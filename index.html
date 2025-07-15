@@ -27,28 +27,18 @@
       <canvas id="board"></canvas>
       <!-- Botões principais -->
       <div id="controls">
-        <button id="startBtn">▶ Iniciar</button>
+         <button id="startBtn">▶ Iniciar</button>
         <button id="resetBtn">🔄 Reiniciar</button>
         <button id="pauseBtn">⏸ Pausar</button>
-        <button id="toggle-sound">🔊 Som ligado</button>
+        <button id="toggle-sound">🔊 Som</button>
+        <button id="save-score-btn">💾 Guardar</button>
       </div>
-      <!-- Botão Guardar -->
-      <div id="save-button">
-        <button id="saveBtn">💾 Guardar</button>
-      </div>
-      <!-- Botão Top 10 -->
-      <div id="ranking-button">
-        <button id="top10Btn">🏆 Top 10</button>
+      <!-- Ranking -->
+      <div id="ranking-container">
+        <h2>Ranking Top 10 🏆</h2>
+        <ul id="ranking-list"></ul>
       </div>
     </div>
-    <!-- Ranking -->
-    <div id="ranking-container" style="display: none;">
-      <h2>Top 10 Jogadores</h2>
-      <ul id="ranking-list">
-        <!-- Entradas de ranking serão inseridas dinamicamente -->
-      </ul>
-    </div>
-  </div>
   <!-- Sons do jogo -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
   <audio id="rodar" src="rodar.mp3" preload="auto"></audio>
