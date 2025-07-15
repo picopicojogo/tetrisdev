@@ -1,21 +1,22 @@
-// Módulo de desenho do canvas (tabuleiro e peças)
+// 🎨 Módulo de desenho no canvas: tabuleiro e peças
 import { TAMANHO_BLOCO, CORES } from './motor.js';
 
 /**
- * Desenha uma Matriz (peça ou tabuleiro) no canvas escolhido
- * @param {number[][]} matriz - matriz com valores das peças
+ * Desenha uma matriz (peça ou tabuleiro) no canvas indicado
+ * @param {number[][]} matriz - matriz com valores de blocos
  * @param {{x: number, y: number}} offset - posição onde desenhar
- * @param {CanvasRenderingContext2D} contexto - contexto de desenho (ctx)
+ * @param {CanvasRenderingContext2D} contexto - contexto do canvas
  */
 export function desenharMatriz(matriz, offset, contexto) {
-  matriz.forEach((linha, y) =>
+  matriz.forEach((linha, y) => {
     linha.forEach((valor, x) => {
       if (!valor) return;
 
       const px = (x + offset.x) * TAMANHO_BLOCO;
       const py = (y + offset.y) * TAMANHO_BLOCO;
+
       const gradiente = contexto.createLinearGradient(px, py, px + TAMANHO_BLOCO, py + TAMANHO_BLOCO);
-      gradiente.addColorStop(0, "#fff");
+      gradiente.addColorStop(0, "#ffffff");
       gradiente.addColorStop(1, CORES[valor]);
 
       contexto.fillStyle = gradiente;
@@ -27,20 +28,20 @@ export function desenharMatriz(matriz, offset, contexto) {
       contexto.fillRect(px, py, TAMANHO_BLOCO, TAMANHO_BLOCO);
       contexto.strokeRect(px, py, TAMANHO_BLOCO, TAMANHO_BLOCO);
 
-      // remove sombra após desenhar
+      // ⚠️ Remove sombra para próximos blocos
       contexto.shadowColor = "transparent";
       contexto.shadowBlur = 0;
-    })
-  );
+    });
+  });
 }
 
 /**
- * Desenha o tabuleiro completo e a peça actual
+ * Desenha o estado completo do jogo no canvas principal
  * @param {CanvasRenderingContext2D} ctx - contexto do canvas principal
- * @param {number} largura - largura total
- * @param {number} altura - altura total
- * @param {number[][]} tabuleiro - estado atual do tabuleiro
- * @param {number[][]} peça - peça ativa
+ * @param {number} largura - largura do canvas
+ * @param {number} altura - altura do canvas
+ * @param {number[][]} tabuleiro - matriz atual do tabuleiro
+ * @param {number[][]} peça - matriz da peça atual
  * @param {{x: number, y: number}} posição - posição da peça
  */
 export function desenharJogo(ctx, largura, altura, tabuleiro, peça, posição) {
@@ -58,12 +59,15 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peça, posição) 
 
 /**
  * Desenha a próxima peça no canvas lateral
- * @param {CanvasRenderingContext2D} ctx - contexto do canvas de preview
- * @param {number[][]} próximaPeça - peça seguinte
+ * @param {CanvasRenderingContext2D} ctx - contexto do canvas de pré-visualização
+ * @param {number[][]} próximaPeça - matriz da próxima peça
  */
 export function desenharProxima(ctx, próximaPeça) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  // Centraliza a peça dentro do canvas
   const offsetX = Math.floor((4 - próximaPeça[0].length) / 2);
   const offsetY = Math.floor((4 - próximaPeça.length) / 2);
+
   desenharMatriz(próximaPeça, { x: offsetX, y: offsetY }, ctx);
 }
