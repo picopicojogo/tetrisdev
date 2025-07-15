@@ -1,5 +1,4 @@
 // cerebro.js — o CPU do jogo
-
 import { COLUNAS, LINHAS } from './motor.js';
 import { desenharJogo, desenharProxima } from './canvas.js';
 import {
@@ -16,14 +15,14 @@ const nextCanvas = document.getElementById('next');
 const boardCtx = boardCanvas.getContext('2d');
 const nextCtx = nextCanvas.getContext('2d');
 
-// Dimensões dos canvases
+// Dimensões do canvas
 const tamanhoBloco = 20;
 boardCanvas.width = COLUNAS * tamanhoBloco;
 boardCanvas.height = LINHAS * tamanhoBloco;
 nextCanvas.width = 80;
 nextCanvas.height = 80;
 
-// Estado inicial do jogo
+// Estado do jogo
 let tabuleiro = criarTabuleiroVazio();
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
@@ -37,13 +36,13 @@ function criarTabuleiroVazio() {
 
 function gerarPecaAleatoria() {
   const pecas = [
-    [[1, 1], [1, 1]],                    // O
-    [[0, 2, 0], [2, 2, 2]],              // T
-    [[3, 3, 0], [0, 3, 3]],              // S
-    [[0, 4, 4], [4, 4, 0]],              // Z
-    [[5, 5, 5, 5]],                      // I
-    [[6, 0, 0], [6, 6, 6]],              // L
-    [[0, 0, 7], [7, 7, 7]]               // J
+    [[1, 1], [1, 1]],
+    [[0, 2, 0], [2, 2, 2]],
+    [[3, 3, 0], [0, 3, 3]],
+    [[0, 4, 4], [4, 4, 0]],
+    [[5, 5, 5, 5]],
+    [[6, 0, 0], [6, 6, 6]],
+    [[0, 0, 7], [7, 7, 7]]
   ];
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
@@ -53,7 +52,6 @@ function desenhar() {
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Actualização do jogo
 function atualizar() {
   const novaY = posicao.y + 1;
 
@@ -71,14 +69,13 @@ function atualizar() {
       tocarSomPerdeu();
       clearInterval(intervalo);
       intervalo = null;
-      alert("💥 Fim de jogo!");
+      alert("💥 Fim de jogo!!");
     }
   }
 
   desenhar();
 }
 
-// Verifica a colisão
 function colisao(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -99,7 +96,6 @@ function colisao(tab, peca, pos) {
   return false;
 }
 
-// Fixar peça
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -114,7 +110,22 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// Iniciar jogo
+function rodarMatriz(matriz) {
+  const altura = matriz.length;
+  const largura = matriz[0].length;
+  const nova = [];
+
+  for (let x = 0; x < largura; x++) {
+    nova[x] = [];
+    for (let y = altura - 1; y >= 0; y--) {
+      nova[x].push(matriz[y][x]);
+    }
+  }
+
+  return nova;
+}
+
+// Iniciar o jogo
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -122,14 +133,14 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 });
 
-// Pausar jogo
+// Pausar o jogo
 document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
   pararMusicaFundo();
 });
 
-// Reiniciar jogo
+// Reiniciar o jogo
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -140,7 +151,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
-// Alternar som de fundo com botão
+// Alternar o som de fundo
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
@@ -156,9 +167,16 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Controlos por teclado
+// Controlo por teclado
 document.addEventListener('keydown', (e) => {
   if (!intervalo) return;
+
+  // Bloquear o SCROLL indesejado
+  if (
+    ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+  ) {
+    e.preventDefault();
+  }
 
   if (e.key === 'ArrowLeft') {
     const novaX = posicao.x - 1;
@@ -182,7 +200,11 @@ document.addEventListener('keydown', (e) => {
   }
 
   if (e.key === 'ArrowUp') {
-    tocarSomRodar();
+    const rodada = rodarMatriz(pecaAtual);
+    if (!colisao(tabuleiro, rodada, posicao)) {
+      pecaAtual = rodada;
+      tocarSomRodar();
+    }
   }
 
   desenhar();
