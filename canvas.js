@@ -1,19 +1,19 @@
-// 🎨 Módulo de desenho no canvas: tabuleiro e peças
+// Módulo de desenho: renderiza o tabuleiro e as pecas
 import { TAMANHO_BLOCO, CORES } from './motor.js';
 
 /**
- * Desenha uma matriz (peça ou tabuleiro) no canvas indicado
- * @param {number[][]} matriz - matriz com valores de blocos
- * @param {{x: number, y: number}} offset - posição onde desenhar
- * @param {CanvasRenderingContext2D} contexto - contexto do canvas
+ * Desenha uma matriz no canvas (tabuleiro ou peca)
+ * @param {number[][]} matriz - matriz de blocos
+ * @param {{x: number, y: number}} deslocamento - posicao no canvas
+ * @param {CanvasRenderingContext2D} contexto - contexto 2D do canvas
  */
-export function desenharMatriz(matriz, offset, contexto) {
+export function desenharMatriz(matriz, deslocamento, contexto) {
   matriz.forEach((linha, y) => {
     linha.forEach((valor, x) => {
       if (!valor) return;
 
-      const px = (x + offset.x) * TAMANHO_BLOCO;
-      const py = (y + offset.y) * TAMANHO_BLOCO;
+      const px = (x + deslocamento.x) * TAMANHO_BLOCO;
+      const py = (y + deslocamento.y) * TAMANHO_BLOCO;
 
       const gradiente = contexto.createLinearGradient(px, py, px + TAMANHO_BLOCO, py + TAMANHO_BLOCO);
       gradiente.addColorStop(0, "#ffffff");
@@ -28,7 +28,7 @@ export function desenharMatriz(matriz, offset, contexto) {
       contexto.fillRect(px, py, TAMANHO_BLOCO, TAMANHO_BLOCO);
       contexto.strokeRect(px, py, TAMANHO_BLOCO, TAMANHO_BLOCO);
 
-      // ⚠️ Remove sombra para próximos blocos
+      // Remove sombra para os proximos blocos
       contexto.shadowColor = "transparent";
       contexto.shadowBlur = 0;
     });
@@ -36,21 +36,21 @@ export function desenharMatriz(matriz, offset, contexto) {
 }
 
 /**
- * Desenha o estado completo do jogo no canvas principal
+ * Desenha o estado atual do jogo no canvas principal
  * @param {CanvasRenderingContext2D} ctx - contexto do canvas principal
  * @param {number} largura - largura do canvas
  * @param {number} altura - altura do canvas
- * @param {number[][]} tabuleiro - matriz atual do tabuleiro
- * @param {number[][]} peça - matriz da peça atual
- * @param {{x: number, y: number}} posição - posição da peça
+ * @param {number[][]} tabuleiro - matriz do tabuleiro
+ * @param {number[][]} peca - matriz da peca atual
+ * @param {{x: number, y: number}} posicao - posicao da peca
  */
-export function desenharJogo(ctx, largura, altura, tabuleiro, peça, posição) {
+export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
   ctx.clearRect(0, 0, largura, altura);
   ctx.fillStyle = "rgba(253, 246, 227, 0.25)";
   ctx.fillRect(0, 0, largura, altura);
 
   desenharMatriz(tabuleiro, { x: 0, y: 0 }, ctx);
-  if (peça) desenharMatriz(peça, posição, ctx);
+  if (peca) desenharMatriz(peca, posicao, ctx);
 
   ctx.strokeStyle = "#888";
   ctx.lineWidth = 4;
@@ -58,16 +58,15 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peça, posição) 
 }
 
 /**
- * Desenha a próxima peça no canvas lateral
- * @param {CanvasRenderingContext2D} ctx - contexto do canvas de pré-visualização
- * @param {number[][]} próximaPeça - matriz da próxima peça
+ * Desenha a proxima peca no canvas lateral
+ * @param {CanvasRenderingContext2D} ctx - contexto do canvas lateral
+ * @param {number[][]} proximaPeca - matriz da proxima peca
  */
-export function desenharProxima(ctx, próximaPeça) {
+export function desenharProxima(ctx, proximaPeca) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // Centraliza a peça dentro do canvas
-  const offsetX = Math.floor((4 - próximaPeça[0].length) / 2);
-  const offsetY = Math.floor((4 - próximaPeça.length) / 2);
+  const deslocamentoX = Math.floor((4 - proximaPeca[0].length) / 2);
+  const deslocamentoY = Math.floor((4 - proximaPeca.length) / 2);
 
-  desenharMatriz(próximaPeça, { x: offsetX, y: offsetY }, ctx);
+  desenharMatriz(proximaPeca, { x: deslocamentoX, y: deslocamentoY }, ctx);
 }
