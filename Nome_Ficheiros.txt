@@ -1,6 +1,6 @@
 Nome do Ficheiro Função Principal
 motor.js	Núcleo do jogo: criação de peças, tabuleiro, pontuação
-formas.js	Desenho no canvas: tabuleiro, peças, próxima peça
+canvas.js	Desenho no canvas: tabuleiro, peças, próxima peça
 controlos.js	Configurações do teclado, botões e gestos táteis
 ui.js	        Modal de fim de jogo, ranking e informações visuais
 audio.js	Gestão dos sons
