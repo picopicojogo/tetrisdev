@@ -1,0 +1,20 @@
+Ficheiros incluídos:
+- index.html
+- style.css
+- motor.js
+- canvas.js
+- controlos.js
+- ui.js
+- audio.js
+- cerebro.js
+- capadojogo.png (imagem de fundo)
+- *.mp3
+
+Nome do Ficheiro e Função Principal
+motor.js	   Núcleo do jogo: criação de peças, tabuleiro, pontuação
+canvas.js	   Desenho no canvas: tabuleiro, peças, próxima peça
+controlos.js Configurações do teclado, botões e gestos táteis
+ui.js	       Modal de fim de jogo, ranking e informações visuais
+audio.js	   Gestão dos sons
+cerebro.js	 Inicialização geral, liga todos os módulos
+style.css    Estilos e fontes de texto
