@@ -1,4 +1,4 @@
-/* Base geral */
+/* Base global */
 html, body {
   margin: 0;
   padding: 0;
@@ -17,7 +17,7 @@ body {
   align-items: center;
 }
 
-/* Wrapper principal */
+/* Wrapper */
 #wrapper {
   width: 100%;
   padding: 1rem;
@@ -27,16 +27,17 @@ body {
   align-items: center;
 }
 
+/* Área de jogo */
 #game-container {
   width: 90vw;
   height: 90vh;
   max-width: 480px;
   max-height: 720px;
-  background-color: rgba(255, 255, 255, 0.65);
+  background-color: rgba(255,255,255,0.65);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 24px rgba(0,0,0,0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -69,13 +70,13 @@ body {
   margin: 0 auto;
 }
 
-/* Título */
+/* Título do jogo */
 h1 {
   margin-top: 0;
   margin-bottom: 12px;
 }
 
-/* Info jogador */
+/* Informação */
 #info {
   font-weight: bold;
   display: flex;
@@ -129,4 +130,66 @@ h1 {
 #controls button:active {
   transform: translateY(2px);
   box-shadow: none;
+}
+
+/* Controlos móveis */
+#touch-controls {
+  display: none;
+}
+
+#touch-controls button {
+  padding: 10px;
+  margin: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: #f7b731;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 3px 0 #c29e00;
+}
+
+/* Ranking */
+#ranking-container {
+  margin-top: 20px;
+  background-color: #fffbe7;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(250,130,49,0.15);
+}
+
+/* Modal fim de jogo */
+#modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#modal.show {
+  display: flex;
+}
+
+#modal-content {
+  background-color: rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  width: 90%;
+  max-width: 320px;
+  box-shadow: 0 0 16px rgba(0,0,0,0.3);
+}
+
+/* Campo de nome do jogador */
+#player-name {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #fa8231;
+  margin: 10px 0;
+  font-size: 1rem;
 }
