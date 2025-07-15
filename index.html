@@ -4,25 +4,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pico-Pico Bricks</title>
+  <meta name="description" content="Jogo do estilo Tetris Oficial do Pico-Pico">
+  <meta name="keywords" content="Tetris, Pico-Pico, jogo de blocos, Pico-Pico Bricks, puzzle">
+  <meta name="author" content="Pico-Pico">
+  <meta name="theme-color" content="#fa8231">
+  <meta property="og:title" content="Pico-Pico Bricks — O Tetris oficial do Pico-Pico">
+  <meta property="og:description" content="Desafia-te com este jogo de blocos vibrante e viciante, inspirado no Tetris!">
+  <meta property="og:type" content="website">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="wrapper">
     <div id="game-container">
-      <h1>🎮 Pico-Pico Bricks</h1>
-      <!-- Info do jogador -->
+      <!-- Próxima Peça -->
+      <div id="preview-container">
+        <h2 class="preview-title">Próxima Peça</h2>
+        <canvas id="next"></canvas>
+      </div>
+      <h1>Pico-Pico Bricks</h1>
+      <!-- Informações do jogador -->
       <div id="info">
         <div>Pontos: <span id="score">0</span></div>
         <div>Nível: <span id="level">1</span></div>
         <div>Tempo: <span id="time">00:00</span></div>
       </div>
-
-      <!-- Canvas principal e próximo -->
+      <!-- Tabuleiro principal -->
       <canvas id="board"></canvas>
-      <canvas id="next"></canvas>
-
-      <!-- Controlos principais -->
+      <!-- Botões principais -->
       <div id="controls">
         <button id="startBtn">▶ Iniciar</button>
         <button id="resetBtn">🔄 Reiniciar</button>
@@ -30,23 +39,20 @@
         <button id="toggle-sound">🔊 Som</button>
         <button id="save-score-btn">💾 Guardar</button>
       </div>
-
-      <!-- Controlos mobile -->
+      <!-- Controles táteis para mobile -->
       <div id="touch-controls">
         <button id="leftBtn">⬅</button>
         <button id="rightBtn">➡</button>
         <button id="downBtn">⬇</button>
         <button id="rotateBtn">🔄</button>
       </div>
-
       <!-- Ranking -->
       <div id="ranking-container">
         <h2>Ranking Top 10 🏆</h2>
         <ul id="ranking-list"></ul>
       </div>
     </div>
-
-    <!-- Modal do fim de jogo -->
+    <!-- Modal fim de jogo -->
     <div id="modal">
       <div id="modal-content">
         <h2>Fim de Jogo 💀</h2>
@@ -56,14 +62,12 @@
       </div>
     </div>
   </div>
-
-  <!-- Áudios com IDs alinhados  -->
+  <!-- Sons alinhados com audio.js -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
   <audio id="rodar" src="rodar.mp3" preload="auto"></audio>
   <audio id="colidir" src="colidir.mp3" preload="auto"></audio>
   <audio id="perdeu" src="perdeu.mp3" preload="auto"></audio>
-
-  <!-- Scripts principais -->
+  <!-- Script principal -->
   <script type="module" src="./cerebro.js"></script>
 </body>
 </html>
