@@ -1,19 +1,19 @@
-// Módulo de audio: musica de fundo e efeitos sonoros
-
+// Módulo de áudio: música de fundo e efeitos sonoros principais
 let somAtivo = true;
 
+// Referência à música de fundo
 const musicaFundo = document.getElementById("musica-fundo");
 
+// Referências aos efeitos sonoros com os IDs correspondentes aos ficheiros.mp3
 const sons = {
-  rodar: document.getElementById("som-rodar"),
-  colidir: document.getElementById("som-colidir"),
-  pontos: document.getElementById("som-pontos"),
-  perdeu: document.getElementById("som-perdeu")
+  rodar: document.getElementById("rodar"),
+  colidir: document.getElementById("colidir"),
+  perdeu: document.getElementById("perdeu")
 };
 
 /**
- * Toca o som especificado, se activo
- * @param {string} nome - chave do som ("rodar", "colidir", etc.)
+ * Toca o som com o nome especificado, caso o mesmo esteja activo
+ * @param {string} nome - 'rodar', 'colidir' ou 'perdeu'
  */
 export function tocarSom(nome) {
   if (!somAtivo) return;
@@ -26,7 +26,7 @@ export function tocarSom(nome) {
 }
 
 /**
- * Liga ou pausa a musica de fundo
+ * Actualiza o estado da música de fundo (play ou pause)
  */
 export function atualizarMusica() {
   if (somAtivo) {
@@ -37,7 +37,7 @@ export function atualizarMusica() {
 }
 
 /**
- * Alterna entre som ligado/desligado
+ * Alterna entre os modos ligado e desligado, e actualiza botão visual
  */
 export function alternarSom() {
   somAtivo = !somAtivo;
@@ -47,7 +47,7 @@ export function alternarSom() {
 }
 
 /**
- * Verifica se o som esta activo
+ * Verifica se o som está actualmente ativo
  * @returns {boolean}
  */
 export function somLigado() {
