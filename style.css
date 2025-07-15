@@ -3,11 +3,12 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  width: 100%;
   font-family: 'Fredoka', sans-serif;
-  overflow: hidden; /* impede scroll geral */
+  overflow: hidden; /* evita scroll exterior */
 }
 
-/* Fundo visual */
+/* Fundo com imagem  */
 body {
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
@@ -26,11 +27,12 @@ body {
   align-items: center;
 }
 
-/* Área principal do jogo */
+/* Área principal do jogo com efeito fosco e altura adaptável */
 #game-container {
-  width: 100%;
-  max-width: 420px;
-  height: auto;
+  width: 90vw;
+  height: 90vh;
+  max-width: 480px;
+  max-height: 720px;
   padding: 16px;
   margin: auto;
   background-color: rgba(255, 255, 255, 0.65);
@@ -39,6 +41,10 @@ body {
   border-radius: 16px;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
 }
 
 /* Título */
@@ -47,7 +53,7 @@ body {
   margin-bottom: 12px;
 }
 
-/* Informações do estado do jogo */
+/* Estado do jogo */
 #info {
   font-weight: bold;
   display: flex;
@@ -58,7 +64,7 @@ body {
   text-shadow: 1px 1px #f7b731;
 }
 
-/* 🎮 Canvases principais */
+/* Canvas */
 canvas {
   background-color: transparent !important;
   display: block;
@@ -123,7 +129,7 @@ canvas {
   box-shadow: 0 3px 0 #c29e00;
 }
 
-/* Ranking de jogadores */
+/* Ranking */
 #ranking-container {
   margin-top: 20px;
   background-color: #fffbe7;
@@ -132,7 +138,7 @@ canvas {
   box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
 }
 
-/* Modal de fim de jogo */
+/* Modal */
 #modal {
   position: fixed;
   top: 0; left: 0;
@@ -159,7 +165,7 @@ canvas {
   box-shadow: 0 0 16px rgba(0,0,0,0.3);
 }
 
-/* Input do nome do jogador */
+/* Input de nome */
 #player-name {
   width: 100%;
   padding: 8px;
@@ -169,18 +175,11 @@ canvas {
   font-size: 1rem;
 }
 
-/* Ajuste para ecrãs largos */
-@media (min-width: 1200px) {
-  #game-container {
-    max-width: 420px;
-  }
-}
-
-/* Responsividade móvel */
+/* Responsivo para telemóveis */
 @media (max-width: 768px) {
   #game-container {
-    max-width: 100%;
-    margin: 10px;
+    width: 95vw;
+    height: 95vh;
     padding: 12px;
   }
 
