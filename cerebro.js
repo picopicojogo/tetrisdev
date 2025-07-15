@@ -1,8 +1,7 @@
-// Ficheiro principal do jogo
-
+// Ficheiro principal do jogo que liga todos os ficheiros
 import {
   COLUNAS, LINHAS, TAMANHO_BLOCO,
-  criarMatriz, gerarPeça, verificarColisao,
+  criarMatriz, gerarPeca, verificarColisao,
   fundirPeca, limparLinhas
 } from './motor.js';
 
@@ -11,7 +10,7 @@ import {
 } from './canvas.js';
 
 import {
-  moverPeça, rodarPeça, descerPeça,
+  moverPeca, rodarPeca, descerPeca,
   configurarControlos
 } from './controlos.js';
 
@@ -24,7 +23,7 @@ import {
   tocarSom, atualizarMusica, alternarSom, somLigado
 } from './audio.js';
 
-// Referências ao DOM
+// Referencias ao DOM
 const canvas = document.getElementById("board");
 const nextCanvas = document.getElementById("next");
 const timeEl = document.getElementById("time");
@@ -36,21 +35,19 @@ const saveBtn = document.getElementById("save-score-btn");
 const toggleSoundBtn = document.getElementById("toggle-sound");
 
 // Estado do jogo
-let tabuleiro, peçaAtual, próximaPeça, posição;
-let score = 0, level = 1, progressoNivel = 0;
+let tabuleiro, pecaAtual, proximaPeca, posicao;
+let pontuacao = 0, nivel = 1, progressoNivel = 0;
 let dropIntervalo = 1000, dropContador = 0;
 let animacaoID = null;
 let pausado = false, fimDeJogo = false;
 let startTime = null, lastTime = 0;
 
-// Redimensionar o canvas responsivamente
+// Redimensiona o canvas ao ecrã
 function redimensionarCanvas() {
-  const larguraMáxima = 400;
-  const alturaMáxima = 600;
-
-  const largura = Math.min(canvas.parentElement.clientWidth, larguraMáxima);
-  const altura = Math.min(canvas.parentElement.clientHeight, alturaMáxima);
-
+  const larguraMax = 400;
+  const alturaMax = 600;
+  const largura = Math.min(canvas.parentElement.clientWidth, larguraMax);
+  const altura = Math.min(canvas.parentElement.clientHeight, alturaMax);
   canvas.width = largura;
   canvas.height = altura;
   nextCanvas.width = largura / 2;
@@ -63,7 +60,7 @@ window.addEventListener("load", () => {
   carregarRankingGuardado();
 });
 
-// Ciclo principal do jogo
+// Ciclo do jogo
 function atualizar(time = 0) {
   if (fimDeJogo || pausado) return;
   if (!startTime) startTime = time;
@@ -73,30 +70,30 @@ function atualizar(time = 0) {
   dropContador += delta;
 
   if (dropContador > dropIntervalo) {
-    const colidiu = descerPeça(tabuleiro, peçaAtual, posição);
+    const colidiu = descerPeca(tabuleiro, pecaAtual, posicao);
     if (colidiu) {
-      fundirPeca(tabuleiro, peçaAtual, posição);
-      const { novaPontuação, progressoNível } = limparLinhas(tabuleiro, level);
-      score += novaPontuação;
-      progressoNivel += progressoNível;
+      fundirPeca(tabuleiro, pecaAtual, posicao);
+      const { novaPontuacao, progressoNivel: progresso } = limparLinhas(tabuleiro, nivel);
+      pontuacao += novaPontuacao;
+      progressoNivel += progresso;
 
-      if (progressoNivel >= level * 10) {
-        level++;
+      if (progressoNivel >= nivel * 10) {
+        nivel++;
         dropIntervalo = Math.max(100, dropIntervalo * 0.8);
       }
 
-      atualizarPontuacao(score, level);
-      peçaAtual = próximaPeça;
-      próximaPeça = gerarPeça();
-      posição = {
-        x: Math.floor(COLUNAS / 2) - Math.floor(peçaAtual[0].length / 2),
+      atualizarPontuacao(pontuacao, nivel);
+      pecaAtual = proximaPeca;
+      proximaPeca = gerarPeca();
+      posicao = {
+        x: Math.floor(COLUNAS / 2) - Math.floor(pecaAtual[0].length / 2),
         y: 0
       };
 
-      if (verificarColisao(tabuleiro, peçaAtual, posição)) {
+      if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
         fimDeJogo = true;
         tocarSom("perdeu");
-        mostrarModalFim(score);
+        mostrarModalFim(pontuacao);
         return;
       }
     }
@@ -105,17 +102,17 @@ function atualizar(time = 0) {
 
   const segundos = Math.floor((time - startTime) / 1000);
   atualizarTempo(timeEl, segundos);
-  desenharJogo(canvas.getContext("2d"), canvas.width, canvas.height, tabuleiro, peçaAtual, posição);
-  desenharProxima(nextCanvas.getContext("2d"), próximaPeça);
+  desenharJogo(canvas.getContext("2d"), canvas.width, canvas.height, tabuleiro, pecaAtual, posicao);
+  desenharProxima(nextCanvas.getContext("2d"), proximaPeca);
 
   animacaoID = requestAnimationFrame(atualizar);
 }
 
-// Iniciar um novo jogo
+// Inicia novo jogo
 function iniciarJogo() {
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
-  score = 0;
-  level = 1;
+  pontuacao = 0;
+  nivel = 1;
   progressoNivel = 0;
   dropIntervalo = 1000;
   dropContador = 0;
@@ -124,19 +121,19 @@ function iniciarJogo() {
   startTime = null;
   lastTime = 0;
 
-  próximaPeça = gerarPeça();
-  peçaAtual = gerarPeça();
-  posição = {
-    x: Math.floor(COLUNAS / 2) - Math.floor(peçaAtual[0].length / 2),
+  proximaPeca = gerarPeca();
+  pecaAtual = gerarPeca();
+  posicao = {
+    x: Math.floor(COLUNAS / 2) - Math.floor(pecaAtual[0].length / 2),
     y: 0
   };
 
-  atualizarPontuacao(score, level);
+  atualizarPontuacao(pontuacao, nivel);
   atualizarMusica();
   animacaoID = requestAnimationFrame(atualizar);
 }
 
-// Pausar ou retomar o jogo
+// Alternar a pausa
 function alternarPausa() {
   pausado = !pausado;
   pauseBtn.textContent = pausado ? "▶ Retomar" : "⏸ Pausar";
@@ -151,7 +148,7 @@ function alternarPausa() {
   }
 }
 
-// Reiniciar o jogo
+// Reiniciar
 function reiniciarJogo() {
   cancelAnimationFrame(animacaoID);
   document.getElementById("musica-fundo").currentTime = 0;
@@ -163,12 +160,12 @@ startBtn.addEventListener("click", iniciarJogo);
 resetBtn.addEventListener("click", reiniciarJogo);
 pauseBtn.addEventListener("click", alternarPausa);
 toggleSoundBtn.addEventListener("click", alternarSom);
-saveBtn.addEventListener("click", () => guardarPontuacao(score));
+saveBtn.addEventListener("click", () => guardarPontuacao(pontuacao));
 
-// Configurar os controlos
+// Controlos do jogador
 configurarControlos(
-  dir => moverPeça(dir, tabuleiro, peçaAtual, posição),
-  dir => { peçaAtual = rodarPeça(dir, peçaAtual, tabuleiro, posição); },
-  () => descerPeça(tabuleiro, peçaAtual, posição),
+  dir => moverPeca(dir, tabuleiro, pecaAtual, posicao),
+  dir => { pecaAtual = rodarPeca(dir, pecaAtual, tabuleiro, posicao); },
+  () => descerPeca(tabuleiro, pecaAtual, posicao),
   () => alternarPausa()
 );
