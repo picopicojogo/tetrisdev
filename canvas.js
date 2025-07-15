@@ -1,4 +1,5 @@
-// canvas.js — desenho do tabuleiro e da próxima peça
+// canvas.js — desenho do tabuleiro principal e da próxima peça
+
 import { COLUNAS, LINHAS } from "./motor.js";
 
 /**
@@ -16,7 +17,7 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
   const larguraBloco = largura / COLUNAS;
   const alturaBloco = altura / LINHAS;
 
-  // Desenhar blocos do tabuleiro
+  // Desenha o tabuleiro fixo
   for (let y = 0; y < LINHAS; y++) {
     for (let x = 0; x < COLUNAS; x++) {
       const valor = tabuleiro[y][x];
@@ -26,26 +27,25 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
     }
   }
 
-  // Desenhar a peça actual
+  // Desenha a peça actual
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
       const valor = peca[y][x];
       if (valor) {
-        desenharBloco(
-          ctx,
-          posicao.x + x,
-          posicao.y + y,
-          larguraBloco,
-          alturaBloco,
-          valor
-        );
+        const px = posicao.x + x;
+        const py = posicao.y + y;
+
+        // Impede que o bloco ultrapasse a linha inferior
+        if (py >= 0 && py < LINHAS) {
+          desenharBloco(ctx, px, py, larguraBloco, alturaBloco, valor);
+        }
       }
     }
   }
 }
 
 /**
- * Desenha a próxima peça no canvas secundário
+ * Desenha a próxima peça no canvas de preview
  * @param {CanvasRenderingContext2D} ctx
  * @param {number[][]} proxima
  */
@@ -69,7 +69,7 @@ export function desenharProxima(ctx, proxima) {
 }
 
 /**
- * Desenha um único bloco no canvas
+ * Desenha um único bloco com cor no canvas
  * @param {CanvasRenderingContext2D} ctx
  * @param {number} x
  * @param {number} y
@@ -88,7 +88,7 @@ function desenharBloco(ctx, x, y, largura, altura, valor) {
 }
 
 /**
- * Devolve a cor associada ao valor do bloco
+ * Retorna a cor associada ao valor do bloco
  * @param {number} valor
  * @returns {string}
  */
