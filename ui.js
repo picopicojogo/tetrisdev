@@ -1,19 +1,19 @@
-// Módulo de interface do utilizador: pontuação, tempo, modal e ranking
+// Módulo de interface: pontuacao, tempo, ranking, modal
 
 /**
- * Actualiza os elementos visuais de pontuação e nível
- * @param {number} score - pontuação atual
- * @param {number} level - nível atual
+ * Actualiza pontuacao e nivel na interface
+ * @param {number} pontuacao
+ * @param {number} nivel
  */
-export function atualizarPontuacao(score, level) {
-  document.getElementById("score").textContent = score;
-  document.getElementById("level").textContent = level;
+export function atualizarPontuacao(pontuacao, nivel) {
+  document.getElementById("score").textContent = pontuacao;
+  document.getElementById("level").textContent = nivel;
 }
 
 /**
- * Actualiza o cronómetro com base nos segundos decorridos
- * @param {HTMLElement} elTempo - elemento HTML que mostra o tempo
- * @param {number} segundos - tempo total decorrido (em segundos)
+ * Actualiza o cronometro com base nos segundos
+ * @param {HTMLElement} elTempo
+ * @param {number} segundos
  */
 export function atualizarTempo(elTempo, segundos) {
   const min = String(Math.floor(segundos / 60)).padStart(2, "0");
@@ -22,17 +22,17 @@ export function atualizarTempo(elTempo, segundos) {
 }
 
 /**
- * Mostra o modal de fim de jogo com a pontuação final
- * @param {number} pontuacao - pontuação final alcançada
+ * Mostra o modal com pontuacao final
+ * @param {number} pontuacao
  */
 export function mostrarModalFim(pontuacao) {
-  document.getElementById("final-score").textContent = `Pontuação: ${pontuacao}`;
+  document.getElementById("final-score").textContent = `Pontuacao: ${pontuacao}`;
   document.getElementById("modal").classList.add("show");
 }
 
 /**
- * Actualiza a lista de ranking visualmente
- * @param {Array<{name: string, score: number}>} listaScores - top jogadores
+ * Actualiza a lista do ranking
+ * @param {Array<{name: string, score: number}>} listaScores
  */
 export function atualizarRanking(listaScores) {
   const medalhas = ["🥇", "🥈", "🥉"];
@@ -44,7 +44,7 @@ export function atualizarRanking(listaScores) {
 }
 
 /**
- * Carrega as pontuações guardadas do localStorage e actualiza o ranking
+ * Carrega pontuacoes guardadas do localStorage
  */
 export function carregarRankingGuardado() {
   const guardados = JSON.parse(localStorage.getItem("scores") || "[]");
@@ -52,8 +52,8 @@ export function carregarRankingGuardado() {
 }
 
 /**
- * Guarda a pontuação introduzida pelo jogador e actualiza o ranking
- * @param {number} pontuacao - pontuação final
+ * Guarda pontuacao do jogador e actualiza o ranking
+ * @param {number} pontuacao
  */
 export function guardarPontuacao(pontuacao) {
   const nome = document.getElementById("player-name").value.trim();
@@ -65,7 +65,7 @@ export function guardarPontuacao(pontuacao) {
   const lista = JSON.parse(localStorage.getItem("scores") || "[]");
   lista.push({ name: nome, score: pontuacao });
   lista.sort((a, b) => b.score - a.score);
-  lista.splice(10); // mantém apenas o top 10
+  lista.splice(10); // limita ao top 10
 
   localStorage.setItem("scores", JSON.stringify(lista));
   atualizarRanking(lista);
