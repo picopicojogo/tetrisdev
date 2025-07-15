@@ -17,7 +17,7 @@ body {
   align-items: center;
 }
 
-/* Wrapper */
+/* Wrapper principal */
 #wrapper {
   width: 100%;
   padding: 1rem;
@@ -33,50 +33,25 @@ body {
   height: 90vh;
   max-width: 480px;
   max-height: 720px;
-  background-color: rgba(255,255,255,0.65);
+  background-color: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(10px);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 0 24px rgba(0,0,0,0.2);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
 }
 
-/* Próxima Peça */
-#preview-container {
-  background-color: rgba(255,255,255,0.9);
-  border-radius: 10px;
-  padding: 6px;
-  margin-bottom: 8px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  max-width: 120px;
-  align-self: center;
-}
-
-.preview-title {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-#next {
-  width: 100%;
-  max-width: 100px;
-  max-height: 100px;
-  display: block;
-  margin: 0 auto;
-}
-
 /* Título do jogo */
 h1 {
   margin-top: 0;
   margin-bottom: 12px;
+  text-align: center;
 }
 
-/* Informação */
+/* Info do jogador */
 #info {
   font-weight: bold;
   display: flex;
@@ -85,9 +60,36 @@ h1 {
   margin: 12px 0;
   color: #fa8231;
   text-shadow: 1px 1px #f7b731;
+  font-size: 1rem;
 }
 
-/* Tabuleiro */
+/* Próxima Peça */
+#preview-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 6px;
+  margin-bottom: 8px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  max-width: 120px;
+  align-self: center;
+}
+
+.preview-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+#next {
+  width: 100%;
+  max-width: 80px;
+  max-height: 80px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Tabuleiro principal */
 #board {
   max-width: 320px;
   max-height: 320px;
@@ -95,15 +97,16 @@ h1 {
   height: auto;
   display: block;
   margin: 0 auto;
+  margin-bottom: 12px;
 }
 
 /* Botões principais */
 #controls {
-  background-color: rgba(255,255,255,0.9);
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 10px;
   border-radius: 12px;
-  margin-top: 12px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  margin-top: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -132,20 +135,9 @@ h1 {
   box-shadow: none;
 }
 
-/* Controlos móveis */
-#touch-controls {
-  display: none;
-}
-
-#touch-controls button {
-  padding: 10px;
-  margin: 5px;
-  font-size: 1.2rem;
-  font-weight: bold;
+/* Estilo dinâmico para botão de som */
+#toggle-sound.active {
   background-color: #f7b731;
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 3px 0 #c29e00;
 }
 
 /* Ranking */
@@ -154,7 +146,9 @@ h1 {
   background-color: #fffbe7;
   border-radius: 12px;
   padding: 10px;
-  box-shadow: 0 2px 8px rgba(250,130,49,0.15);
+  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
+  width: 100%;
+  max-width: 320px;
 }
 
 /* Modal fim de jogo */
