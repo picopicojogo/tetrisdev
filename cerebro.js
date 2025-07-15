@@ -1,4 +1,5 @@
-// Módulo principal: liga todos os scripts
+// Ficheiro principal do jogo
+
 import {
   COLUNAS, LINHAS, TAMANHO_BLOCO,
   criarMatriz, gerarPeça, verificarColisao,
@@ -23,7 +24,7 @@ import {
   tocarSom, atualizarMusica, alternarSom, somLigado
 } from './audio.js';
 
-// Referências a elementos do HTML
+// Referências ao DOM
 const canvas = document.getElementById("board");
 const nextCanvas = document.getElementById("next");
 const timeEl = document.getElementById("time");
@@ -34,6 +35,7 @@ const pauseBtn = document.getElementById("pauseBtn");
 const saveBtn = document.getElementById("save-score-btn");
 const toggleSoundBtn = document.getElementById("toggle-sound");
 
+// Estado do jogo
 let tabuleiro, peçaAtual, próximaPeça, posição;
 let score = 0, level = 1, progressoNivel = 0;
 let dropIntervalo = 1000, dropContador = 0;
@@ -41,22 +43,27 @@ let animacaoID = null;
 let pausado = false, fimDeJogo = false;
 let startTime = null, lastTime = 0;
 
-// Redimensionamento do responsivo
+// Redimensionar o canvas responsivamente
 function redimensionarCanvas() {
   const larguraMáxima = 400;
-  const larguraDisponível = Math.min(canvas.parentElement.clientWidth, larguraMáxima);
-  canvas.width = larguraDisponível;
-  canvas.height = larguraDisponível * (LINHAS / COLUNAS);
-  nextCanvas.width = larguraDisponível / 2;
-  nextCanvas.height = larguraDisponível / 2;
+  const alturaMáxima = 600;
+
+  const largura = Math.min(canvas.parentElement.clientWidth, larguraMáxima);
+  const altura = Math.min(canvas.parentElement.clientHeight, alturaMáxima);
+
+  canvas.width = largura;
+  canvas.height = altura;
+  nextCanvas.width = largura / 2;
+  nextCanvas.height = altura / 2;
 }
+
 window.addEventListener("resize", redimensionarCanvas);
 window.addEventListener("load", () => {
   redimensionarCanvas();
   carregarRankingGuardado();
 });
 
-// Actualiza jogo a cada frame
+// Ciclo principal do jogo
 function atualizar(time = 0) {
   if (fimDeJogo || pausado) return;
   if (!startTime) startTime = time;
@@ -104,7 +111,7 @@ function atualizar(time = 0) {
   animacaoID = requestAnimationFrame(atualizar);
 }
 
-// Começa um novo jogo
+// Iniciar um novo jogo
 function iniciarJogo() {
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
   score = 0;
@@ -129,7 +136,7 @@ function iniciarJogo() {
   animacaoID = requestAnimationFrame(atualizar);
 }
 
-// Alterna entre pausa e retoma
+// Pausar ou retomar o jogo
 function alternarPausa() {
   pausado = !pausado;
   pauseBtn.textContent = pausado ? "▶ Retomar" : "⏸ Pausar";
@@ -144,21 +151,21 @@ function alternarPausa() {
   }
 }
 
-// Reinicia o jogo do zero
+// Reiniciar o jogo
 function reiniciarJogo() {
   cancelAnimationFrame(animacaoID);
   document.getElementById("musica-fundo").currentTime = 0;
   iniciarJogo();
 }
 
-// Liga os eventos aos botões
+// Eventos dos botões
 startBtn.addEventListener("click", iniciarJogo);
 resetBtn.addEventListener("click", reiniciarJogo);
 pauseBtn.addEventListener("click", alternarPausa);
 toggleSoundBtn.addEventListener("click", alternarSom);
 saveBtn.addEventListener("click", () => guardarPontuacao(score));
 
-// Liga as funções aos controlos
+// Configurar os controlos
 configurarControlos(
   dir => moverPeça(dir, tabuleiro, peçaAtual, posição),
   dir => { peçaAtual = rodarPeça(dir, peçaAtual, tabuleiro, posição); },
