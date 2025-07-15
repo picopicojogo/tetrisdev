@@ -1,8 +1,7 @@
 // Módulo de lógica do jogo: peças, colisões e tabuleiro
-
 export const COLUNAS = 10;
 export const LINHAS = 20;
-export const TAMANHO_BLOCO = 24; // adaptado para melhor a escala
+export const TAMANHO_BLOCO = 24;
 
 export const CORES = [
   null, "#FF3CAC", "#784BA0", "#29FFC6",
@@ -20,18 +19,18 @@ export const FORMATOS = [
   [[0,0,7],[7,7,7]]
 ];
 
-// Cria uma matriz de tabuleiro
+// Cria matriz de tabuleiro
 export function criarMatriz(largura, altura) {
   return Array.from({ length: altura }, () => Array(largura).fill(0));
 }
 
-// Roda uma matriz 90º
+// Roda matriz 90º
 export function rodar(matriz, direcao) {
   const transposta = matriz[0].map((_, i) => matriz.map(l => l[i]));
   return direcao > 0 ? transposta.reverse() : transposta.map(r => r.reverse());
 }
 
-// Verifica se há colisão
+// Verifica colisão com tabuleiro
 export function verificarColisao(tabuleiro, peça, posição) {
   return peça.some((linha, y) =>
     linha.some((valor, x) =>
@@ -41,7 +40,7 @@ export function verificarColisao(tabuleiro, peça, posição) {
   );
 }
 
-// Fundir a peça no tabuleiro
+// Fundir a peça ao tabuleiro
 export function fundirPeca(tabuleiro, peça, posição) {
   peça.forEach((linha, y) =>
     linha.forEach((valor, x) => {
@@ -58,10 +57,22 @@ export function gerarPeça() {
   return FORMATOS[i].map(r => [...r]);
 }
 
-// Limpa linhas preenchidas e calcula a pontuação
+// Limpa linhas preenchidas e dá pontuação
 export function limparLinhas(tabuleiro, nivelAtual) {
   let linhasLimpas = 0;
+
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
     if (tabuleiro[y].every(valor => valor !== 0)) {
-      const linha = tabuleiro.splice(y, 1)[0].fill(0);
-      tabuleiro.unshift(linha);
+      const linhaVazia = Array(COLUNAS).fill(0);
+      tabuleiro.splice(y, 1);
+      tabuleiro.unshift(linhaVazia);
+      linhasLimpas++;
+      y++; // reavalia linha atual depois de remoção
+    }
+  }
+
+  const novaPontuação = linhasLimpas * 100 * nivelAtual;
+  const progressoNível = linhasLimpas;
+
+  return { novaPontuação, progressoNível };
+}
