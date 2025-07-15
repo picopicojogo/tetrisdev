@@ -147,6 +147,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
+// Controlar o som
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
