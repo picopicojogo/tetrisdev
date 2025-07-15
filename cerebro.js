@@ -15,7 +15,7 @@ const nextCanvas = document.getElementById('next');
 const boardCtx = boardCanvas.getContext('2d');
 const nextCtx = nextCanvas.getContext('2d');
 
-// Dimensões dos canvases
+// Dimensões do tabuleiro e da peça seguinte
 const tamanhoBloco = 20;
 boardCanvas.width = COLUNAS * tamanhoBloco;
 boardCanvas.height = LINHAS * tamanhoBloco;
@@ -29,20 +29,20 @@ let proximaPeca = gerarPecaAleatoria();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
 
-// 🔧 Funções auxiliares
+// Funções auxiliares
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
 function gerarPecaAleatoria() {
   const pecas = [
-    [[1, 1], [1, 1]],
-    [[0, 2, 0], [2, 2, 2]],
-    [[3, 3, 0], [0, 3, 3]],
-    [[0, 4, 4], [4, 4, 0]],
-    [[5, 5, 5, 5]],
-    [[6, 0, 0], [6, 6, 6]],
-    [[0, 0, 7], [7, 7, 7]]
+    [[1, 1], [1, 1]],                  // O
+    [[0, 2, 0], [2, 2, 2]],            // T
+    [[3, 3, 0], [0, 3, 3]],            // S
+    [[0, 4, 4], [4, 4, 0]],            // Z
+    [[5, 5, 5, 5]],                    // I
+    [[6, 0, 0], [6, 6, 6]],            // L
+    [[0, 0, 7], [7, 7, 7]]             // J
   ];
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
@@ -54,17 +54,14 @@ function desenhar() {
 
 function atualizar() {
   const novaY = posicao.y + 1;
-
   if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
     posicao.y = novaY;
   } else {
     fixarPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
-
     pecaAtual = proximaPeca;
     proximaPeca = gerarPecaAleatoria();
     posicao = { x: 3, y: 0 };
-
     if (colisao(tabuleiro, pecaAtual, posicao)) {
       tocarSomPerdeu();
       clearInterval(intervalo);
@@ -72,10 +69,8 @@ function atualizar() {
       alert("💥 Fim de jogo!");
     }
   }
-
   desenhar();
 }
-
 function colisao(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -83,10 +78,8 @@ function colisao(tab, peca, pos) {
         const novoX = pos.x + x;
         const novoY = pos.y + y;
         if (
-          novoX < 0 ||
-          novoX >= COLUNAS ||
-          novoY >= LINHAS ||
-          (novoY >= 0 && tab[novoY]?.[novoX])
+          novoX < 0 || novoX >= COLUNAS ||
+          novoY >= LINHAS || (novoY >= 0 && tab[novoY]?.[novoX])
         ) {
           return true;
         }
@@ -95,7 +88,6 @@ function colisao(tab, peca, pos) {
   }
   return false;
 }
-
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -109,23 +101,20 @@ function fixarPeca(tab, peca, pos) {
     }
   }
 }
-
 function rodarMatriz(matriz) {
   const altura = matriz.length;
   const largura = matriz[0].length;
   const nova = [];
-
   for (let x = 0; x < largura; x++) {
     nova[x] = [];
     for (let y = altura - 1; y >= 0; y--) {
       nova[x].push(matriz[y][x]);
     }
   }
-
   return nova;
 }
 
-// Iniciar jogo
+// Botão Iniciar
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -133,14 +122,14 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 });
 
-// Pausar jogo
+// Botão Pausar
 document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
   pararMusicaFundo();
 });
 
-// Reiniciar jogo
+// Botão Reiniciar
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -151,11 +140,10 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
-// Alternar som de fundo
+// Botão do Som
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
-
   if (!audio) return;
 
   if (audio.paused) {
@@ -167,38 +155,31 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Controlo por teclado
+// Controlo por Teclado
 document.addEventListener('keydown', (e) => {
   if (!intervalo) return;
 
-  // Bloquear scroll indesejado
-  if (
-    ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)
-  ) {
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
     e.preventDefault();
   }
-
   if (e.key === 'ArrowLeft') {
     const novaX = posicao.x - 1;
     if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
       posicao.x = novaX;
     }
   }
-
   if (e.key === 'ArrowRight') {
     const novaX = posicao.x + 1;
     if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
       posicao.x = novaX;
     }
   }
-
   if (e.key === 'ArrowDown') {
     const novaY = posicao.y + 1;
     if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
       posicao.y = novaY;
     }
   }
-
   if (e.key === 'ArrowUp') {
     const rodada = rodarMatriz(pecaAtual);
     if (!colisao(tabuleiro, rodada, posicao)) {
@@ -206,9 +187,7 @@ document.addEventListener('keydown', (e) => {
       tocarSomRodar();
     }
   }
-
   desenhar();
 });
-
 // Render inicial
 desenhar();
