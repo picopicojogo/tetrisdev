@@ -5,10 +5,10 @@ html, body {
   height: 100%;
   width: 100%;
   font-family: 'Fredoka', sans-serif;
-  overflow: hidden; /* evita scroll exterior */
+  overflow: hidden;
 }
 
-/* Fundo com imagem  */
+/* Fundo principal */
 body {
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
@@ -17,7 +17,7 @@ body {
   align-items: center;
 }
 
-/* Estrutura geral */
+/* Contorno (Wrapper) principal */
 #wrapper {
   width: 100%;
   padding: 1rem;
@@ -27,7 +27,7 @@ body {
   align-items: center;
 }
 
-/* Área principal do jogo com efeito fosco e altura adaptável */
+/* Area desfocada do jogo */
 #game-container {
   width: 90vw;
   height: 90vh;
@@ -47,13 +47,13 @@ body {
   overflow: hidden;
 }
 
-/* Título */
+/* Titulo */
 #game-container h1 {
   margin-top: 0;
   margin-bottom: 12px;
 }
 
-/* Estado do jogo */
+/* Info do jogador */
 #info {
   font-weight: bold;
   display: flex;
@@ -81,7 +81,7 @@ canvas {
   margin-bottom: 10px;
 }
 
-/* Botões principais */
+/* Botoes principais */
 #controls {
   display: flex;
   flex-wrap: wrap;
@@ -112,7 +112,7 @@ canvas {
   box-shadow: none;
 }
 
-/* Controlos táteis */
+/* Controlos moveis */
 #touch-controls {
   display: none;
 }
@@ -165,7 +165,7 @@ canvas {
   box-shadow: 0 0 16px rgba(0,0,0,0.3);
 }
 
-/* Input de nome */
+/* Campo do nome do jogador */
 #player-name {
   width: 100%;
   padding: 8px;
@@ -175,7 +175,7 @@ canvas {
   font-size: 1rem;
 }
 
-/* Responsivo para telemóveis */
+/* Responsivo */
 @media (max-width: 768px) {
   #game-container {
     width: 95vw;
