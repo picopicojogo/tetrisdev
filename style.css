@@ -1,4 +1,4 @@
-/* Estilo base da página */
+/* Estilo base global */
 html, body {
   margin: 0;
   padding: 0;
@@ -6,7 +6,7 @@ html, body {
   font-family: 'Fredoka', sans-serif;
 }
 
-/* Fundo com imagem e alinhamento central */
+/* Fundo com imagem personalizada e alinhamento central */
 body {
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
@@ -16,7 +16,7 @@ body {
   align-items: center;
 }
 
-/* Wrapper do jogo */
+/* Wrapper principal que envolve o jogo */
 #wrapper {
   width: 100%;
   padding: 1rem;
@@ -26,22 +26,22 @@ body {
   align-items: center;
 }
 
-/* Zona do jogo */
+/* Zona do jogo com efeito moderno de vidro fosco */
 #game-container {
-  max-width: 480px;
   width: 100%;
+  max-width: 420px;
   padding: 16px;
   margin: auto;
-  background-color: rgba(255, 255, 255, 0.65); /* fundo semi-transparente */
+  background-color: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* compatibilidade Safari */
+  -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
   text-align: center;
   transition: all 0.3s ease;
 }
 
-/* Informações de jogo */
+/* Informações do jogo como nível, pontuação e tempo */
 #info {
   font-weight: bold;
   display: flex;
@@ -52,13 +52,14 @@ body {
   text-shadow: 1px 1px #f7b731;
 }
 
-/* Estilo dos canvas */
+/* Canvas do jogo */
 canvas {
   background-color: transparent !important;
-  width: 100%;
-  height: auto;
   display: block;
   margin: 0 auto;
+  width: 100%;
+  height: auto;
+  max-width: 320px; /* Limita largura para resoluções maiores */
 }
 
 /* Estilo dos botões principais */
@@ -92,7 +93,7 @@ canvas {
   box-shadow: none;
 }
 
-/* Controlos visuais para ecrãs móveis */
+/* Controlos móveis táteis */
 #touch-controls {
   display: none;
 }
@@ -150,45 +151,4 @@ canvas {
   width: 100%;
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #fa8231;
-  margin: 10px 0;
-  font-size: 1rem;
-}
-
-/* Responsividade para dispositivos móveis */
-@media (max-width: 768px) {
-  #game-container {
-    max-width: 100%;
-    margin: 10px;
-    padding: 12px;
-  }
-
-  #controls {
-    flex-direction: column;
-  }
-
-  #controls button {
-    width: 100%;
-  }
-
-  #touch-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-    margin-top: 10px;
-  }
-
-  #touch-controls button {
-    width: 45%;
-  }
-
-  #ranking-container {
-    width: 100%;
-  }
-
-  #modal-content {
-    width: 95%;
-    max-width: 280px;
-  }
-}
+  border: 1px solid #fa823
