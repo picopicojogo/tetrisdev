@@ -1,74 +1,65 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pico-Pico Bricks</title>
-  <meta name="description" content="Jogo de Tetris Oficial do Pico-Pico" />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta name="description" content="Jogo Tetris Oficial do Pico-Pico">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="wrapper">
-    <main id="game-container" role="main">
-      <!-- Título principal do jogo -->
+    <div id="game-container">
       <h1>Pico-Pico Bricks</h1>
-
-      <!-- Área de jogo (canvas principal) -->
-      <canvas id="board" aria-label="Tabuleiro de Jogo" tabindex="0"></canvas>
-
-      <!-- Visualização da próxima peça -->
-      <canvas id="next" aria-label="Próxima Peça" tabindex="0"></canvas>
-
-      <!-- Informações em tempo real do jogo -->
-      <section id="info" aria-live="polite">
-        <span>Nível: <span id="level">1</span></span>
-        <span>Pontuação: <span id="score">0</span></span>
-        <span>Tempo: <span id="time">00:00</span></span>
-      </section>
-
-      <!-- Botões principais de controlo -->
-      <section id="controls">
-        <button id="startBtn" aria-label="Iniciar Jogo">▶ Iniciar</button>
-        <button id="resetBtn" aria-label="Reiniciar Jogo">🔄 Reiniciar</button>
-        <button id="toggle-sound" aria-label="Ativar/Desativar Som">🔊 Som</button>
-        <button id="pauseBtn" aria-label="Pausar Jogo">⏸ Pausar</button>
-      </section>
-
-      <!-- Controlos visuais para dispositivos móveis -->
-      <section id="touch-controls" aria-hidden="true">
-        <button id="leftBtn" aria-label="Mover para a Esquerda">←</button>
-        <button id="rightBtn" aria-label="Mover para a Direita">→</button>
-        <button id="downBtn" aria-label="Descer Peça">↓</button>
-        <button id="rotateBtn" aria-label="Rodar Peça">⟳</button>
-      </section>
-
-      <!-- Ranking dos melhores jogadores -->
-      <section id="ranking-container">
-        <h2>🏆 Top 10 Jogadores</h2>
-        <ol id="ranking-list"></ol>
-      </section>
-
-      <!-- Modal apresentado quando o jogo termina -->
-      <section id="modal" aria-hidden="true">
-        <div id="modal-content" role="dialog" aria-modal="true">
-          <h2>🧱 Fim de Jogo!</h2>
-          <p id="final-score">Pontuação: 0</p>
-          <input type="text" id="player-name" placeholder="O teu nome" aria-label="Nome do Jogador" autofocus />
-          <button id="save-score-btn" aria-label="Guardar Pontuação">💾 Guardar Pontuação</button>
-        </div>
-      </section>
-    </main>
+      <!-- Informacoes do jogo -->
+      <div id="info">
+        <div>Pontos: <span id="score">0</span></div>
+        <div>Tempo: <span id="time">00:00</span></div>
+        <div>Nivel: <span id="level">1</span></div>
+      </div>
+      <!-- Area do jogo -->
+      <canvas id="board"></canvas>
+      <p>Proxima peça:</p>
+      <canvas id="next"></canvas>
+      <!-- Controlos principais -->
+      <div id="controls">
+        <button id="startBtn">▶ Iniciar</button>
+        <button id="resetBtn">🔄 Reiniciar</button>
+        <button id="pauseBtn">⏸ Pausar</button>
+        <button id="toggle-sound">🔊 Som</button>
+        <button id="save-score-btn">💾 Guardar pontuação</button>
+      </div>
+      <!-- Controlos móveis -->
+      <div id="touch-controls">
+        <button id="leftBtn">◀</button>
+        <button id="rightBtn">▶</button>
+        <button id="downBtn">▼</button>
+        <button id="rotateBtn">⟳</button>
+      </div>
+      <!-- Ranking -->
+      <div id="ranking-container">
+        <h3>🏆 Ranking</h3>
+        <ul id="ranking-list"></ul>
+      </div>
+    </div>
   </div>
-
-  <!-- Ficheiros de som utilizados durante o jogo -->
-  <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
-  <audio id="som-rodar" src="rodar.mp3"></audio>
-  <audio id="som-colidir" src="colidir.mp3"></audio>
-  <audio id="som-pontos" src="pontos.mp3"></audio>
-  <audio id="som-perdeu" src="perdeu.mp3"></audio>
-
-  <!-- Ficheiro principal que liga todos os módulos -->
+  <!-- Modal de fim de jogo -->
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Fim de Jogo</h2>
+      <p id="final-score">Pontuação: 0</p>
+      <input type="text" id="player-name" placeholder="Escreve o teu nome" />
+      <button id="save-score-btn">Guardar no ranking</button>
+    </div>
+  </div>
+  <!-- Áudios -->
+  <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
+  <audio id="som-rodar" src="som-rodar.mp3" preload="auto"></audio>
+  <audio id="som-colidir" src="som-colidir.mp3" preload="auto"></audio>
+  <audio id="som-pontos" src="som-pontos.mp3" preload="auto"></audio>
+  <audio id="som-perdeu" src="som-perdeu.mp3" preload="auto"></audio>
+  <!-- Script principal do jogo -->
   <script type="module" src="cerebro.js"></script>
 </body>
 </html>
