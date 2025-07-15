@@ -1,9 +1,9 @@
 // Módulo de áudio: efeitos sonoros e música de fundo
 
-// Variável global que indica se o som está activo
+// Estado global do som (ligado/desligado)
 let somAtivo = true;
 
-// Referências aos elementos de áudio definidos no HTML
+// Referências aos elementos de áudio no HTML
 const musicaFundo = document.getElementById("musica-fundo");
 const sons = {
   rodar: document.getElementById("som-rodar"),
@@ -13,11 +13,12 @@ const sons = {
 };
 
 /**
- * Toca o efeito sonoro indicado, se o som estiver activo
- * @param {string} nome - nome da acção (ex: "rodar", "colidir")
+ * Toca o som correspondente à acção
+ * @param {string} nome - chave do som ("rodar", "colidir", etc.)
  */
 export function tocarSom(nome) {
   if (!somAtivo) return;
+
   const audio = sons[nome];
   if (audio) {
     audio.currentTime = 0;
@@ -26,7 +27,7 @@ export function tocarSom(nome) {
 }
 
 /**
- * Inicia ou pausa a música de fundo consoante o estado do som
+ * Actualiza o estado da música de fundo consoante o somAtivo
  */
 export function atualizarMusica() {
   if (somAtivo) {
@@ -37,18 +38,19 @@ export function atualizarMusica() {
 }
 
 /**
- * Alterna entre som activo e desactivado
- * Actualiza o botão visualmente e ajusta a música de fundo
+ * Alterna entre som ligado/desligado e actualiza o botão visual
  */
 export function alternarSom() {
   somAtivo = !somAtivo;
+
   const btn = document.getElementById("toggle-sound");
   btn.textContent = somAtivo ? "🔊 Som" : "🔇 Silenciar";
+
   atualizarMusica();
 }
 
 /**
- * Verifica se o som está activado (usado por outros módulos)
+ * Devolve o estado atual do som
  * @returns {boolean}
  */
 export function somLigado() {
