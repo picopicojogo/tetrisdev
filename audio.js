@@ -1,55 +1,55 @@
-// Módulo de áudio: música de fundo e efeitos sonoros principais
-let somAtivo = true;
+// audio.js — gestão centralizada dos sons do jogo
 
-// Referência à música de fundo
-const musicaFundo = document.getElementById("musica-fundo");
-
-// Referências aos efeitos sonoros com os IDs correspondentes aos ficheiros.mp3
-const sons = {
-  rodar: document.getElementById("rodar"),
-  colidir: document.getElementById("colidir"),
-  perdeu: document.getElementById("perdeu")
-};
+// Obtém os elementos de áudio do HTML
+const somRodar = document.getElementById('rodar');
+const somColidir = document.getElementById('colidir');
+const somPerdeu = document.getElementById('perdeu');
+const musicaFundo = document.getElementById('musica-fundo');
 
 /**
- * Toca o som com o nome especificado, caso o mesmo esteja activo
- * @param {string} nome - 'rodar', 'colidir' ou 'perdeu'
+ * Reproduz o som de rotação da peça
  */
-export function tocarSom(nome) {
-  if (!somAtivo) return;
-
-  const audio = sons[nome];
-  if (audio) {
-    audio.currentTime = 0;
-    audio.play();
+export function tocarSomRodar() {
+  if (somRodar && typeof somRodar.play === 'function') {
+    somRodar.currentTime = 0;
+    somRodar.play();
   }
 }
 
 /**
- * Actualiza o estado da música de fundo (play ou pause)
+ * Reproduz o som de colisão ao fixar peça
  */
-export function atualizarMusica() {
-  if (somAtivo) {
+export function tocarSomColidir() {
+  if (somColidir && typeof somColidir.play === 'function') {
+    somColidir.currentTime = 0;
+    somColidir.play();
+  }
+}
+
+/**
+ * Reproduz som de fim de jogo
+ */
+export function tocarSomPerdeu() {
+  if (somPerdeu && typeof somPerdeu.play === 'function') {
+    somPerdeu.currentTime = 0;
+    somPerdeu.play();
+  }
+}
+
+/**
+ * Inicia a música de fundo
+ */
+export function iniciarMusicaFundo() {
+  if (musicaFundo && typeof musicaFundo.play === 'function') {
     musicaFundo.play();
-  } else {
+  }
+}
+
+/**
+ * Pausa a música de fundo
+ */
+export function pararMusicaFundo() {
+  if (musicaFundo && typeof musicaFundo.pause === 'function') {
     musicaFundo.pause();
   }
-}
-
-/**
- * Alterna entre os modos ligado e desligado, e actualiza botão visual
- */
-export function alternarSom() {
-  somAtivo = !somAtivo;
-  const btn = document.getElementById("toggle-sound");
-  btn.textContent = somAtivo ? "🔊 Som" : "🔇 Silenciar";
-  atualizarMusica();
-}
-
-/**
- * Verifica se o som está actualmente ativo
- * @returns {boolean}
- */
-export function somLigado() {
-  return somAtivo;
 }
