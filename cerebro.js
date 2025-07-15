@@ -149,10 +149,10 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
 
   if (audio.paused) {
     audio.play();
-    botao.textContent = '🔊 Som ON';
+    botao.textContent = '🔊 Som ligado';
   } else {
     audio.pause();
-    botao.textContent = '🔇 Som OFF';
+    botao.textContent = '🔇 Som desligado';
   }
 });
 
