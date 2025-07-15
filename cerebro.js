@@ -20,8 +20,8 @@ const nextCtx = nextCanvas.getContext('2d');
 const tamanhoBloco = 20;
 boardCanvas.width = COLUNAS * tamanhoBloco;
 boardCanvas.height = LINHAS * tamanhoBloco;
-nextCanvas.width = 100;
-nextCanvas.height = 100;
+nextCanvas.width = 80;
+nextCanvas.height = 80;
 
 // Estado inicial do jogo
 let tabuleiro = criarTabuleiroVazio();
@@ -53,7 +53,7 @@ function desenhar() {
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Ciclo principal de actualização
+// Actualização do jogo
 function atualizar() {
   const novaY = posicao.y + 1;
 
@@ -78,7 +78,7 @@ function atualizar() {
   desenhar();
 }
 
-// Colisão entre peça e tabuleiro
+// Verifica a colisão
 function colisao(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -99,7 +99,7 @@ function colisao(tab, peca, pos) {
   return false;
 }
 
-// Fixar peça no tabuleiro
+// Fixar peça
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -114,7 +114,7 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// Botão: Iniciar
+// Iniciar jogo
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -122,14 +122,14 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 });
 
-// Botão: Pausar
+// Pausar jogo
 document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
   pararMusicaFundo();
 });
 
-// Botão: Reiniciar
+// Reiniciar jogo
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -140,7 +140,23 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
-// Teclado: mover ou rodar
+// Alternar som de fundo com botão
+document.getElementById('toggle-sound').addEventListener('click', () => {
+  const audio = document.getElementById('musica-fundo');
+  const botao = document.getElementById('toggle-sound');
+
+  if (!audio) return;
+
+  if (audio.paused) {
+    audio.play();
+    botao.textContent = '🔊 Som ON';
+  } else {
+    audio.pause();
+    botao.textContent = '🔇 Som OFF';
+  }
+});
+
+// Controlos por teclado
 document.addEventListener('keydown', (e) => {
   if (!intervalo) return;
 
@@ -167,7 +183,6 @@ document.addEventListener('keydown', (e) => {
 
   if (e.key === 'ArrowUp') {
     tocarSomRodar();
-    // 🔄 Podes implementar rotação aqui
   }
 
   desenhar();
