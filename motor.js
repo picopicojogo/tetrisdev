@@ -1,4 +1,3 @@
-// Módulo de lógica do jogo: peças, colisões e tabuleiro
 export const COLUNAS = 10;
 export const LINHAS = 20;
 export const TAMANHO_BLOCO = 24;
@@ -19,60 +18,53 @@ export const FORMATOS = [
   [[0,0,7],[7,7,7]]
 ];
 
-// Cria matriz de tabuleiro
 export function criarMatriz(largura, altura) {
   return Array.from({ length: altura }, () => Array(largura).fill(0));
 }
 
-// Roda matriz 90º
 export function rodar(matriz, direcao) {
   const transposta = matriz[0].map((_, i) => matriz.map(l => l[i]));
   return direcao > 0 ? transposta.reverse() : transposta.map(r => r.reverse());
 }
 
-// Verifica colisão com tabuleiro
-export function verificarColisao(tabuleiro, peça, posição) {
-  return peça.some((linha, y) =>
+export function verificarColisao(tabuleiro, peca, posicao) {
+  return peca.some((linha, y) =>
     linha.some((valor, x) =>
       valor !== 0 &&
-      (tabuleiro[y + posição.y]?.[x + posição.x]) !== 0
+      (tabuleiro[y + posicao.y]?.[x + posicao.x]) !== 0
     )
   );
 }
 
-// Fundir a peça ao tabuleiro
-export function fundirPeca(tabuleiro, peça, posição) {
-  peça.forEach((linha, y) =>
+export function fundirPeca(tabuleiro, peca, posicao) {
+  peca.forEach((linha, y) =>
     linha.forEach((valor, x) => {
       if (valor !== 0) {
-        tabuleiro[y + posição.y][x + posição.x] = valor;
+        tabuleiro[y + posicao.y][x + posicao.x] = valor;
       }
     })
   );
 }
 
-// Gera peça aleatória
-export function gerarPeça() {
+export function gerarPeca() {
   const i = Math.floor(Math.random() * (FORMATOS.length - 1)) + 1;
   return FORMATOS[i].map(r => [...r]);
 }
 
-// Limpa linhas preenchidas e dá pontuação
 export function limparLinhas(tabuleiro, nivelAtual) {
   let linhasLimpas = 0;
-
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
     if (tabuleiro[y].every(valor => valor !== 0)) {
       const linhaVazia = Array(COLUNAS).fill(0);
       tabuleiro.splice(y, 1);
       tabuleiro.unshift(linhaVazia);
       linhasLimpas++;
-      y++; // reavalia linha atual depois de remoção
+      y++;
     }
   }
 
-  const novaPontuação = linhasLimpas * 100 * nivelAtual;
-  const progressoNível = linhasLimpas;
+  const novaPontuacao = linhasLimpas * 100 * nivelAtual;
+  const progressoNivel = linhasLimpas;
 
-  return { novaPontuação, progressoNível };
+  return { novaPontuacao, progressoNivel };
 }
