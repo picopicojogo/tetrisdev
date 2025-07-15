@@ -1,72 +1,106 @@
-// Módulo de desenho: renderiza o tabuleiro e as pecas
-import { TAMANHO_BLOCO, CORES } from './motor.js';
+// canvas.js — desenho do tabuleiro e da próxima peça
+import { COLUNAS, LINHAS } from "./motor.js";
 
 /**
- * Desenha uma matriz no canvas (tabuleiro ou peca)
- * @param {number[][]} matriz - matriz de blocos
- * @param {{x: number, y: number}} deslocamento - posicao no canvas
- * @param {CanvasRenderingContext2D} contexto - contexto 2D do canvas
- */
-export function desenharMatriz(matriz, deslocamento, contexto) {
-  matriz.forEach((linha, y) => {
-    linha.forEach((valor, x) => {
-      if (!valor) return;
-
-      const px = (x + deslocamento.x) * TAMANHO_BLOCO;
-      const py = (y + deslocamento.y) * TAMANHO_BLOCO;
-
-      const gradiente = contexto.createLinearGradient(px, py, px + TAMANHO_BLOCO, py + TAMANHO_BLOCO);
-      gradiente.addColorStop(0, "#ffffff");
-      gradiente.addColorStop(1, CORES[valor]);
-
-      contexto.fillStyle = gradiente;
-      contexto.strokeStyle = "#222";
-      contexto.lineWidth = 2;
-      contexto.shadowColor = "rgba(0, 0, 0, 0.4)";
-      contexto.shadowBlur = 6;
-
-      contexto.fillRect(px, py, TAMANHO_BLOCO, TAMANHO_BLOCO);
-      contexto.strokeRect(px, py, TAMANHO_BLOCO, TAMANHO_BLOCO);
-
-      // Remove sombra para os proximos blocos
-      contexto.shadowColor = "transparent";
-      contexto.shadowBlur = 0;
-    });
-  });
-}
-
-/**
- * Desenha o estado atual do jogo no canvas principal
- * @param {CanvasRenderingContext2D} ctx - contexto do canvas principal
- * @param {number} largura - largura do canvas
- * @param {number} altura - altura do canvas
- * @param {number[][]} tabuleiro - matriz do tabuleiro
- * @param {number[][]} peca - matriz da peca atual
- * @param {{x: number, y: number}} posicao - posicao da peca
+ * Desenha o tabuleiro e a peça atual no canvas principal
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} largura
+ * @param {number} altura
+ * @param {number[][]} tabuleiro
+ * @param {number[][]} peca
+ * @param {object} posicao
  */
 export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
   ctx.clearRect(0, 0, largura, altura);
-  ctx.fillStyle = "rgba(253, 246, 227, 0.25)";
-  ctx.fillRect(0, 0, largura, altura);
 
-  desenharMatriz(tabuleiro, { x: 0, y: 0 }, ctx);
-  if (peca) desenharMatriz(peca, posicao, ctx);
+  const larguraBloco = largura / COLUNAS;
+  const alturaBloco = altura / LINHAS;
 
-  ctx.strokeStyle = "#888";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(0, 0, largura, altura);
+  // Desenhar blocos do tabuleiro
+  for (let y = 0; y < LINHAS; y++) {
+    for (let x = 0; x < COLUNAS; x++) {
+      const valor = tabuleiro[y][x];
+      if (valor) {
+        desenharBloco(ctx, x, y, larguraBloco, alturaBloco, valor);
+      }
+    }
+  }
+
+  // Desenhar a peça actual
+  for (let y = 0; y < peca.length; y++) {
+    for (let x = 0; x < peca[y].length; x++) {
+      const valor = peca[y][x];
+      if (valor) {
+        desenharBloco(
+          ctx,
+          posicao.x + x,
+          posicao.y + y,
+          larguraBloco,
+          alturaBloco,
+          valor
+        );
+      }
+    }
+  }
 }
 
 /**
- * Desenha a proxima peca no canvas lateral
- * @param {CanvasRenderingContext2D} ctx - contexto do canvas lateral
- * @param {number[][]} proximaPeca - matriz da proxima peca
+ * Desenha a próxima peça no canvas secundário
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number[][]} proxima
  */
-export function desenharProxima(ctx, proximaPeca) {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+export function desenharProxima(ctx, proxima) {
+  const largura = ctx.canvas.width;
+  const altura = ctx.canvas.height;
 
-  const deslocamentoX = Math.floor((4 - proximaPeca[0].length) / 2);
-  const deslocamentoY = Math.floor((4 - proximaPeca.length) / 2);
+  ctx.clearRect(0, 0, largura, altura);
 
-  desenharMatriz(proximaPeca, { x: deslocamentoX, y: deslocamentoY }, ctx);
+  const larguraBloco = largura / proxima[0].length;
+  const alturaBloco = altura / proxima.length;
+
+  for (let y = 0; y < proxima.length; y++) {
+    for (let x = 0; x < proxima[y].length; x++) {
+      const valor = proxima[y][x];
+      if (valor) {
+        desenharBloco(ctx, x, y, larguraBloco, alturaBloco, valor);
+      }
+    }
+  }
+}
+
+/**
+ * Desenha um único bloco no canvas
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} x
+ * @param {number} y
+ * @param {number} largura
+ * @param {number} altura
+ * @param {number} valor
+ */
+function desenharBloco(ctx, x, y, largura, altura, valor) {
+  ctx.fillStyle = obterCor(valor);
+  ctx.fillRect(
+    Math.floor(x * largura),
+    Math.floor(y * altura),
+    Math.ceil(largura),
+    Math.ceil(altura)
+  );
+}
+
+/**
+ * Devolve a cor associada ao valor do bloco
+ * @param {number} valor
+ * @returns {string}
+ */
+function obterCor(valor) {
+  const cores = [
+    "#F9CA24", // amarelo
+    "#E74C3C", // vermelho
+    "#8E44AD", // roxo
+    "#3498DB", // azul
+    "#2ECC71", // verde
+    "#E67E22", // laranja
+    "#34495E"  // cinza escuro
+  ];
+  return cores[(valor - 1) % cores.length] || "#FFFFFF";
 }
