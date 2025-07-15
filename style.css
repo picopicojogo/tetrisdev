@@ -27,7 +27,7 @@ body {
   align-items: center;
 }
 
-/* Area desfocada do jogo */
+/* Area do jogo com scroll interno se necessário */
 #game-container {
   width: 90vw;
   height: 90vh;
@@ -43,17 +43,17 @@ body {
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  overflow: hidden;
+  justify-content: flex-start;
+  overflow-y: auto;
 }
 
-/* Titulo */
+/* Título */
 #game-container h1 {
   margin-top: 0;
   margin-bottom: 12px;
 }
 
-/* Info do jogador */
+/* Informações do jogador */
 #info {
   font-weight: bold;
   display: flex;
@@ -72,7 +72,7 @@ canvas {
   width: 100%;
   height: auto;
   max-width: 320px;
-  max-height: 480px;
+  max-height: 320px;
 }
 
 #next {
@@ -81,13 +81,20 @@ canvas {
   margin-bottom: 10px;
 }
 
-/* Botoes principais */
+/* Botões principais */
 #controls {
+  position: sticky;
+  bottom: 12px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 12px;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-  margin-top: 12px;
+  margin-top: 16px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }
 
 #controls button {
@@ -112,7 +119,7 @@ canvas {
   box-shadow: none;
 }
 
-/* Controlos moveis */
+/* Botões móveis */
 #touch-controls {
   display: none;
 }
@@ -175,7 +182,7 @@ canvas {
   font-size: 1rem;
 }
 
-/* Responsivo */
+/* Responsivo para mobile */
 @media (max-width: 768px) {
   #game-container {
     width: 95vw;
