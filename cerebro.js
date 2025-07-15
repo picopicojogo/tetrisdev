@@ -1,4 +1,4 @@
-// cerebro.js — o procesador central do jogo
+// cerebro.js — o CPU do jogo
 
 import { COLUNAS, LINHAS } from './motor.js';
 import { desenharJogo, desenharProxima } from './canvas.js';
