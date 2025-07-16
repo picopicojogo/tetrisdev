@@ -34,7 +34,7 @@ function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
-// Gerar peça aleatória
+// Criar peça aleatória
 function gerarPecaAleatoria() {
   const pecas = [
     [[1, 1], [1, 1]],
@@ -68,7 +68,7 @@ function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
-// Atualizar estado
+// Actualizar estado
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -78,7 +78,6 @@ function atualizar() {
     tocarSomColidir();
     pontuacao += 10;
 
-    // Eliminar linhas e pontuar
     const eliminadas = eliminarLinhas(tabuleiro);
     if (eliminadas > 0) {
       pontuacao += eliminadas * 100;
@@ -197,10 +196,9 @@ document.getElementById('confirmSave').addEventListener('click', () => {
     const pontuacaoAtual = parseInt(document.getElementById('score').textContent, 10);
     const agora = new Date();
     const data = agora.toLocaleDateString('pt-PT');
-    const hora = agora.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
 
     const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
-    ranking.push({ nome, pontuacao: pontuacaoAtual, data, hora });
+    ranking.push({ nome, pontuacao: pontuacaoAtual, data });
     ranking.sort((a, b) => b.pontuacao - a.pontuacao);
     const top10 = ranking.slice(0, 10);
     localStorage.setItem('ranking', JSON.stringify(top10));
@@ -223,19 +221,18 @@ document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
   atualizarRankingVisual([]);
 });
 
-// Actualizar a lista visual
+// Actualizar lista visual
 function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
-  lista.innerHTML = ''; // limpar a lista antiga
-
+  lista.innerHTML = '';
   ranking.forEach((item, index) => {
     const li = document.createElement('li');
-    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data} às ${item.hora})`;
+    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data})`;
     lista.appendChild(li);
   });
 }
 
-// Carregar ranking ao iniciar
+// Carregar o ranking ao iniciar
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   ranking.sort((a, b) => b.pontuacao - a.pontuacao);
@@ -245,6 +242,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // Controlo por teclado
 document.addEventListener('keydown', (e) => {
   if (!intervalo) return;
+
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
     e.preventDefault();
   }
