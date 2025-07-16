@@ -54,6 +54,20 @@ function desenhar() {
   desenharProxima(nextCtx, proximaPeca);
 }
 
+// Eliminar linhas completas
+function eliminarLinhas(tabuleiro) {
+  let linhasEliminadas = 0;
+  for (let y = tabuleiro.length - 1; y >= 0; y--) {
+    if (tabuleiro[y].every(val => val !== 0)) {
+      tabuleiro.splice(y, 1);
+      tabuleiro.unshift(Array(COLUNAS).fill(0));
+      linhasEliminadas++;
+      y++;
+    }
+  }
+  return linhasEliminadas;
+}
+
 // Atualizar estado
 function atualizar() {
   const novaY = posicao.y + 1;
@@ -63,8 +77,14 @@ function atualizar() {
     fixarPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
     pontuacao += 10;
-    document.getElementById('score').textContent = pontuacao;
 
+    // Eliminar linhas e pontuar
+    const eliminadas = eliminarLinhas(tabuleiro);
+    if (eliminadas > 0) {
+      pontuacao += eliminadas * 100;
+    }
+
+    document.getElementById('score').textContent = pontuacao;
     pecaAtual = proximaPeca;
     proximaPeca = gerarPecaAleatoria();
     posicao = { x: 3, y: 0 };
@@ -166,31 +186,60 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Botão Guardar
+// Guardar pontuação
 document.getElementById('save-score-btn').addEventListener('click', () => {
   document.getElementById('modal').classList.add('show');
 });
 
-// Guardar pontuação no ranking
 document.getElementById('confirmSave').addEventListener('click', () => {
   const nome = document.getElementById('player-name').value.trim();
   if (nome) {
-    const rankingItem = document.createElement('li');
-    rankingItem.textContent = `${nome} — ${pontuacao} pts`;
-    document.getElementById('ranking-list').appendChild(rankingItem);
+    const pontuacaoAtual = parseInt(document.getElementById('score').textContent, 10);
+    const agora = new Date();
+    const data = agora.toLocaleDateString('pt-PT');
+    const hora = agora.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+
+    const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+    ranking.push({ nome, pontuacao: pontuacaoAtual, data, hora });
+    ranking.sort((a, b) => b.pontuacao - a.pontuacao);
+    const top10 = ranking.slice(0, 10);
+    localStorage.setItem('ranking', JSON.stringify(top10));
+    atualizarRankingVisual(top10);
+
     document.getElementById('modal').classList.remove('show');
     document.getElementById('player-name').value = '';
   }
 });
 
-// Botão Top 10 → mostrar/ocultar ranking
+// Mostrar/ocultar o ranking
 document.getElementById('top10Btn')?.addEventListener('click', () => {
   const ranking = document.getElementById('ranking-container');
-  if (ranking.style.display === 'none' || !ranking.style.display) {
-    ranking.style.display = 'block';
-  } else {
-    ranking.style.display = 'none';
-  }
+  ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
+});
+
+// Limpar o ranking
+document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
+  localStorage.removeItem('ranking');
+  atualizarRankingVisual([]);
+});
+
+// Actualizar a lista visual
+function atualizarRankingVisual(ranking) {
+  const lista = document.getElementById('ranking-list');
+  lista.innerHTML = ''; // limpar a lista antiga
+
+  ranking.forEach((item, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data} às ${item.hora})`;
+    lista.appendChild(li);
+  });
+}
+
+// Carregar ranking ao iniciar
+window.addEventListener('DOMContentLoaded', () => {
+  const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+  ranking.sort((a, b) => b.pontuacao - a.pontuacao);
+  atualizarRankingVisual(ranking);
 });
 
 // Controlo por teclado
@@ -231,3 +280,6 @@ document.addEventListener('keydown', (e) => {
 
   desenhar();
 });
+
+// Render inicial
+desenhar();
