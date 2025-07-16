@@ -1,65 +1,77 @@
-/* Estilo geral da página */
+/* Fundo estilo arcade */
 body {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #111;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  font-family: 'Press Start 2P', monospace, sans-serif;
+  background-image: url('capadojogo.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  color: #00ffcc;
+  text-align: center;
 }
 
-/* Canvas do tabuleiro principal */
+/* Canvas do tabuleiro */
 #board {
-  background-color: #222;
-  border: 2px solid #555;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 3px solid #ff00ff;
   margin-top: 20px;
+  box-shadow: 0 0 15px #ff00ff;
 }
 
 /* Canvas da próxima peça */
 #next {
-  background-color: #333;
-  border: 2px solid #666;
+  background-color: rgba(0, 0, 0, 0.6);
+  border: 2px dashed #00ffff;
   margin-top: 10px;
+  box-shadow: 0 0 10px #00ffff;
 }
 
 /* Botões principais */
 button {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #444;
-  color: #fff;
-  border: none;
+  margin: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-family: 'Press Start 2P', monospace;
+  background-color: #000;
+  color: #00ffcc;
+  border: 2px solid #00ffcc;
   border-radius: 4px;
   cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px #00ffcc;
+  transition: all 0.2s ease-in-out;
 }
 
 button:hover {
-  background-color: #666;
+  background-color: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 12px #00ffcc;
 }
 
-/* ⏱Cronómetro, pontuação e nível */
+/* Cronómetro, pontuação e nível */
 #info {
   margin-top: 15px;
   display: flex;
-  gap: 20px;
-  font-size: 18px;
+  justify-content: center;
+  gap: 30px;
+  font-size: 16px;
+  text-shadow: 0 0 5px #00ffff;
 }
 
 #time, #score, #level {
   font-weight: bold;
-  font-family: monospace;
+  font-family: 'Press Start 2P', monospace;
 }
 
-/* Modal de fim de jogo e ranking */
+/* Modal de fim de jogo */
 #modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: rgba(10, 0, 20, 0.9);
   display: none;
   justify-content: center;
   align-items: center;
@@ -71,25 +83,29 @@ button:hover {
 }
 
 #modal-content {
-  background-color: #222;
+  background-color: #111;
   padding: 30px;
   border-radius: 8px;
-  text-align: center;
+  border: 2px solid #ff00ff;
+  box-shadow: 0 0 20px #ff00ff;
   color: #fff;
   max-width: 400px;
 }
 
 /* Campo para nome do jogador */
 #player-name {
-  padding: 8px;
-  font-size: 16px;
+  padding: 10px;
+  font-size: 14px;
   width: 80%;
   margin-top: 10px;
   border-radius: 4px;
-  border: none;
+  border: 2px solid #00ffcc;
+  background-color: #000;
+  color: #00ffcc;
+  font-family: 'Press Start 2P', monospace;
 }
 
-/* Lista de ranking */
+/* 📋 Lista de ranking */
 #ranking-container {
   margin-top: 20px;
   display: none;
@@ -103,13 +119,15 @@ button:hover {
 
 #ranking-list li {
   margin: 5px 0;
-  font-family: monospace;
+  font-family: 'Press Start 2P', monospace;
+  color: #ffff00;
+  text-shadow: 0 0 5px #ff0;
 }
 
 /* Botão de som */
 #toggle-sound {
   margin-top: 10px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* Animação de celebração */
@@ -119,12 +137,13 @@ button:hover {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 32px;
-  color: gold;
+  color: #ffcc00;
   display: none;
   z-index: 1000;
+  text-shadow: 0 0 10px #ffcc00;
 }
 
-/* Efeito de subida da celebração */
+/* Efeito de subida */
 @keyframes subirCelebracao {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -143,7 +162,7 @@ button:hover {
 
 @keyframes flashTabuleiro {
   0% {
-    box-shadow: 0 0 10px #0f0;
+    box-shadow: 0 0 15px #00ffcc;
   }
   100% {
     box-shadow: none;
@@ -158,7 +177,8 @@ button:hover {
   }
 
   button {
-    width: 80%;
+    width: 90%;
+    font-size: 12px;
   }
 
   #modal-content {
