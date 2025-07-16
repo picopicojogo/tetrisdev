@@ -28,13 +28,16 @@ let proximaPeca = gerarPecaAleatoria();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
 let pontuacao = 0;
+let nivel = 1;
+let totalLinhasEliminadas = 0;
+let intervaloTempo = 600;
 
 // Criar tabuleiro vazio
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
-// Criar peça aleatória
+// Gerar peça aleatória
 function gerarPecaAleatoria() {
   const pecas = [
     [[1, 1], [1, 1]],
@@ -68,7 +71,7 @@ function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
-// Actualizar estado
+// Atualizar estado
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -81,6 +84,30 @@ function atualizar() {
     const eliminadas = eliminarLinhas(tabuleiro);
     if (eliminadas > 0) {
       pontuacao += eliminadas * 100;
+      totalLinhasEliminadas += eliminadas;
+
+      // 🎆 Flash visual
+      boardCanvas.classList.add('flash');
+      setTimeout(() => boardCanvas.classList.remove('flash'), 300);
+
+      // 🎉 Animação de celebração
+      const celebracao = document.getElementById('celebracao');
+      celebracao.style.display = 'block';
+      celebracao.style.animation = 'subirCelebracao 1s ease-out forwards';
+      setTimeout(() => {
+        celebracao.style.display = 'none';
+        celebracao.style.animation = '';
+      }, 1000);
+
+      // Subir de nível
+      const novoNivel = Math.floor(totalLinhasEliminadas / 5) + 1;
+      if (novoNivel > nivel) {
+        nivel = novoNivel;
+        document.getElementById('level').textContent = nivel;
+        clearInterval(intervalo);
+        intervaloTempo = Math.max(150, intervaloTempo - 50);
+        intervalo = setInterval(atualizar, intervaloTempo);
+      }
     }
 
     document.getElementById('score').textContent = pontuacao;
@@ -149,7 +176,7 @@ function rodarMatriz(matriz) {
 // Botões principais
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
-    intervalo = setInterval(atualizar, 600);
+    intervalo = setInterval(atualizar, intervaloTempo);
     iniciarMusicaFundo();
   }
 });
@@ -168,7 +195,11 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   proximaPeca = gerarPecaAleatoria();
   posicao = { x: 3, y: 0 };
   pontuacao = 0;
+  nivel = 1;
+  totalLinhasEliminadas = 0;
+  intervaloTempo = 600;
   document.getElementById('score').textContent = 0;
+  document.getElementById('level').textContent = nivel;
   desenhar();
 });
 
@@ -187,14 +218,19 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
 
 // Guardar pontuação
 document.getElementById('save-score-btn').addEventListener('click', () => {
+  const nomeAnterior = localStorage.getItem('ultimoJogador');
+  if (nomeAnterior) {
+    document.getElementById('player-name').value = nomeAnterior;
+  }
   document.getElementById('modal').classList.add('show');
 });
 
 document.getElementById('confirmSave').addEventListener('click', () => {
   const nome = document.getElementById('player-name').value.trim();
   if (nome) {
+    localStorage.setItem('ultimoJogador', nome);
     const pontuacaoAtual = parseInt(document.getElementById('score').textContent, 10);
-    const agora = new Date();
+      const agora = new Date();
     const data = agora.toLocaleDateString('pt-PT');
 
     const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
@@ -209,19 +245,19 @@ document.getElementById('confirmSave').addEventListener('click', () => {
   }
 });
 
-// Mostrar/ocultar o ranking
+// Mostrar/ocultar ranking
 document.getElementById('top10Btn')?.addEventListener('click', () => {
   const ranking = document.getElementById('ranking-container');
   ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
 });
 
-// Limpar o ranking
+// Limpar ranking
 document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-// Actualizar lista visual
+// ACtualizar lista visual
 function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
   lista.innerHTML = '';
@@ -232,7 +268,7 @@ function atualizarRankingVisual(ranking) {
   });
 }
 
-// Carregar o ranking ao iniciar
+// Carregar O ranking ao iniciar
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   ranking.sort((a, b) => b.pontuacao - a.pontuacao);
