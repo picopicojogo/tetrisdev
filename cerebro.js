@@ -68,7 +68,7 @@ function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
-// Gera uma peça aleatória
+// Cria uma peça aleatória
 function gerarPecaAleatoria() {
   const pecas = [
     [[1, 1], [1, 1]],
@@ -169,6 +169,17 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
+// Atualiza visualmente a lista de ranking
+function atualizarRankingVisual(ranking) {
+  const lista = document.getElementById('ranking-list');
+  lista.innerHTML = '';
+  ranking.forEach((item, index) => {
+    const li = document.createElement('li');
+    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data})`;
+    lista.appendChild(li);
+  });
+}
+
 // Liga os controlos do jogador
 configurarControlos(
   direcao => {
@@ -225,16 +236,15 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
-// Ranking
+// Ranking e modal
 document.getElementById('save-score-btn').addEventListener('click', () => {
   const nomeAnterior = localStorage.getItem('ultimoJogador');
   if (nomeAnterior) {
     document.getElementById('player-name').value = nomeAnterior;
   }
-    document.getElementById('modal').classList.add('show');
+  document.getElementById('modal').classList.add('show');
 });
 
-// Botão para confirmar e guardar pontuação
 document.getElementById('confirmSave').addEventListener('click', () => {
   const nome = document.getElementById('player-name').value.trim();
   if (nome) {
@@ -253,6 +263,12 @@ document.getElementById('confirmSave').addEventListener('click', () => {
     document.getElementById('modal').classList.remove('show');
     document.getElementById('player-name').value = '';
   }
+});
+
+// Botão para cancelar e fechar o modal sem guardar
+document.getElementById('cancelSave').addEventListener('click', () => {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('player-name').value = '';
 });
 
 // Botão para mostrar/esconder o ranking
@@ -282,17 +298,6 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Atualiza visualmente a lista de ranking
-function atualizarRankingVisual(ranking) {
-  const lista = document.getElementById('ranking-list');
-  lista.innerHTML = '';
-  ranking.forEach((item, index) => {
-    const li = document.createElement('li');
-    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data})`;
-    lista.appendChild(li);
-  });
-}
-
 // Renderização inicial ao carregar a página
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
@@ -301,3 +306,4 @@ window.addEventListener('DOMContentLoaded', () => {
   reiniciarCronometro();
   desenhar();
 });
+  
