@@ -10,7 +10,8 @@ import {
   configurarControlos,
   moverPeca,
   rodarPeca,
-  descerPeca
+  descerPeca,
+  quedaInstantanea
 } from './controlos.js';
 
 const boardCanvas = document.getElementById('board');
@@ -33,6 +34,28 @@ let pontuacao = 0;
 let nivel = 1;
 let totalLinhasEliminadas = 0;
 let intervaloTempo = 600;
+
+let segundos = 0;
+let cronometroID = null;
+
+function iniciarCronometro() {
+  cronometroID = setInterval(() => {
+    segundos++;
+    const mm = String(Math.floor(segundos / 60)).padStart(2, '0');
+    const ss = String(segundos % 60).padStart(2, '0');
+    document.getElementById('time').textContent = `${mm}:${ss}`;
+  }, 1000);
+}
+
+function pararCronometro() {
+  clearInterval(cronometroID);
+  cronometroID = null;
+}
+
+function reiniciarCronometro() {
+  segundos = 0;
+  document.getElementById('time').textContent = '00:00';
+}
 
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
@@ -113,6 +136,7 @@ function atualizar() {
       tocarSomPerdeu();
       clearInterval(intervalo);
       intervalo = null;
+      pararCronometro();
       document.getElementById('modal').classList.add('show');
     }
   }
@@ -133,7 +157,7 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// Controlos integrados
+// 🕹️ Controlos integrados
 configurarControlos(
   direcao => {
     moverPeca(direcao, tabuleiro, pecaAtual, posicao);
@@ -149,6 +173,10 @@ configurarControlos(
   },
   () => {
     document.getElementById('pauseBtn').click();
+  },
+  () => {
+    quedaInstantanea(tabuleiro, pecaAtual, posicao);
+    desenhar();
   }
 );
 
@@ -157,6 +185,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
     iniciarMusicaFundo();
+    iniciarCronometro();
   }
 });
 
@@ -164,6 +193,7 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
   pararMusicaFundo();
+  pararCronometro();
 });
 
 document.getElementById('resetBtn').addEventListener('click', () => {
@@ -179,9 +209,11 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   intervaloTempo = 600;
   document.getElementById('score').textContent = 0;
   document.getElementById('level').textContent = nivel;
+  reiniciarCronometro();
   desenhar();
 });
 
+// Som
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
@@ -195,7 +227,7 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Guardar pontuação
+// Ranking
 document.getElementById('save-score-btn').addEventListener('click', () => {
   const nomeAnterior = localStorage.getItem('ultimoJogador');
   if (nomeAnterior) {
@@ -248,7 +280,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   ranking.sort((a, b) => b.pontuacao - a.pontuacao);
   atualizarRankingVisual(ranking);
+  reiniciarCronometro();
+  desenhar();
 });
-
-// Render inicial
-desenhar();
