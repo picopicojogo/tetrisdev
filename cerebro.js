@@ -1,3 +1,4 @@
+// Importa módulos essenciais para o funcionamento do jogo
 import { COLUNAS, LINHAS, verificarColisao } from './motor.js';
 import { desenharJogo, desenharProxima } from './canvas.js';
 import {
@@ -14,17 +15,20 @@ import {
   quedaInstantanea
 } from './controlos.js';
 
+// Referências aos elementos canvas
 const boardCanvas = document.getElementById('board');
 const nextCanvas = document.getElementById('next');
 const boardCtx = boardCanvas.getContext('2d');
 const nextCtx = nextCanvas.getContext('2d');
 
+// Define tamanho dos blocos e dimensões dos canvas
 const tamanhoBloco = 20;
 boardCanvas.width = COLUNAS * tamanhoBloco;
 boardCanvas.height = LINHAS * tamanhoBloco;
 nextCanvas.width = 80;
 nextCanvas.height = 80;
 
+// Variáveis principais do estado do jogo
 let tabuleiro = criarTabuleiroVazio();
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
@@ -35,9 +39,11 @@ let nivel = 1;
 let totalLinhasEliminadas = 0;
 let intervaloTempo = 600;
 
+// Variáveis do cronómetro
 let segundos = 0;
 let cronometroID = null;
 
+// Inicia o cronómetro e atualiza o elemento #time
 function iniciarCronometro() {
   cronometroID = setInterval(() => {
     segundos++;
@@ -47,38 +53,44 @@ function iniciarCronometro() {
   }, 1000);
 }
 
+// Para o cronómetro
 function pararCronometro() {
   clearInterval(cronometroID);
   cronometroID = null;
 }
 
+// Reinicia o cronómetro para 00:00
 function reiniciarCronometro() {
   segundos = 0;
   document.getElementById('time').textContent = '00:00';
 }
 
+// Cria um tabuleiro vazio (matriz de zeros)
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
+// Gera uma peça aleatória a partir das formas disponíveis
 function gerarPecaAleatoria() {
   const pecas = [
-    [[1, 1], [1, 1]],
-    [[0, 2, 0], [2, 2, 2]],
-    [[3, 3, 0], [0, 3, 3]],
-    [[0, 4, 4], [4, 4, 0]],
-    [[5, 5, 5, 5]],
-    [[6, 0, 0], [6, 6, 6]],
-    [[0, 0, 7], [7, 7, 7]]
+    [[1, 1], [1, 1]], // Quadrado
+    [[0, 2, 0], [2, 2, 2]], // T
+    [[3, 3, 0], [0, 3, 3]], // S
+    [[0, 4, 4], [4, 4, 0]], // Z
+    [[5, 5, 5, 5]], // I
+    [[6, 0, 0], [6, 6, 6]], // L
+    [[0, 0, 7], [7, 7, 7]]  // J
   ];
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
 
+// Desenha o estado atual do jogo e da próxima peça
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
+// Elimina linhas completas do tabuleiro e retorna quantas foram removidas
 function eliminarLinhas(tabuleiro) {
   let linhasEliminadas = 0;
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
@@ -92,6 +104,7 @@ function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
+// Atualiza o estado do jogo a cada intervalo
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -106,6 +119,7 @@ function atualizar() {
       pontuacao += eliminadas * 100;
       totalLinhasEliminadas += eliminadas;
 
+      // Animação de celebração
       boardCanvas.classList.add('flash');
       setTimeout(() => boardCanvas.classList.remove('flash'), 300);
 
@@ -117,6 +131,7 @@ function atualizar() {
         celebracao.style.animation = '';
       }, 1000);
 
+      // Atualiza nível conforme linhas eliminadas
       const novoNivel = Math.floor(totalLinhasEliminadas / 5) + 1;
       if (novoNivel > nivel) {
         nivel = novoNivel;
@@ -132,6 +147,7 @@ function atualizar() {
     proximaPeca = gerarPecaAleatoria();
     posicao = { x: 3, y: 0 };
 
+    // Verifica se o jogador perdeu
     if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
       tocarSomPerdeu();
       clearInterval(intervalo);
@@ -143,6 +159,7 @@ function atualizar() {
   desenhar();
 }
 
+// Fixa a peça no tabuleiro após colisão
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -157,7 +174,7 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// 🕹️ Controlos integrados
+// Liga os controlos do jogador ao jogo
 configurarControlos(
   direcao => {
     moverPeca(direcao, tabuleiro, pecaAtual, posicao);
@@ -180,7 +197,7 @@ configurarControlos(
   }
 );
 
-// Botões principais
+// Botão Start — inicia o jogo
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
@@ -189,6 +206,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 });
 
+// Botão Pause — pausa o jogo
 document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -196,6 +214,7 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
   pararCronometro();
 });
 
+// Botão Reset — reinicia o jogo
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -213,11 +232,12 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
-// Som
+// Alterna entre o ligar e desligar a música de fundo
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
   if (!audio) return;
+
   if (audio.paused) {
     audio.play();
     botao.textContent = '🔊 Som ligado';
@@ -227,7 +247,7 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Ranking
+// Abre o modal para guardar pontuação
 document.getElementById('save-score-btn').addEventListener('click', () => {
   const nomeAnterior = localStorage.getItem('ultimoJogador');
   if (nomeAnterior) {
@@ -236,6 +256,7 @@ document.getElementById('save-score-btn').addEventListener('click', () => {
   document.getElementById('modal').classList.add('show');
 });
 
+// Confirma e guarda pontuação no ranking local
 document.getElementById('confirmSave').addEventListener('click', () => {
   const nome = document.getElementById('player-name').value.trim();
   if (nome) {
@@ -256,26 +277,19 @@ document.getElementById('confirmSave').addEventListener('click', () => {
   }
 });
 
+// Alterna visualização do ranking
 document.getElementById('top10Btn')?.addEventListener('click', () => {
   const ranking = document.getElementById('ranking-container');
   ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
 });
 
+// Limpa o ranking guardado
 document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-function atualizarRankingVisual(ranking) {
-  const lista = document.getElementById('ranking-list');
-  lista.innerHTML = '';
-  ranking.forEach((item, index) => {
-    const li = document.createElement('li');
-    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data})`;
-    lista.appendChild(li);
-  });
-}
-
+// Ao carregar a página, desenha o tabuleiro e carrega o ranking
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   ranking.sort((a, b) => b.pontuacao - a.pontuacao);
