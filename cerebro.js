@@ -1,4 +1,3 @@
-// cerebro.js — o CPU do jogo
 import { COLUNAS, LINHAS } from './motor.js';
 import { desenharJogo, desenharProxima } from './canvas.js';
 import {
@@ -9,49 +8,53 @@ import {
   pararMusicaFundo
 } from './audio.js';
 
-// Canvas e contexto
+// Canvas
 const boardCanvas = document.getElementById('board');
 const nextCanvas = document.getElementById('next');
 const boardCtx = boardCanvas.getContext('2d');
 const nextCtx = nextCanvas.getContext('2d');
 
-// Dimensões do tabuleiro e da peça seguinte
+// Dimensões
 const tamanhoBloco = 20;
 boardCanvas.width = COLUNAS * tamanhoBloco;
 boardCanvas.height = LINHAS * tamanhoBloco;
 nextCanvas.width = 80;
 nextCanvas.height = 80;
 
-// Estado do jogo
+// Estado inicial
 let tabuleiro = criarTabuleiroVazio();
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
+let pontuacao = 0;
 
-// Funções auxiliares
+// CCria um tabuleiro vazio
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
+// Cria uma peça aleatória
 function gerarPecaAleatoria() {
   const pecas = [
-    [[1, 1], [1, 1]],                  // O
-    [[0, 2, 0], [2, 2, 2]],            // T
-    [[3, 3, 0], [0, 3, 3]],            // S
-    [[0, 4, 4], [4, 4, 0]],            // Z
-    [[5, 5, 5, 5]],                    // I
-    [[6, 0, 0], [6, 6, 6]],            // L
-    [[0, 0, 7], [7, 7, 7]]             // J
+    [[1, 1], [1, 1]],
+    [[0, 2, 0], [2, 2, 2]],
+    [[3, 3, 0], [0, 3, 3]],
+    [[0, 4, 4], [4, 4, 0]],
+    [[5, 5, 5, 5]],
+    [[6, 0, 0], [6, 6, 6]],
+    [[0, 0, 7], [7, 7, 7]]
   ];
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
 
+// Desenha o tabuleiro e a próxima peça
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
+// Actualizar jogo
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -59,18 +62,24 @@ function atualizar() {
   } else {
     fixarPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
+    pontuacao += 10;
+    document.getElementById('score').textContent = pontuacao;
+
     pecaAtual = proximaPeca;
     proximaPeca = gerarPecaAleatoria();
     posicao = { x: 3, y: 0 };
+
     if (colisao(tabuleiro, pecaAtual, posicao)) {
       tocarSomPerdeu();
       clearInterval(intervalo);
       intervalo = null;
-      alert("💥 Fim de jogo!");
+      document.getElementById('modal').classList.add('show');
     }
   }
   desenhar();
 }
+
+// Verificar colisão
 function colisao(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -88,6 +97,8 @@ function colisao(tab, peca, pos) {
   }
   return false;
 }
+
+// Fixar peça no tabuleiro
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -101,6 +112,8 @@ function fixarPeca(tab, peca, pos) {
     }
   }
 }
+
+// Rodar matriz (90° sentido horário)
 function rodarMatriz(matriz) {
   const altura = matriz.length;
   const largura = matriz[0].length;
@@ -137,15 +150,16 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   pecaAtual = gerarPecaAleatoria();
   proximaPeca = gerarPecaAleatoria();
   posicao = { x: 3, y: 0 };
+  pontuacao = 0;
+  document.getElementById('score').textContent = 0;
   desenhar();
 });
 
-// Botão do Som
+// Botão Som
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
   if (!audio) return;
-
   if (audio.paused) {
     audio.play();
     botao.textContent = '🔊 Som ligado';
@@ -155,31 +169,53 @@ document.getElementById('toggle-sound').addEventListener('click', () => {
   }
 });
 
-// Controlo por Teclado
+// Botão Guardar
+document.getElementById('save-score-btn').addEventListener('click', () => {
+  document.getElementById('modal').classList.add('show');
+});
+
+// Botão Confirmar → guarda o nome e pontuação
+document.getElementById('confirmSave').addEventListener('click', () => {
+  const nome = document.getElementById('player-name').value.trim();
+  if (nome) {
+    const rankingItem = document.createElement('li');
+    rankingItem.textContent = `${nome} — ${pontuacao} pts`;
+    document.getElementById('ranking-list').appendChild(rankingItem);
+    document.getElementById('modal').classList.remove('show');
+    document.getElementById('player-name').value = '';
+  }
+});
+
+// Controlos por teclado
 document.addEventListener('keydown', (e) => {
   if (!intervalo) return;
-
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+  if (
+    ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)
+  ) {
     e.preventDefault();
   }
+
   if (e.key === 'ArrowLeft') {
     const novaX = posicao.x - 1;
     if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
       posicao.x = novaX;
     }
   }
+
   if (e.key === 'ArrowRight') {
     const novaX = posicao.x + 1;
     if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
       posicao.x = novaX;
     }
   }
+
   if (e.key === 'ArrowDown') {
     const novaY = posicao.y + 1;
     if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
       posicao.y = novaY;
     }
   }
+
   if (e.key === 'ArrowUp') {
     const rodada = rodarMatriz(pecaAtual);
     if (!colisao(tabuleiro, rodada, posicao)) {
@@ -187,7 +223,9 @@ document.addEventListener('keydown', (e) => {
       tocarSomRodar();
     }
   }
+
   desenhar();
 });
+
 // Render inicial
 desenhar();
