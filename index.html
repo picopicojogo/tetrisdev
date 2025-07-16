@@ -1,63 +1,68 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- SEO -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pico-Pico Bricks</title>
-  <meta name="description" content="Jogo Tetris do Pico-Pico">
-  <meta name="keywords" content="tetris, jogo, lógica, ranking, javascript, canvas, bricks">
+  <meta name="description" content="Pico-Pico Bricks é um jogo estilo arcade inspirado em Tetris.">
+  <meta name="keywords" content="Tetris, Jogo Retro, Pico-Pico Bricks, Jogo Arcade, Bricks Game, Puzzle Game">
   <meta name="author" content="Pico-Pico">
   <meta name="robots" content="index, follow">
-  <!-- Estilos -->
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Título principal -->
   <h1>Pico-Pico Bricks</h1>
-  <div id="game-container">
-    <!-- Canvas -->
-    <canvas id="board"></canvas>
-    <canvas id="next"></canvas>
-    <!-- Celebração -->
-    <div id="celebracao">🎉</div>
-    <!-- 🔢 Informações -->
-    <div id="info">
-      <div>Pontos: <span id="score">0</span></div>
-      <div>Nível: <span id="level">1</span></div>
-      <div>Tempo: <span id="time">00:00</span></div>
-    </div>
-    <!-- Botões -->
+  <!-- Canvas do jogo -->
+  <canvas id="board"></canvas>
+  <!-- Canvas da próxima peça -->
+  <canvas id="next"></canvas>
+  <!-- Informações de jogo -->
+  <div id="info">
+    <div>⏱️ Tempo: <span id="time">00:00</span></div>
+    <div>🏆 Pontuação: <span id="score">0</span></div>
+    <div>🎮 Nível: <span id="level">1</span></div>
+  </div>
+  <!-- Botões principais -->
+  <div>
     <button id="startBtn">▶️ Iniciar</button>
     <button id="pauseBtn">⏸️ Pausar</button>
     <button id="resetBtn">🔄 Reiniciar</button>
-    <button id="toggle-sound">🔊 Som ligado</button>
     <button id="save-score-btn">💾 Guardar</button>
-    <button id="top10Btn">🏆 Top 10</button>
+    <button id="top10Btn">📋 Ver a pontuação</button>
+    <button id="clear-ranking-btn">🧹 Limpar a pontuação</button>
+    <button id="toggle-sound">🔊 Som ligado</button>
   </div>
-  <!-- Modal para guardar pontuação -->
-  <div id="modal">
-    <div id="modal-content">
-      <h2>Guardar Pontuação</h2>
-      <input type="text" id="player-name" placeholder="Nome do jogador">
-        <div style="display: flex; justify-content: center; gap: 20px;">
-            <button id="confirmSave">✅ Guardar</button>
-            <button id="cancelSave">❌ Fechar</button>
-        </div>
-    </div>
-  </div>
+
   <!-- Ranking -->
   <div id="ranking-container">
-    <h2>Top 10 🏆</h2>
+    <h2>🏅 Top 10</h2>
     <ul id="ranking-list"></ul>
-    <button id="clear-ranking-btn">🧹 Limpar a Pontuação</button>
   </div>
- <!-- Áudio -->
+
+  <!-- Modal de fim de jogo -->
+  <div id="modal">
+    <div id="modal-content">
+      <h2>Fim de Jogo</h2>
+      <p>Escreve o teu nome para guardar a pontuação:</p>
+      <input type="text" id="player-name" placeholder="Nome do jogador" />
+      <br /><br />
+      <div style="display: flex; justify-content: center; gap: 20px;">
+        <button id="confirmSave">✅ Guardar</button>
+        <button id="cancelSave">❌ Fechar</button>
+      </div>
+    </div>
+  </div>
+  <!-- Celebração -->
+  <div id="celebracao">🎉 LINHA!</div>
+  <!-- Áudio -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
   <audio id="som-colidir" src="colidir.mp3"></audio>
   <audio id="som-perdeu" src="perdeu.mp3"></audio>
   <audio id="som-pontos" src="pontos.mp3"></audio>
   <audio id="som-rodar" src="rodar.mp3"></audio>
-  <!-- Scripts -->
+  <!-- Script -->
   <script type="module" src="cerebro.js"></script>
 </body>
 </html>
