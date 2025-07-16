@@ -116,13 +116,22 @@ button:hover {
   text-shadow: 0 0 5px #00ffff;
 }
 
-/* Estilo dos valores de tempo, pontuação e nível */
-#time, #score, #level {
-  font-weight: bold;
-  font-family: 'Press Start 2P', monospace;
+/* Fundo transparente para os títulos de Tempo, Pontuação e Nível */
+#info div {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
   border-radius: 6px;
+  font-size: clamp(10px, 1.5vw, 14px);
+  font-family: 'Press Start 2P', monospace;
+  display: inline-block;
+}
+
+/* Estilo dos valores de Tempo, Pontuação e Nível */
+#time, #score, #level {
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
   display: inline-block;
 }
 
