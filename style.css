@@ -139,6 +139,7 @@ h1 {
 
 /* Ranking */
 #ranking-container {
+  display: none;
   margin-top: 10px;
   background-color: #fffbe7;
   border-radius: 12px;
@@ -197,17 +198,5 @@ h1 {
   border: 1px solid #fa8231;
   margin: 10px 0;
   font-size: 1rem;
-}
-
-/* Ranking inicia de forma oculta */
-#ranking-container {
-  display: none;
-  margin-top: 10px;
-  background-color: #fffbe7;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
-  width: 100%;
-  max-width: 320px;
 }
 
