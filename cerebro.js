@@ -1,12 +1,17 @@
-import { COLUNAS, LINHAS } from './motor.js';
+import { COLUNAS, LINHAS, verificarColisao } from './motor.js';
 import { desenharJogo, desenharProxima } from './canvas.js';
 import {
-  tocarSomRodar,
   tocarSomColidir,
   tocarSomPerdeu,
   iniciarMusicaFundo,
   pararMusicaFundo
 } from './audio.js';
+import {
+  configurarControlos,
+  moverPeca,
+  rodarPeca,
+  descerPeca
+} from './controlos.js';
 
 const boardCanvas = document.getElementById('board');
 const nextCanvas = document.getElementById('next');
@@ -66,7 +71,7 @@ function eliminarLinhas(tabuleiro) {
 
 function atualizar() {
   const novaY = posicao.y + 1;
-  if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
+  if (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
     posicao.y = novaY;
   } else {
     fixarPeca(tabuleiro, pecaAtual, posicao);
@@ -104,7 +109,7 @@ function atualizar() {
     proximaPeca = gerarPecaAleatoria();
     posicao = { x: 3, y: 0 };
 
-    if (colisao(tabuleiro, pecaAtual, posicao)) {
+    if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
       tocarSomPerdeu();
       clearInterval(intervalo);
       intervalo = null;
@@ -112,24 +117,6 @@ function atualizar() {
     }
   }
   desenhar();
-}
-
-function colisao(tab, peca, pos) {
-  for (let y = 0; y < peca.length; y++) {
-    for (let x = 0; x < peca[y].length; x++) {
-      if (peca[y][x]) {
-        const novoX = pos.x + x;
-        const novoY = pos.y + y;
-        if (
-          novoX < 0 || novoX >= COLUNAS ||
-          novoY >= LINHAS || (novoY >= 0 && tab[novoY]?.[novoX])
-        ) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
 }
 
 function fixarPeca(tab, peca, pos) {
@@ -146,24 +133,30 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-function rodarMatriz(matriz) {
-  const altura = matriz.length;
-  const largura = matriz[0].length;
-  const nova = [];
-  for (let x = 0; x < largura; x++) {
-    nova[x] = [];
-    for (let y = altura - 1; y >= 0; y--) {
-      nova[x].push(matriz[y][x]);
-    }
+// Controlos integrados
+configurarControlos(
+  direcao => {
+    moverPeca(direcao, tabuleiro, pecaAtual, posicao);
+    desenhar();
+  },
+  () => {
+    pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao);
+    desenhar();
+  },
+  () => {
+    descerPeca(tabuleiro, pecaAtual, posicao);
+    desenhar();
+  },
+  () => {
+    document.getElementById('pauseBtn').click();
   }
-  return nova;
-}
+);
 
 // Botões principais
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
-    iniciarMusicaFundo(); // Música começa ao iniciar o jogo
+    iniciarMusicaFundo();
   }
 });
 
@@ -212,7 +205,7 @@ document.getElementById('save-score-btn').addEventListener('click', () => {
 });
 
 document.getElementById('confirmSave').addEventListener('click', () => {
-    const nome = document.getElementById('player-name').value.trim();
+  const nome = document.getElementById('player-name').value.trim();
   if (nome) {
     localStorage.setItem('ultimoJogador', nome);
     const pontuacaoAtual = parseInt(document.getElementById('score').textContent, 10);
@@ -231,19 +224,16 @@ document.getElementById('confirmSave').addEventListener('click', () => {
   }
 });
 
-// Mostrar/ocultar o ranking
 document.getElementById('top10Btn')?.addEventListener('click', () => {
   const ranking = document.getElementById('ranking-container');
   ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
 });
 
-// Limpar o ranking
 document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-// Actualizar lista visual
 function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
   lista.innerHTML = '';
@@ -254,51 +244,10 @@ function atualizarRankingVisual(ranking) {
   });
 }
 
-// Carregar o ranking ao iniciar
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   ranking.sort((a, b) => b.pontuacao - a.pontuacao);
   atualizarRankingVisual(ranking);
-});
-
-// Controlo por teclado
-document.addEventListener('keydown', (e) => {
-  if (!intervalo) return;
-
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-    e.preventDefault();
-  }
-
-  if (e.key === 'ArrowLeft') {
-    const novaX = posicao.x - 1;
-    if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
-      posicao.x = novaX;
-    }
-  }
-
-  if (e.key === 'ArrowRight') {
-    const novaX = posicao.x + 1;
-    if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
-      posicao.x = novaX;
-    }
-  }
-
-  if (e.key === 'ArrowDown') {
-    const novaY = posicao.y + 1;
-    if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
-      posicao.y = novaY;
-    }
-  }
-
-  if (e.key === 'ArrowUp') {
-    const rodada = rodarMatriz(pecaAtual);
-    if (!colisao(tabuleiro, rodada, posicao)) {
-      pecaAtual = rodada;
-      tocarSomRodar();
-    }
-  }
-
-  desenhar();
 });
 
 // Render inicial
