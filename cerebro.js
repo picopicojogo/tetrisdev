@@ -21,7 +21,7 @@ boardCanvas.height = LINHAS * tamanhoBloco;
 nextCanvas.width = 80;
 nextCanvas.height = 80;
 
-// Estado inicial
+// Estado do jogo
 let tabuleiro = criarTabuleiroVazio();
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
@@ -29,12 +29,12 @@ let posicao = { x: 3, y: 0 };
 let intervalo = null;
 let pontuacao = 0;
 
-// CCria um tabuleiro vazio
+// Criar tabuleiro vazio
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
-// Cria uma peça aleatória
+// Gerar peça aleatória
 function gerarPecaAleatoria() {
   const pecas = [
     [[1, 1], [1, 1]],
@@ -48,13 +48,13 @@ function gerarPecaAleatoria() {
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
 
-// Desenha o tabuleiro e a próxima peça
+// Desenhar jogo
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Actualizar jogo
+// Atualizar estado
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -98,7 +98,7 @@ function colisao(tab, peca, pos) {
   return false;
 }
 
-// Fixar peça no tabuleiro
+// Fixar peça
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -113,7 +113,7 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// Rodar matriz (90° sentido horário)
+// Rodar peça
 function rodarMatriz(matriz) {
   const altura = matriz.length;
   const largura = matriz[0].length;
@@ -127,7 +127,7 @@ function rodarMatriz(matriz) {
   return nova;
 }
 
-// Botão Iniciar
+// Botões principais
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -135,14 +135,12 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 });
 
-// Botão Pausar
 document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
   pararMusicaFundo();
 });
 
-// Botão Reiniciar
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -155,7 +153,6 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   desenhar();
 });
 
-// Botão Som
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
@@ -174,7 +171,7 @@ document.getElementById('save-score-btn').addEventListener('click', () => {
   document.getElementById('modal').classList.add('show');
 });
 
-// Botão Confirmar → guarda o nome e pontuação
+// Guardar pontuação no ranking
 document.getElementById('confirmSave').addEventListener('click', () => {
   const nome = document.getElementById('player-name').value.trim();
   if (nome) {
@@ -186,12 +183,20 @@ document.getElementById('confirmSave').addEventListener('click', () => {
   }
 });
 
-// Controlos por teclado
+// Botão Top 10 → mostrar/ocultar ranking
+document.getElementById('top10Btn')?.addEventListener('click', () => {
+  const ranking = document.getElementById('ranking-container');
+  if (ranking.style.display === 'none' || !ranking.style.display) {
+    ranking.style.display = 'block';
+  } else {
+    ranking.style.display = 'none';
+  }
+});
+
+// Controlo por teclado
 document.addEventListener('keydown', (e) => {
   if (!intervalo) return;
-  if (
-    ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)
-  ) {
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
     e.preventDefault();
   }
 
@@ -226,6 +231,3 @@ document.addEventListener('keydown', (e) => {
 
   desenhar();
 });
-
-// Render inicial
-desenhar();
