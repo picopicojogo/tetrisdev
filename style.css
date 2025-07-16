@@ -11,6 +11,17 @@ body {
   text-align: center;
 }
 
+/* Título principal com fundo semi-transparente */
+h1 {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-top: 20px;
+  text-shadow: 0 0 5px #00ffff;
+  font-family: 'Press Start 2P', monospace;
+}
+
 /* Canvas do tabuleiro */
 #board {
   background-color: rgba(0, 0, 0, 0.8);
@@ -90,25 +101,7 @@ button:hover {
   box-shadow: 0 0 20px #ff00ff;
   color: #fff;
   max-width: 400px;
-}
-
-#modal-content button {
   font-family: 'Press Start 2P', monospace;
-  padding: 10px 16px;
-  font-size: 12px;
-  background-color: #000;
-  color: #00ffcc;
-  border: 2px solid #00ffcc;
-  border-radius: 4px;
-  cursor: pointer;
-  box-shadow: 0 0 8px #00ffcc;
-  transition: all 0.2s ease-in-out;
-}
-
-#modal-content button:hover {
-  background-color: #00ffcc;
-  color: #000;
-  box-shadow: 0 0 12px #00ffcc;
 }
 
 /* Campo para nome do jogador */
@@ -124,7 +117,7 @@ button:hover {
   font-family: 'Press Start 2P', monospace;
 }
 
-/* 📋 Lista de ranking */
+/* Lista de ranking */
 #ranking-container {
   margin-top: 20px;
   display: none;
@@ -147,6 +140,7 @@ button:hover {
 #toggle-sound {
   margin-top: 10px;
   font-size: 16px;
+  font-family: 'Press Start 2P', monospace;
 }
 
 /* Animação de celebração */
@@ -160,9 +154,9 @@ button:hover {
   display: none;
   z-index: 1000;
   text-shadow: 0 0 10px #ffcc00;
+  font-family: 'Press Start 2P', monospace;
 }
 
-/* Efeito de subida */
 @keyframes subirCelebracao {
   0% {
     transform: translate(-50%, -50%) scale(1);
