@@ -169,17 +169,6 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// Atualiza visualmente o ranking
-function atualizarRankingVisual(ranking) {
-  const lista = document.getElementById('ranking-list');
-  lista.innerHTML = '';
-  ranking.forEach((item, index) => {
-    const li = document.createElement('li');
-    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data})`;
-    lista.appendChild(li);
-  });
-}
-
 // Liga os controlos do jogador
 configurarControlos(
   direcao => {
