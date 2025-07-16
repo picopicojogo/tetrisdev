@@ -1,70 +1,52 @@
+// Constantes do tabuleiro
 export const COLUNAS = 10;
 export const LINHAS = 20;
-export const TAMANHO_BLOCO = 24;
 
-export const CORES = [
-  null, "#FF3CAC", "#784BA0", "#29FFC6",
-  "#F8FF00", "#00F0FF", "#FFB65C", "#FF4E50"
-];
-
-export const FORMATOS = [
-  [],
-  [[1,1,1,1]],
-  [[2,2],[2,2]],
-  [[0,3,0],[3,3,3]],
-  [[4,4,0],[0,4,4]],
-  [[0,5,5],[5,5,0]],
-  [[6,0,0],[6,6,6]],
-  [[0,0,7],[7,7,7]]
-];
-
-export function criarMatriz(largura, altura) {
-  return Array.from({ length: altura }, () => Array(largura).fill(0));
-}
-
-export function rodar(matriz, direcao) {
-  const transposta = matriz[0].map((_, i) => matriz.map(l => l[i]));
-  return direcao > 0 ? transposta.reverse() : transposta.map(r => r.reverse());
-}
-
+/**
+ * Verifica se há colisão entre a peça e o tabuleiro na posição dada
+ * @param {number[][]} tabuleiro
+ * @param {number[][]} peca
+ * @param {{x: number, y: number}} posicao
+ * @returns {boolean}
+ */
 export function verificarColisao(tabuleiro, peca, posicao) {
-  return peca.some((linha, y) =>
-    linha.some((valor, x) =>
-      valor !== 0 &&
-      (tabuleiro[y + posicao.y]?.[x + posicao.x]) !== 0
-    )
-  );
-}
-
-export function fundirPeca(tabuleiro, peca, posicao) {
-  peca.forEach((linha, y) =>
-    linha.forEach((valor, x) => {
-      if (valor !== 0) {
-        tabuleiro[y + posicao.y][x + posicao.x] = valor;
+  for (let y = 0; y < peca.length; y++) {
+    for (let x = 0; x < peca[y].length; x++) {
+      if (peca[y][x]) {
+        const novoX = posicao.x + x;
+        const novoY = posicao.y + y;
+        if (
+          novoX < 0 || novoX >= COLUNAS ||
+          novoY >= LINHAS ||
+          (novoY >= 0 && tabuleiro[novoY]?.[novoX])
+        ) {
+          return true;
+        }
       }
-    })
-  );
+    }
+  }
+  return false;
 }
 
-export function gerarPeca() {
-  const i = Math.floor(Math.random() * (FORMATOS.length - 1)) + 1;
-  return FORMATOS[i].map(r => [...r]);
-}
+/**
+ * Roda uma matriz no sentido horário (+1) ou anti-horário (-1)
+ * @param {number[][]} peca
+ * @param {number} direcao
+ * @returns {number[][]}
+ */
+export function rodar(peca, direcao = 1) {
+  const altura = peca.length;
+  const largura = peca[0].length;
+  const matriz = [];
 
-export function limparLinhas(tabuleiro, nivelAtual) {
-  let linhasLimpas = 0;
-  for (let y = tabuleiro.length - 1; y >= 0; y--) {
-    if (tabuleiro[y].every(valor => valor !== 0)) {
-      const linhaVazia = Array(COLUNAS).fill(0);
-      tabuleiro.splice(y, 1);
-      tabuleiro.unshift(linhaVazia);
-      linhasLimpas++;
-      y++;
+  for (let x = 0; x < largura; x++) {
+    matriz[x] = [];
+    for (let y = 0; y < altura; y++) {
+      matriz[x][y] = direcao > 0
+        ? peca[altura - 1 - y][x]     // horário
+        : peca[y][largura - 1 - x];  // anti-horário
     }
   }
 
-  const novaPontuacao = linhasLimpas * 100 * nivelAtual;
-  const progressoNivel = linhasLimpas;
-
-  return { novaPontuacao, progressoNivel };
+  return matriz;
 }
