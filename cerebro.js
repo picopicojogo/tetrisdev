@@ -43,7 +43,7 @@ let intervaloTempo = 600;
 let segundos = 0;
 let cronometroID = null;
 
-// Inicia o cronómetro e atualiza o elemento #time
+// Inicia o cronómetro e actualiza o elemento #time
 function iniciarCronometro() {
   cronometroID = setInterval(() => {
     segundos++;
@@ -104,7 +104,7 @@ function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
-// Atualiza o estado do jogo a cada intervalo
+// Actualiza o estado do jogo a cada intervalo
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -197,7 +197,7 @@ configurarControlos(
   }
 );
 
-// Botão Start — inicia o jogo
+// Botão Start
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
@@ -206,7 +206,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
   }
 });
 
-// Botão Pause — pausa o jogo
+// Botão Pause
 document.getElementById('pauseBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -214,7 +214,7 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
   pararCronometro();
 });
 
-// Botão Reset — reinicia o jogo
+// Botão Reset
 document.getElementById('resetBtn').addEventListener('click', () => {
   clearInterval(intervalo);
   intervalo = null;
