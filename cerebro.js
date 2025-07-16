@@ -8,20 +8,17 @@ import {
   pararMusicaFundo
 } from './audio.js';
 
-// Canvas
 const boardCanvas = document.getElementById('board');
 const nextCanvas = document.getElementById('next');
 const boardCtx = boardCanvas.getContext('2d');
 const nextCtx = nextCanvas.getContext('2d');
 
-// Dimensões
 const tamanhoBloco = 20;
 boardCanvas.width = COLUNAS * tamanhoBloco;
 boardCanvas.height = LINHAS * tamanhoBloco;
 nextCanvas.width = 80;
 nextCanvas.height = 80;
 
-// Estado do jogo
 let tabuleiro = criarTabuleiroVazio();
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
@@ -32,12 +29,10 @@ let nivel = 1;
 let totalLinhasEliminadas = 0;
 let intervaloTempo = 600;
 
-// Criar tabuleiro vazio
 function criarTabuleiroVazio() {
   return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 }
 
-// Gerar peça aleatória
 function gerarPecaAleatoria() {
   const pecas = [
     [[1, 1], [1, 1]],
@@ -51,13 +46,11 @@ function gerarPecaAleatoria() {
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
 
-// Desenhar jogo
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Eliminar linhas completas
 function eliminarLinhas(tabuleiro) {
   let linhasEliminadas = 0;
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
@@ -71,7 +64,6 @@ function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
-// Atualizar estado
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -86,11 +78,9 @@ function atualizar() {
       pontuacao += eliminadas * 100;
       totalLinhasEliminadas += eliminadas;
 
-      // 🎆 Flash visual
       boardCanvas.classList.add('flash');
       setTimeout(() => boardCanvas.classList.remove('flash'), 300);
 
-      // 🎉 Animação de celebração
       const celebracao = document.getElementById('celebracao');
       celebracao.style.display = 'block';
       celebracao.style.animation = 'subirCelebracao 1s ease-out forwards';
@@ -99,7 +89,6 @@ function atualizar() {
         celebracao.style.animation = '';
       }, 1000);
 
-      // Subir de nível
       const novoNivel = Math.floor(totalLinhasEliminadas / 5) + 1;
       if (novoNivel > nivel) {
         nivel = novoNivel;
@@ -125,7 +114,6 @@ function atualizar() {
   desenhar();
 }
 
-// Verificar colisão
 function colisao(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -144,7 +132,6 @@ function colisao(tab, peca, pos) {
   return false;
 }
 
-// Fixar peça
 function fixarPeca(tab, peca, pos) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -159,7 +146,6 @@ function fixarPeca(tab, peca, pos) {
   }
 }
 
-// Rodar peça
 function rodarMatriz(matriz) {
   const altura = matriz.length;
   const largura = matriz[0].length;
@@ -177,7 +163,7 @@ function rodarMatriz(matriz) {
 document.getElementById('startBtn').addEventListener('click', () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
-    iniciarMusicaFundo();
+    iniciarMusicaFundo(); // Música começa ao iniciar o jogo
   }
 });
 
@@ -226,11 +212,11 @@ document.getElementById('save-score-btn').addEventListener('click', () => {
 });
 
 document.getElementById('confirmSave').addEventListener('click', () => {
-  const nome = document.getElementById('player-name').value.trim();
+    const nome = document.getElementById('player-name').value.trim();
   if (nome) {
     localStorage.setItem('ultimoJogador', nome);
     const pontuacaoAtual = parseInt(document.getElementById('score').textContent, 10);
-      const agora = new Date();
+    const agora = new Date();
     const data = agora.toLocaleDateString('pt-PT');
 
     const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
@@ -245,19 +231,19 @@ document.getElementById('confirmSave').addEventListener('click', () => {
   }
 });
 
-// Mostrar/ocultar ranking
+// Mostrar/ocultar o ranking
 document.getElementById('top10Btn')?.addEventListener('click', () => {
   const ranking = document.getElementById('ranking-container');
   ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
 });
 
-// Limpar ranking
+// Limpar o ranking
 document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-// ACtualizar lista visual
+// Actualizar lista visual
 function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
   lista.innerHTML = '';
@@ -268,7 +254,7 @@ function atualizarRankingVisual(ranking) {
   });
 }
 
-// Carregar O ranking ao iniciar
+// Carregar o ranking ao iniciar
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   ranking.sort((a, b) => b.pontuacao - a.pontuacao);
