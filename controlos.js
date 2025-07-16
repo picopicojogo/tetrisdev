@@ -58,7 +58,7 @@ export function descerPeca(tabuleiro, peca, posicao) {
  * @param {function} pausarFn
  */
 export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn) {
-  // 🎹 Teclado
+  // Teclado
   window.addEventListener("keydown", e => {
     const tecla = e.key;
     if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(tecla)) e.preventDefault();
@@ -69,13 +69,13 @@ export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn) {
     if (tecla.toLowerCase() === "p") pausarFn();
   });
 
-  // 🖱️ Botões visuais (se existirem)
+  // Botões visuais (pcional)
   document.getElementById("leftBtn")?.addEventListener("click", () => moverFn(-1));
   document.getElementById("rightBtn")?.addEventListener("click", () => moverFn(1));
   document.getElementById("downBtn")?.addEventListener("click", () => descerFn());
   document.getElementById("rotateBtn")?.addEventListener("click", () => rodarFn(1));
 
-  // 📱 Toque em ecrãs móveis
+  // Toque em ecrãs móveis
   let startX = 0, startY = 0;
   const canvas = document.getElementById("board");
 
