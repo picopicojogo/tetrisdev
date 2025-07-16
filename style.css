@@ -180,6 +180,17 @@ h1 {
   background-color: #e74c3c;
 }
 
+/* Animações */
+#board.flash {
+  animation: flashBoard 0.3s ease-in-out;
+}
+
+@keyframes flashBoard {
+  0%   { background-color: #fff176; }
+  50%  { background-color: #ffca28; }
+  100% { background-color: transparent; }
+}
+
 /* Modal fim de jogo */
 #modal {
   position: fixed;
