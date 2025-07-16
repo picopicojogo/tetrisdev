@@ -191,6 +191,22 @@ h1 {
   100% { background-color: transparent; }
 }
 
+#celebracao {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 48px;
+  transform: translate(-50%, -50%);
+  animation: subirCelebracao 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes subirCelebracao {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -150%) scale(1.5); }
+}
+
 /* Modal fim de jogo */
 #modal {
   position: fixed;
