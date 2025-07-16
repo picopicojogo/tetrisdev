@@ -1,140 +1,130 @@
-/* Reset global */
-html, body {
+/* Layout principal */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fdf6e3;
   margin: 0;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Título */
+h1 {
+  margin-top: 20px;
+  font-size: 2em;
+  color: #ff5722;
+}
+
+/*  Container do jogo */
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  position: relative;
+}
+
+/* Canvas */
+canvas {
+  border: 2px solid #ff9800;
+  background-color: #fff;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+/* Flash ao eliminar linhas */
+#board.flash {
+  animation: flashBoard 0.3s ease-in-out;
+}
+
+@keyframes flashBoard {
+  0%   { background-color: #fff176; }
+  50%  { background-color: #ffca28; }
+  100% { background-color: transparent; }
+}
+
+/* Animação de celebração */
+#celebracao {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 48px;
+  transform: translate(-50%, -50%);
+  animation: subirCelebracao 1s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+  display: none;
+}
+
+@keyframes subirCelebracao {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -150%) scale(1.5); }
+}
+
+/* Botões */
+button {
+  padding: 10px 20px;
+  margin: 6px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #ff9800;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 3px 0 #e65100;
+  transition: background-color 0.2s ease;
+}
+
+button:hover {
+  background-color: #fb8c00;
+}
+
+/* Botão limpar ranking */
+#clear-ranking-btn {
+  background-color: #e53935;
+  box-shadow: 0 3px 0 #b71c1c;
+}
+
+#clear-ranking-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Modal */
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  font-family: 'Fredoka', sans-serif;
-  background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: cover;
-  display: flex;
+  background-color: rgba(0,0,0,0.6);
+  display: none;
   justify-content: center;
   align-items: center;
+  z-index: 20;
 }
 
-/* Wrapper principal */
-#wrapper {
-  width: 100%;
-  padding: 1rem;
-  box-sizing: border-box;
+#modal.show {
   display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* Área de jogo */
-#game-container {
-  width: 90vw;
-  max-width: 420px;
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Título do jogo */
-h1 {
-  margin-top: 0;
-  margin-bottom: 12px;
-  text-align: center;
-  font-size: 2rem;
-  color: #fa8231;
-}
-
-/* Informação do jogador */
-#info {
-  font-weight: bold;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-  color: #fa8231;
-  width: 100%;
-  font-size: 1rem;
-}
-
-/* Próxima Peça */
-#preview-container {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  padding: 8px;
-  margin-bottom: 10px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  max-width: 120px;
-  width: 100%;
-}
-
-.preview-title {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 4px;
-  color: #fa8231;
-}
-
-#next {
-  width: 80px;
-  height: 80px;
-  display: block;
-  margin: 0 auto;
-}
-
-/* Tabuleiro principal */
-#board {
-  background-color: #eee;
-  width: 100%;
-  max-width: 320px;
-  height: 240px; /* Altura mais compacta */
-  margin-bottom: 12px;
-  border: 4px solid #fa8231;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-/* Botões principais */
-#controls {
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px;
+#modal-content {
+  background-color: #fff;
+  padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  width: 100%;
-  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 300px;
+  width: 90%;
 }
 
-#controls button {
-  flex: 1 1 45%;
-  padding: 10px;
-  font-weight: bold;
-  background-color: #fa8231;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  box-shadow: 0 3px 0 #d35400;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  cursor: pointer;
-}
-
-#controls button:hover {
-  background-color: #f39c12;
-}
-
-#controls button:active {
-  transform: scale(0.98);
-  box-shadow: none;
-}
-
-/* Estado activo do botão de som */
-#toggle-sound.active {
-  background-color: #f7b731;
+#modal-content input {
+  width: 80%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 /* Ranking */
@@ -150,97 +140,27 @@ h1 {
 }
 
 #ranking-container h2 {
-  text-align: center;
   margin-top: 0;
-  color: #fa8231;
+  color: #ff5722;
 }
 
 #ranking-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  text-align: left;
-  font-size: 0.95rem;
 }
 
-#clear-ranking-btn {
-  margin-top: 8px;
-  padding: 8px 16px;
-  background-color: #ff5e57;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 3px 0 #c0392b;
-  transition: background-color 0.2s ease;
+#ranking-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #ffe0b2;
+  font-weight: 500;
 }
 
-#clear-ranking-btn:hover {
-  background-color: #e74c3c;
-}
-
-/* Animações */
-#board.flash {
-  animation: flashBoard 0.3s ease-in-out;
-}
-
-@keyframes flashBoard {
-  0%   { background-color: #fff176; }
-  50%  { background-color: #ffca28; }
-  100% { background-color: transparent; }
-}
-
-#celebracao {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  font-size: 48px;
-  transform: translate(-50%, -50%);
-  animation: subirCelebracao 1s ease-out forwards;
-  pointer-events: none;
-  z-index: 10;
-}
-
-@keyframes subirCelebracao {
-  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-  100% { opacity: 0; transform: translate(-50%, -150%) scale(1.5); }
-}
-
-/* Modal fim de jogo */
-#modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-#modal.show {
+/* Informações do jogo */
+#info {
   display: flex;
+  gap: 20px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
 }
-
-#modal-content {
-  background-color: rgba(255,255,255,0.95);
-  backdrop-filter: blur(8px);
-  padding: 20px;
-  border-radius: 14px;
-  text-align: center;
-  width: 90%;
-  max-width: 320px;
-  box-shadow: 0 0 16px rgba(0,0,0,0.3);
-}
-
-/* Nome do jogador */
-#player-name {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #fa8231;
-  margin: 10px 0;
-  font-size: 1rem;
-}
-
