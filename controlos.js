@@ -1,9 +1,8 @@
-// Módulo de controlos: teclado, botoes e toque
 import { verificarColisao, rodar } from './motor.js';
-import { tocarSom } from './audio.js';
+import { tocarSomRodar } from './audio.js';
 
 /**
- * Move a peca lateralmente, se possivel
+ * Move a peça lateralmente, se possível
  * @param {number} direcao - -1 para esquerda, +1 para direita
  * @param {number[][]} tabuleiro
  * @param {number[][]} peca
@@ -17,8 +16,8 @@ export function moverPeca(direcao, tabuleiro, peca, posicao) {
 }
 
 /**
- * Roda a peca, se possivel
- * @param {number} direcao - +1 horario, -1 anti-horario
+ * Roda a peça, se possível
+ * @param {number} direcao - +1 horário, -1 anti-horário
  * @param {number[][]} peca
  * @param {number[][]} tabuleiro
  * @param {{x: number, y: number}} posicao
@@ -30,17 +29,17 @@ export function rodarPeca(direcao, peca, tabuleiro, posicao) {
   if (verificarColisao(tabuleiro, rodada, posicao)) {
     return original;
   } else {
-    tocarSom("rodar");
+    tocarSomRodar();
     return rodada;
   }
 }
 
 /**
- * Move a peca uma linha para baixo
+ * Move a peça uma linha para baixo
  * @param {number[][]} tabuleiro
  * @param {number[][]} peca
  * @param {{x: number, y: number}} posicao
- * @returns {boolean}
+ * @returns {boolean} - true se colidiu
  */
 export function descerPeca(tabuleiro, peca, posicao) {
   posicao.y++;
@@ -59,11 +58,10 @@ export function descerPeca(tabuleiro, peca, posicao) {
  * @param {function} pausarFn
  */
 export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn) {
-  // Teclado
+  // 🎹 Teclado
   window.addEventListener("keydown", e => {
     const tecla = e.key;
-    const setas = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
-    if (setas.includes(tecla)) e.preventDefault();
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(tecla)) e.preventDefault();
     if (tecla === "ArrowLeft") moverFn(-1);
     if (tecla === "ArrowRight") moverFn(1);
     if (tecla === "ArrowDown") descerFn();
@@ -71,13 +69,13 @@ export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn) {
     if (tecla.toLowerCase() === "p") pausarFn();
   });
 
-  // Botoes visuais
+  // 🖱️ Botões visuais (se existirem)
   document.getElementById("leftBtn")?.addEventListener("click", () => moverFn(-1));
   document.getElementById("rightBtn")?.addEventListener("click", () => moverFn(1));
   document.getElementById("downBtn")?.addEventListener("click", () => descerFn());
   document.getElementById("rotateBtn")?.addEventListener("click", () => rodarFn(1));
 
-  // 📱 Toque em ecras moveis
+  // 📱 Toque em ecrãs móveis
   let startX = 0, startY = 0;
   const canvas = document.getElementById("board");
 
