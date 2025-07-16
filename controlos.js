@@ -3,10 +3,6 @@ import { tocarSomRodar } from './audio.js';
 
 /**
  * Move a peça lateralmente, se possível
- * @param {number} direcao - -1 para esquerda, +1 para direita
- * @param {number[][]} tabuleiro
- * @param {number[][]} peca
- * @param {{x: number, y: number}} posicao
  */
 export function moverPeca(direcao, tabuleiro, peca, posicao) {
   posicao.x += direcao;
@@ -17,11 +13,6 @@ export function moverPeca(direcao, tabuleiro, peca, posicao) {
 
 /**
  * Roda a peça, se possível
- * @param {number} direcao - +1 horário, -1 anti-horário
- * @param {number[][]} peca
- * @param {number[][]} tabuleiro
- * @param {{x: number, y: number}} posicao
- * @returns {number[][]}
  */
 export function rodarPeca(direcao, peca, tabuleiro, posicao) {
   const original = peca.map(r => [...r]);
@@ -36,10 +27,6 @@ export function rodarPeca(direcao, peca, tabuleiro, posicao) {
 
 /**
  * Move a peça uma linha para baixo
- * @param {number[][]} tabuleiro
- * @param {number[][]} peca
- * @param {{x: number, y: number}} posicao
- * @returns {boolean} - true se colidiu
  */
 export function descerPeca(tabuleiro, peca, posicao) {
   posicao.y++;
@@ -51,38 +38,52 @@ export function descerPeca(tabuleiro, peca, posicao) {
 }
 
 /**
- * Liga controlos do jogador aos eventos
- * @param {function} moverFn
- * @param {function} rodarFn
- * @param {function} descerFn
- * @param {function} pausarFn
+ * Faz a peça cair até ao fundo
  */
-export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn) {
+export function quedaInstantanea(tabuleiro, peca, posicao) {
+  while (!verificarColisao(tabuleiro, peca, { x: posicao.x, y: posicao.y + 1 })) {
+    posicao.y++;
+  }
+}
+
+/**
+ * Liga controlos do jogador aos eventos
+ */
+export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn, dropFn) {
   // Teclado
   window.addEventListener("keydown", e => {
     const tecla = e.key;
-    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(tecla)) e.preventDefault();
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " "].includes(tecla)) e.preventDefault();
     if (tecla === "ArrowLeft") moverFn(-1);
     if (tecla === "ArrowRight") moverFn(1);
     if (tecla === "ArrowDown") descerFn();
     if (tecla === "ArrowUp") rodarFn(1);
+    if (tecla === " ") dropFn();
     if (tecla.toLowerCase() === "p") pausarFn();
   });
 
-  // Botões visuais (pcional)
+  // Botões visuais (opcionais)
   document.getElementById("leftBtn")?.addEventListener("click", () => moverFn(-1));
   document.getElementById("rightBtn")?.addEventListener("click", () => moverFn(1));
   document.getElementById("downBtn")?.addEventListener("click", () => descerFn());
   document.getElementById("rotateBtn")?.addEventListener("click", () => rodarFn(1));
+  document.getElementById("dropBtn")?.addEventListener("click", () => dropFn());
 
-  // Toque em ecrãs móveis
+  // 📱 Toque em ecrãs móveis
   let startX = 0, startY = 0;
+  let ultimoToque = 0;
   const canvas = document.getElementById("board");
 
   canvas?.addEventListener("touchstart", e => {
     const toque = e.touches[0];
     startX = toque.clientX;
     startY = toque.clientY;
+
+    const agora = Date.now();
+    if (agora - ultimoToque < 300) {
+      rodarFn(-1); // Toque duplo → rotação anti-horária
+    }
+    ultimoToque = agora;
   });
 
   canvas?.addEventListener("touchend", e => {
@@ -90,8 +91,17 @@ export function configurarControlos(moverFn, rodarFn, descerFn, pausarFn) {
     const dx = toque.clientX - startX;
     const dy = toque.clientY - startY;
     const absX = Math.abs(dx), absY = Math.abs(dy);
-    if (Math.max(absX, absY) < 20) return rodarFn(1);
-    if (absX > absY) dx > 0 ? moverFn(1) : moverFn(-1);
-    else if (dy > 0) descerFn();
+
+    if (Math.max(absX, absY) < 30) return rodarFn(1); // Toque curto → rotação horária
+
+    if (absX > absY) {
+      dx > 0 ? moverFn(1) : moverFn(-1);
+    } else {
+      if (absY > 100) {
+        dropFn(); // Deslizar rápido para baixo
+      } else {
+        descerFn(); // Desliza de forma curta
+      }
+    }
   });
 }
