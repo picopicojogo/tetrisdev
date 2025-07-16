@@ -1,6 +1,9 @@
-/* Fundo estilo arcade */
+/* Estilo geral do corpo da página */
 body {
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   font-family: 'Press Start 2P', monospace, sans-serif;
   background-image: url('capadojogo.png');
   background-size: cover;
@@ -11,26 +14,29 @@ body {
   text-align: center;
 }
 
-/* Título principal com fundo semi-transparente */
+/* Título principal fixo no topo da página */
 h1 {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 10px 20px;
   border-radius: 8px;
-  display: inline-block;
-  margin-top: 20px;
   text-shadow: 0 0 5px #00ffff;
   font-family: 'Press Start 2P', monospace;
 }
 
-/* Canvas do tabuleiro */
+/* Área do tabuleiro de jogo */
 #board {
   background-color: rgba(0, 0, 0, 0.8);
   border: 3px solid #ff00ff;
-  margin-top: 20px;
+  margin-top: 100px;
   box-shadow: 0 0 15px #ff00ff;
 }
 
-/* Canvas da próxima peça */
+/* Área da próxima peça */
 #next {
   background-color: rgba(0, 0, 0, 0.6);
   border: 2px dashed #00ffff;
@@ -38,7 +44,7 @@ h1 {
   box-shadow: 0 0 10px #00ffff;
 }
 
-/* Botões principais */
+/* Estilo dos botões principais */
 button {
   margin: 8px;
   padding: 12px 24px;
@@ -54,13 +60,14 @@ button {
   transition: all 0.2s ease-in-out;
 }
 
+/* Efeito ao passar o rato sobre os botões */
 button:hover {
   background-color: #00ffcc;
   color: #000;
   box-shadow: 0 0 12px #00ffcc;
 }
 
-/* Cronómetro, pontuação e nível */
+/* Área de informações do jogo */
 #info {
   margin-top: 15px;
   display: flex;
@@ -70,12 +77,13 @@ button:hover {
   text-shadow: 0 0 5px #00ffff;
 }
 
+/* Estilo dos valores de tempo, pontuação e nível */
 #time, #score, #level {
   font-weight: bold;
   font-family: 'Press Start 2P', monospace;
 }
 
-/* Modal de fim de jogo */
+/* Janela modal de fim de jogo */
 #modal {
   position: fixed;
   top: 0;
@@ -89,10 +97,12 @@ button:hover {
   z-index: 999;
 }
 
+/* Mostrar o modal quando necessário */
 #modal.show {
   display: flex;
 }
 
+/* Conteúdo interno do modal */
 #modal-content {
   background-color: #111;
   padding: 30px;
@@ -104,7 +114,7 @@ button:hover {
   font-family: 'Press Start 2P', monospace;
 }
 
-/* Campo para nome do jogador */
+/* Campo de entrada para o nome do jogador */
 #player-name {
   padding: 10px;
   font-size: 14px;
@@ -117,18 +127,20 @@ button:hover {
   font-family: 'Press Start 2P', monospace;
 }
 
-/* Lista de ranking */
+/* Área que contém o ranking */
 #ranking-container {
   margin-top: 20px;
   display: none;
 }
 
+/* Lista de jogadores no ranking */
 #ranking-list {
   list-style: none;
   padding: 0;
   margin-top: 10px;
 }
 
+/* Estilo de cada linha do ranking */
 #ranking-list li {
   margin: 5px 0;
   font-family: 'Press Start 2P', monospace;
@@ -136,14 +148,14 @@ button:hover {
   text-shadow: 0 0 5px #ff0;
 }
 
-/* Botão de som */
+/* Botão para alternar o som */
 #toggle-sound {
   margin-top: 10px;
   font-size: 16px;
   font-family: 'Press Start 2P', monospace;
 }
 
-/* Animação de celebração */
+/* Texto de celebração ao eliminar linhas */
 #celebracao {
   position: absolute;
   top: 50%;
@@ -157,6 +169,7 @@ button:hover {
   font-family: 'Press Start 2P', monospace;
 }
 
+/* Animação de subida para o texto de celebração */
 @keyframes subirCelebracao {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -168,7 +181,7 @@ button:hover {
   }
 }
 
-/* Flash ao eliminar linhas */
+/* Efeito de flash ao eliminar linhas */
 .flash {
   animation: flashTabuleiro 0.3s ease-in-out;
 }
@@ -182,7 +195,7 @@ button:hover {
   }
 }
 
-/* Responsividade para ecrãs pequenos */
+/* Estilo adaptado para ecrãs pequenos */
 @media (max-width: 600px) {
   #info {
     flex-direction: column;
