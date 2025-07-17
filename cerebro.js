@@ -35,7 +35,7 @@ const $ = id => document.getElementById(id);
 const boardCtx = $('board').getContext('2d');
 const nextCtx = $('next').getContext('2d');
 
-// Dimensões dos canvas
+// Definições do canvas
 $('board').width = COLUNAS * 20;
 $('board').height = LINHAS * 20;
 $('next').width = 80;
@@ -52,13 +52,13 @@ let linhasTotais = 0;
 let intervaloTempo = 600;
 let config = carregarDefinicoesAcessibilidade();
 
-// Desenha tabuleiro e próxima peça
+// Função para desenhar o jogo e próxima peça
 function desenhar() {
   desenharJogo(boardCtx, $('board').width, $('board').height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Encerramento do jogo
+// Função para terminar o jogo
 function terminarJogo() {
   tocarSomPerdeu();
   clearInterval(intervalo);
@@ -67,7 +67,7 @@ function terminarJogo() {
   $('modal').classList.add('show');
 }
 
-// Atualiza lógica principal
+// Função para atualizar estado do jogo
 function atualizar() {
   posicao.y++;
 
@@ -114,7 +114,7 @@ function atualizar() {
   desenhar();
 }
 
-// Liga os controlos
+// Liga os controlos do jogador
 configurarControlos(
   dir => { moverPeca(dir, tabuleiro, pecaAtual, posicao); desenhar(); },
   () => { pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao); desenhar(); },
@@ -173,32 +173,29 @@ $('confirmSave').onclick = () => {
   $('player-name').value = '';
 };
 
-// Cancela modal
 $('cancelSave').onclick = () => {
   $('modal').classList.remove('show');
   $('player-name').value = '';
 };
 
-// Abre modal para guardar pontuação
 $('save-score-btn').onclick = () => {
   const nomeAnterior = localStorage.getItem('ultimoJogador');
   if (nomeAnterior) $('player-name').value = nomeAnterior;
   $('modal').classList.add('show');
 };
 
-// Alterna visualização do ranking
+// Ranking visual
 $('top10Btn')?.addEventListener('click', () => {
   const r = $('ranking-container');
   r.style.display = r.style.display === 'none' || !r.style.display ? 'block' : 'none';
 });
 
-// Limpa ranking
 $('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-// Alterna som de fundo
+// Alterna estado da música de fundo
 $('toggle-sound').onclick = () => {
   const audio = $('musica-fundo');
   const botao = $('toggle-sound');
@@ -207,7 +204,7 @@ $('toggle-sound').onclick = () => {
   botao.textContent = audio.paused ? '🔇 Som desligado' : '🔊 Som ligado';
 };
 
-// Função para guardar preferências de acessibilidade
+// Guarda preferências do jogador no localStorage
 function guardarDefinicoesAcessibilidade() {
   const configNova = {
     flash: $('toggle-flash')?.checked ?? true,
@@ -219,21 +216,50 @@ function guardarDefinicoesAcessibilidade() {
   config = configNova;
 }
 
-// Abre menu de opções
+// Repõe preferências predefinidas
+function reporDefinicoesAcessibilidade() {
+  const predefinidas = {
+    flash: true,
+    vibracao: true,
+    animacoes: true,
+    sonsAgudos: true
+  };
+  localStorage.setItem('acessibilidade', JSON.stringify(predefinidas));
+  config = predefinidas;
+
+  $('toggle-flash').checked = true;
+  $('toggle-vibracao').checked = true;
+  $('toggle-animacoes').checked = true;
+  $('toggle-sonos-agudos').checked = true;
+}
+
+// Menu de opções
 $('btn-opcoes')?.addEventListener('click', () => {
   $('menu-opcoes').classList.remove('escondido');
 });
 
-// Fecha e guarda as opções
 $('fechar-opcoes')?.addEventListener('click', () => {
   guardarDefinicoesAcessibilidade();
   $('menu-opcoes').classList.add('escondido');
 });
 
-// Ao carregar a página
+$('repor-opcoes')?.addEventListener('click', () => {
+  reporDefinicoesAcessibilidade();
+});
+
+// Estado inicial ao carregar a página
 window.addEventListener('DOMContentLoaded', () => {
+  // Recarrega o ranking existente
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   atualizarRankingVisual(ranking.sort((a, b) => b.pontuacao - a.pontuacao));
+
+  // Reinicia o cronómetro e desenha o jogo
   reiniciarCronometro();
   desenhar();
+
+  // Aplica preferências visuais se existirem
+  $('toggle-flash').checked = config.flash;
+  $('toggle-vibracao').checked = config.vibracao;
+  $('toggle-animacoes').checked = config.animacoes;
+  $('toggle-sonos-agudos').checked = config.sonsAgudos;
 });
