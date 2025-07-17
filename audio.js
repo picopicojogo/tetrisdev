@@ -1,47 +1,47 @@
-// audio.js — gestão centralizada dos sons do jogo
-
-// Obtém os elementos de áudio do HTML
-const somRodar = document.getElementById('rodar');
-const somColidir = document.getElementById('colidir');
-const somPerdeu = document.getElementById('perdeu');
-const musicaFundo = document.getElementById('musica-fundo');
+// Seleção dos elementos <audio> existentes no HTML
+const somRodar     = document.getElementById('rodar');
+const somColidir   = document.getElementById('colidir');
+const somPerdeu    = document.getElementById('perdeu');
+const musicaFundo  = document.getElementById('musica-fundo');
 
 /**
- * Reproduz o som de rotação da peça
+ * Toca um elemento de som, reiniciando o tempo de reprodução
+ * @param {HTMLAudioElement} som - elemento de áudio
+ */
+function tocar(som) {
+  if (som && typeof som.play === 'function') {
+    som.currentTime = 0;
+    som.play().catch(erro => console.warn('Erro ao tocar som:', erro));
+  }
+}
+
+/**
+ * Toca o som de rotação da peça
  */
 export function tocarSomRodar() {
-  if (somRodar && typeof somRodar.play === 'function') {
-    somRodar.currentTime = 0;
-    somRodar.play();
-  }
+  tocar(somRodar);
 }
 
 /**
- * Reproduz o som de colisão ao fixar peça
+ * Toca o som ao fixar a peça no tabuleiro
  */
 export function tocarSomColidir() {
-  if (somColidir && typeof somColidir.play === 'function') {
-    somColidir.currentTime = 0;
-    somColidir.play();
-  }
+  tocar(somColidir);
 }
 
 /**
- * Reproduz som de fim de jogo
+ * Toca o som de fim de jogo
  */
 export function tocarSomPerdeu() {
-  if (somPerdeu && typeof somPerdeu.play === 'function') {
-    somPerdeu.currentTime = 0;
-    somPerdeu.play();
-  }
+  tocar(somPerdeu);
 }
 
 /**
- * Inicia a música de fundo
+ * Inicia a música de fundo em loop
  */
 export function iniciarMusicaFundo() {
   if (musicaFundo && typeof musicaFundo.play === 'function') {
-    musicaFundo.play();
+    musicaFundo.play().catch(() => {});
   }
 }
 
