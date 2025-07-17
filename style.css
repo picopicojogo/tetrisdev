@@ -204,7 +204,7 @@ button:focus {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 32px;
+  font-size: clamp(28px, 4vw, 48px);
   color: #ffcc00;
   display: none;
   z-index: 1000;
@@ -235,7 +235,6 @@ button:focus {
   animation: pulsarCombo 1.4s ease-out forwards;
 }
 
-/* Animação pulsante de combo */
 @keyframes pulsarCombo {
   0%   { opacity: 0; transform: scale(1); }
   50%  { opacity: 1; transform: scale(1.8); }
@@ -287,6 +286,8 @@ button:focus {
   font-size: 14px;
   width: 80%;
   max-width: 400px;
+  overflow-y: auto;
+  max-height: 90vh;
 }
 
 .modal h2 {
@@ -311,12 +312,36 @@ button:focus {
   margin-right: 8px;
 }
 
+/* Botões no menu */
+.modal button {
+  margin-top: 8px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-family: 'Press Start 2P', monospace;
+  background-color: #000;
+  color: #00ffcc;
+  border: 2px solid #00ffcc;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 0 8px #00ffcc;
+  transition: all 0.2s ease-in-out;
+  align-self: center;
+}
+
+.modal button:hover {
+  background-color: #00ffcc;
+  color: #000;
+  box-shadow: 0 0 12px #00ffcc;
+}
+
 /* Elementos escondidos com esta classe ficam invisíveis */
 .escondido {
   display: none !important;
 }
 
-/* Responsive */
+/* ---------- Responsividade ---------- */
+
 @media (max-width: 600px) {
   #info {
     flex-direction: column;
@@ -337,6 +362,13 @@ button:focus {
   #modal-content,
   .modal {
     width: 90%;
+    font-size: 12px;
+    padding: 20px;
+  }
+
+  .modal button {
+    font-size: 11px;
+    padding: 10px 16px;
   }
 
   #ranking-container {
@@ -349,9 +381,31 @@ button:focus {
   }
 
   #celebracao {
-    font-size: 28px;
+    font-size: 24px;
   }
 }
+
+@media (min-width: 1280px) {
+  .modal {
+    max-width: 500px;
+    font-size: 15px;
+    padding: 40px;
+  }
+
+  .modal h2 {
+    font-size: 18px;
+  }
+
+  .modal button {
+    font-size: 15px;
+  }
+
+  #celebracao {
+    font-size: 40px;
+  }
+}
+
+/* ---------- Acessibilidade: Redução de Movimento ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   * {
