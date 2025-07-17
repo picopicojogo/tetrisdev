@@ -5,7 +5,7 @@
  * Inclui funções para desenhar o jogo, gerar peças, verificar colisões,
  * fixar peças no tabuleiro e eliminar linhas completas.
  */
-// Dimensões do tabuleiro
+// ---------- Dimensões do tabuleiro ----------
 export const COLUNAS = 10;
 export const LINHAS = 20;
 
@@ -113,27 +113,46 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
 }
 
 /**
- * Desenha a próxima peça
+ * Desenha a próxima peça de forma centralizada
  */
 export function desenharProxima(ctx, peca) {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+  const celulaSize = 20;
+  const larguraPeca = peca[0].length * celulaSize;
+  const alturaPeca = peca.length * celulaSize;
+
+  const offsetX = (ctx.canvas.width - larguraPeca) / 2;
+  const offsetY = (ctx.canvas.height - alturaPeca) / 2;
+
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
       if (peca[y][x]) {
-        desenharCelula(ctx, x, y, '#00ffcc');
+        desenharCelulaAbsoluta(ctx, offsetX + x * celulaSize, offsetY + y * celulaSize, '#00ffcc');
       }
     }
   }
 }
 
 /**
- * Desenha uma célula no canvas
+ * Desenha uma célula no tabuleiro
  */
 function desenharCelula(ctx, x, y, cor) {
   ctx.fillStyle = cor;
   ctx.fillRect(x * 20, y * 20, 20, 20);
   ctx.strokeStyle = '#000';
   ctx.strokeRect(x * 20, y * 20, 20, 20);
+}
+
+/**
+ * Desenha uma célula com coordenadas absolutas (sem multiplicação)
+ * Usada para a próxima peça no canvas lateral
+ */
+function desenharCelulaAbsoluta(ctx, x, y, cor) {
+  ctx.fillStyle = cor;
+  ctx.fillRect(x, y, 20, 20);
+  ctx.strokeStyle = '#000';
+  ctx.strokeRect(x, y, 20, 20);
 }
 
 /**
@@ -156,7 +175,6 @@ export function aplicarEfeitosTabuleiro() {
 
 /**
  * Carrega definições de acessibilidade gravadas pelo jogador
- * Exemplo: { flash: true, somGeral: true, vibracao: true }
  */
 export function carregarDefinicoesAcessibilidade() {
   const def = localStorage.getItem('acessibilidade');
