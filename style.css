@@ -1,0 +1,200 @@
+/* Reset global */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Fredoka', sans-serif;
+  background: url('capadojogo.png') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Wrapper principal */
+#wrapper {
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Área de jogo */
+#game-container {
+  width: 90vw;
+  max-width: 420px;
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Título do jogo */
+h1 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  text-align: center;
+  font-size: 2rem;
+  color: #fa8231;
+}
+
+/* Informação do jogador */
+#info {
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  color: #fa8231;
+  width: 100%;
+  font-size: 1rem;
+}
+
+/* Próxima Peça */
+#preview-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  padding: 8px;
+  margin-bottom: 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  max-width: 120px;
+  width: 100%;
+}
+
+.preview-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #fa8231;
+}
+
+#next {
+  width: 80px;
+  height: 80px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Tabuleiro principal */
+#board {
+  background-color: #eee;
+  width: 100%;
+  max-width: 320px;
+  height: 240px; /* Altura mais compacta */
+  margin-bottom: 12px;
+  border: 4px solid #fa8231;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Botões principais */
+#controls {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+#controls button {
+  flex: 1 1 45%;
+  padding: 10px;
+  font-weight: bold;
+  background-color: #fa8231;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  box-shadow: 0 3px 0 #d35400;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+#controls button:hover {
+  background-color: #f39c12;
+}
+
+#controls button:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
+/* Estado activo do botão de som */
+#toggle-sound.active {
+  background-color: #f7b731;
+}
+
+/* Ranking */
+#ranking-container {
+  margin-top: 10px;
+  background-color: #fffbe7;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
+  width: 100%;
+  max-width: 320px;
+}
+
+#ranking-container h2 {
+  text-align: center;
+  margin-top: 0;
+  color: #fa8231;
+}
+
+#ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+/* Modal fim de jogo */
+#modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#modal.show {
+  display: flex;
+}
+
+#modal-content {
+  background-color: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  padding: 20px;
+  border-radius: 14px;
+  text-align: center;
+  width: 90%;
+  max-width: 320px;
+  box-shadow: 0 0 16px rgba(0,0,0,0.3);
+}
+
+/* Nome do jogador */
+#player-name {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #fa8231;
+  margin: 10px 0;
+  font-size: 1rem;
+}
