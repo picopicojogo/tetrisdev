@@ -25,11 +25,3 @@ Cada peça fixada no tabuleiro: ➤ +10 pontos
     3 linhas: +300
 
     4 linhas ou mais: +400+ (multiplicado por 100 consoante o número)
-  
- Estes pontos acumulam com os +10 pontos da peça que foi fixada.
-
-💡 Exemplo práctico de pontuação
-
-   Se uma peça cair e não eliminar linhas → +10 pontos
-
-   Se uma peça eliminar 2 linhas ao cair → +10 (fixação) + 200 (2 linhas) → total 210 pontos
