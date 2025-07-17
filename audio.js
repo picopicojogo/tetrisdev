@@ -1,36 +1,51 @@
-// Efeitos sonoros
-const somRodar = new Audio('rodar.mp3');
-const somColidir = new Audio('colidir.mp3');
-const somPerdeu = new Audio('perdeu.mp3');
+/**
+ * audio.js
+ *
+ * Módulo responsável por gerir os efeitos sonoros e a música de fundo do jogo.
+ * Inclui funções para tocar sons específicos e controlar o áudio ambiente.
+ */
 
-// Música de fundo (controlada via elemento <audio> no index.html)
-export function iniciarMusicaFundo() {
-  const musica = document.getElementById('musica-fundo');
-  if (musica) {
-    musica.volume = 0.5;
-    musica.play();
-  }
-}
+// Obtém os elementos de áudio definidos no HTML
+const somColidir = document.getElementById('som-colidir');
+const somPerdeu = document.getElementById('som-perdeu');
+const musicaFundo = document.getElementById('musica-fundo');
 
-export function pararMusicaFundo() {
-  const musica = document.getElementById('musica-fundo');
-  if (musica) {
-    musica.pause();
-  }
-}
-
-// Sons de acção
-export function tocarSomRodar() {
-  somRodar.currentTime = 0;
-  somRodar.play();
-}
-
+/**
+ * Toca o som de colisão quando a peça é fixada
+ */
 export function tocarSomColidir() {
-  somColidir.currentTime = 0;
-  somColidir.play();
+  if (somColidir) {
+    somColidir.currentTime = 0;
+    somColidir.play();
+  }
 }
 
+/**
+ * Toca o som de derrota quando o jogo termina
+ */
 export function tocarSomPerdeu() {
-  somPerdeu.currentTime = 0;
-  somPerdeu.play();
+  if (somPerdeu) {
+    somPerdeu.currentTime = 0;
+    somPerdeu.play();
+  }
+}
+
+/**
+ * Inicia a música de fundo do jogo
+ */
+export function iniciarMusicaFundo() {
+  if (musicaFundo && musicaFundo.paused) {
+    musicaFundo.volume = 0.4;
+    musicaFundo.loop = true;
+    musicaFundo.play();
+  }
+}
+
+/**
+ * Para a música de fundo
+ */
+export function pararMusicaFundo() {
+  if (musicaFundo && !musicaFundo.paused) {
+    musicaFundo.pause();
+  }
 }
