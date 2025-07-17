@@ -24,13 +24,13 @@ import {
   configurarControlos
 } from './controlos.js';
 
-// Contexto dos canvas principais
+// Contexto dos canvas
 const board = document.getElementById('board');
 const next = document.getElementById('next');
 const ctxBoard = board.getContext('2d');
 const ctxNext = next.getContext('2d');
 
-// Dimensões dos canvas
+// Dimensões
 board.width = COLUNAS * 24;
 board.height = LINHAS * 24;
 next.width = 80;
@@ -42,19 +42,20 @@ let pecaAtual = gerarPeca();
 let proximaPeca = gerarPeca();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
-let segundos = 0;
-let tempoEl = document.getElementById("time");
 let tempoIntervalo = null;
+let segundos = 0;
 let pontuacao = 0;
 let nivel = 1;
 
-// Renderização atual
+const tempoEl = document.getElementById("time");
+
+// Renderiza o estado atual
 function desenhar() {
   desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(ctxNext, proximaPeca);
 }
 
-// Atualiza o estado do jogo (descida automática ou após fixar peça)
+// Atualiza a posição da peça ou processa fim de jogada
 function atualizar() {
   posicao.y++;
 
@@ -63,7 +64,6 @@ function atualizar() {
     fundirPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
 
-    // Limpa linhas e atualiza pontuação
     const { novaPontuacao, progressoNivel } = limparLinhas(tabuleiro, nivel);
     pontuacao += novaPontuacao;
     nivel += progressoNivel;
@@ -77,13 +77,14 @@ function atualizar() {
       clearInterval(intervalo);
       clearInterval(tempoIntervalo);
       mostrarModalFim(pontuacao);
+      return;
     }
   }
 
   desenhar();
 }
 
-// Descida instantânea até à colisão
+// Descida rápida até ao limite
 function quedaInstantanea() {
   while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
     posicao.y++;
@@ -91,7 +92,7 @@ function quedaInstantanea() {
   atualizar();
 }
 
-// Pausa o jogo
+// Pausa o jogo e cronómetro
 function pausarJogo() {
   clearInterval(intervalo);
   clearInterval(tempoIntervalo);
@@ -100,7 +101,7 @@ function pausarJogo() {
   pararMusicaFundo();
 }
 
-// Inicia cronómetro visual
+// Reinicia o cronómetro
 function iniciarTempo() {
   tempoIntervalo = setInterval(() => {
     segundos++;
@@ -118,24 +119,25 @@ document.getElementById('startBtn').onclick = () => {
 };
 
 // Pausa o jogo
-document.getElementById('pauseBtn').onclick = () => pausarJogo();
+document.getElementById('pauseBtn').onclick = () => {
+  pausarJogo();
+};
 
-// Reinicia o jogo
+// Reinicia o estado do jogo
 document.getElementById('resetBtn').onclick = () => {
   pausarJogo();
-
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
   [pecaAtual, proximaPeca] = [gerarPeca(), gerarPeca()];
   posicao = { x: 3, y: 0 };
-  segundos = 0;
   pontuacao = 0;
   nivel = 1;
+  segundos = 0;
   atualizarPontuacao(pontuacao, nivel);
   atualizarTempo(tempoEl, segundos);
   desenhar();
 };
 
-// Alternância do som de fundo
+// Alternância de som
 document.getElementById('toggle-sound').onclick = () => {
   const audio = document.getElementById('musica-fundo');
   const btn = document.getElementById('toggle-sound');
@@ -148,22 +150,32 @@ document.getElementById('toggle-sound').onclick = () => {
     audio.pause();
     btn.textContent = '🔇 Som desligado';
   }
+
   btn.classList.toggle('active', !audio.paused);
 };
 
-// Guarda pontuação final
+// Guardar pontuação no fim
 document.getElementById('confirmSave').onclick = () => guardarPontuacao(pontuacao);
 document.getElementById('cancelSave').onclick = () =>
-  document.getElementById('modal').classList.remove('show');
+  document.getElementById('modal')?.classList.remove('show');
 
-// Liga controlos do jogador
+// Liga os controlos do utilizador
 configurarControlos(
   direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
-  dir => pecaAtual = rodarPeca(dir, pecaAtual, tabuleiro, posicao),
+  dir => {
+    const nova = rodarPeca(dir, pecaAtual, tabuleiro, posicao);
+    if (nova !== pecaAtual) {
+      pecaAtual = nova;
+      desenhar();
+    }
+  },
   () => {
     const travou = descerPeca(tabuleiro, pecaAtual, posicao);
-    if (travou) atualizar();
-    else desenhar();
+    if (travou) {
+      atualizar();
+    } else {
+      desenhar();
+    }
   },
   quedaInstantanea,
   pausarJogo
