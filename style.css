@@ -1,4 +1,5 @@
-/* Estilo geral do corpo da página */
+/* ---------- Estilo Geral da Página ---------- */
+
 body {
   margin: 0;
   display: flex;
@@ -14,7 +15,8 @@ body {
   text-align: center;
 }
 
-/* Título principal fixo e responsivo no topo da página */
+/* ---------- Título Principal ---------- */
+
 h1 {
   position: fixed;
   top: 0;
@@ -29,7 +31,8 @@ h1 {
   max-width: 90%;
 }
 
-/* Área que agrupa o tabuleiro e a próxima peça */
+/* ---------- Estrutura do Jogo ---------- */
+
 #jogo {
   display: flex;
   justify-content: center;
@@ -39,21 +42,18 @@ h1 {
   flex-wrap: wrap;
 }
 
-/* Área do tabuleiro de jogo */
 #board {
   background-color: rgba(0, 0, 0, 0.8);
   border: 3px solid #ff00ff;
   box-shadow: 0 0 15px #ff00ff;
 }
 
-/* Container da próxima peça */
 #next-container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Título acima da próxima peça */
 #next-title {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
@@ -63,17 +63,16 @@ h1 {
   color: #00ffff;
   text-shadow: 0 0 4px #00ffff;
   text-align: center;
-  max-width: 100%;
 }
 
-/* Área da próxima peça */
 #next {
   background-color: rgba(0, 0, 0, 0.6);
   border: 2px dashed #00ffff;
   box-shadow: 0 0 10px #00ffff;
 }
 
-/* Agrupamento dos botões principais */
+/* ---------- Botões de Ação ---------- */
+
 .botoes {
   display: flex;
   flex-wrap: wrap;
@@ -82,8 +81,7 @@ h1 {
   margin-top: 20px;
 }
 
-/* Estilo uniforme para todos os botões */
-button {
+button, .botao-menu {
   margin: 8px;
   padding: 12px 24px;
   font-size: 14px;
@@ -96,9 +94,11 @@ button {
   text-transform: uppercase;
   box-shadow: 0 0 8px #00ffcc;
   transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Efeito ao passar o rato sobre os botões */
 button:hover,
 button:focus {
   background-color: #00ffcc;
@@ -107,7 +107,12 @@ button:focus {
   outline: none;
 }
 
-/* Área de informações do jogo */
+.icone {
+  font-size: 18px;
+}
+
+/* ---------- Informações do Jogo ---------- */
+
 #info {
   margin-top: 15px;
   display: flex;
@@ -118,24 +123,21 @@ button:focus {
   flex-wrap: wrap;
 }
 
-/* Fundo transparente para os títulos de Tempo, Pontuação e Nível */
 #info div {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
   border-radius: 6px;
-  display: inline-block;
 }
 
-/* Estilo dos valores de Tempo, Pontuação e Nível */
 #time, #score, #level {
   font-weight: bold;
   background-color: rgba(0, 0, 0, 0.5);
   padding: 4px 8px;
   border-radius: 4px;
-  display: inline-block;
 }
 
-/* Janela modal de fim de jogo */
+/* ---------- Modal de Fim de Jogo ---------- */
+
 #modal {
   position: fixed;
   top: 0;
@@ -149,12 +151,10 @@ button:focus {
   z-index: 999;
 }
 
-/* Modal visível */
 #modal.show {
   display: flex;
 }
 
-/* Conteúdo do modal */
 #modal-content {
   background-color: #111;
   padding: 30px;
@@ -164,10 +164,8 @@ button:focus {
   color: #fff;
   max-width: 400px;
   width: 90%;
-  font-family: 'Press Start 2P', monospace;
 }
 
-/* Campo de entrada para o nome do jogador */
 #player-name {
   padding: 10px;
   font-size: 14px;
@@ -177,32 +175,30 @@ button:focus {
   border: 2px solid #00ffcc;
   background-color: #000;
   color: #00ffcc;
-  font-family: 'Press Start 2P', monospace;
 }
 
-/* Área que contém o ranking */
+/* ---------- Ranking ---------- */
+
 #ranking-container {
   margin-top: 20px;
   display: none;
   width: 90%;
 }
 
-/* Lista de jogadores */
 #ranking-list {
   list-style: none;
   padding: 0;
   margin-top: 10px;
 }
 
-/* Cada entrada no ranking */
 #ranking-list li {
   margin: 5px 0;
-  font-family: 'Press Start 2P', monospace;
   color: #ffff00;
   text-shadow: 0 0 5px #ff0;
 }
 
-/* Texto de celebração ao eliminar linhas */
+/* ---------- Texto de Celebração ---------- */
+
 #celebracao {
   position: absolute;
   top: 50%;
@@ -213,49 +209,114 @@ button:focus {
   display: none;
   z-index: 1000;
   text-shadow: 0 0 10px #ffcc00;
-  font-family: 'Press Start 2P', monospace;
 }
 
-/* Estilo especial para COMBO! */
+/* ---------- Efeitos de Combos ---------- */
+
 .combo {
   font-size: 40px;
   color: #ff3366;
   text-shadow: 0 0 12px #ff3366, 0 0 20px #ffffff;
-  transform: translate(-50%, -50%) scale(1.5);
+  transform: scale(1.5);
   animation: pulsarCombo 1s ease-out forwards;
 }
 
-/* Animação para pontuação COMBO! */
-@keyframes pulsarCombo {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.8);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -120%) scale(1.2);
-  }
+.combo2 {
+  font-size: 42px;
+  color: #66ff66;
+  text-shadow: 0 0 14px #66ff66;
+  animation: pulsarCombo 1.2s ease-out forwards;
 }
 
-/* Efeito de flash ao eliminar linhas */
+.combo-final {
+  font-size: 48px;
+  color: #ffcc00;
+  text-shadow: 0 0 18px #ffcc00, 0 0 28px #ff3366;
+  animation: pulsarCombo 1.4s ease-out forwards;
+}
+
+/* Animação pulsante de combo */
+@keyframes pulsarCombo {
+  0%   { opacity: 0; transform: scale(1); }
+  50%  { opacity: 1; transform: scale(1.8); }
+  100% { opacity: 0; transform: scale(1.2) translateY(-40px); }
+}
+
+/* ---------- Efeito de Flash ---------- */
+
 .flash {
   animation: flashTabuleiro 0.3s ease-in-out;
 }
 
 @keyframes flashTabuleiro {
-  0% {
-    box-shadow: 0 0 15px #00ffcc;
-  }
-  100% {
-    box-shadow: none;
-  }
+  0%   { box-shadow: 0 0 15px #00ffcc; }
+  100% { box-shadow: none; }
 }
 
-/* Estilo adaptado para ecrãs pequenos */
+/* ---------- Efeito de Vibração ---------- */
+
+.vibrar {
+  animation: vibrarTabuleiro 0.2s linear 2;
+}
+
+@keyframes vibrarTabuleiro {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-4px); }
+  50%  { transform: translateX(4px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+/* ---------- Menu de Opções ---------- */
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(20, 0, 40, 0.95);
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px solid #00ffcc;
+  box-shadow: 0 0 20px #00ffcc;
+  color: #fff;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 14px;
+  width: 80%;
+  max-width: 400px;
+}
+
+.modal h2 {
+  margin-top: 0;
+  font-size: 16px;
+  text-align: center;
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+/* Etiquetas das opções */
+.modal label {
+  display: block;
+  text-align: left;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+/* Caixa de selecção (checkbox) */
+.modal input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Elementos escondidos com esta classe ficam invisíveis */
+.escondido {
+  display: none !important;
+}
+
+/* Responsive */
 @media (max-width: 600px) {
   #info {
     flex-direction: column;
@@ -267,12 +328,14 @@ button:focus {
     align-items: center;
   }
 
-  button {
+  button,
+  .botao-menu {
     width: 90%;
     font-size: 12px;
   }
 
-  #modal-content {
+  #modal-content,
+  .modal {
     width: 90%;
   }
 
@@ -287,5 +350,20 @@ button:focus {
 
   #celebracao {
     font-size: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .flash,
+  .vibrar,
+  .combo,
+  .combo2,
+  .combo-final {
+    animation: none !important;
   }
 }
