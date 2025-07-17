@@ -21,22 +21,13 @@ export const pecasDisponiveis = [
   [[0, 0, 7], [7, 7, 7]]               // J
 ];
 
-/**
- * Gera uma peça aleatória com base na lista disponível
- * @returns {Array<Array<number>>} matriz da peça
- */
+// Gera uma peça aleatória
 export function gerarPecaAleatoria() {
   const aleatoria = Math.floor(Math.random() * pecasDisponiveis.length);
   return pecasDisponiveis[aleatoria];
 }
 
-/**
- * Verifica se uma peça colide com o tabuleiro ou com os limites
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Array<Array<number>>} peca - matriz da peça
- * @param {Object} posicao - posição x e y da peça
- * @returns {boolean} - true se houver colisão
- */
+// Verifica colisão entre peça e tabuleiro/limites
 export function verificarColisao(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -58,12 +49,7 @@ export function verificarColisao(tabuleiro, peca, posicao) {
   return false;
 }
 
-/**
- * Fixa a peça no tabuleiro após colisão
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Array<Array<number>>} peca - matriz da peça
- * @param {Object} posicao - posição x e y da peça
- */
+// Fixa a peça no tabuleiro após colisão
 export function fixarPeca(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
@@ -79,11 +65,7 @@ export function fixarPeca(tabuleiro, peca, posicao) {
   }
 }
 
-/**
- * Elimina linhas completas do tabuleiro
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @returns {number} - número de linhas eliminadas
- */
+// Elimina linhas completas
 export function eliminarLinhas(tabuleiro) {
   let linhasEliminadas = 0;
 
@@ -99,11 +81,7 @@ export function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
-/**
- * Desenha a próxima peça no canvas de preview
- * @param {CanvasRenderingContext2D} ctx - contexto do canvas
- * @param {Array<Array<number>>} peca - matriz da peça
- */
+// Desenha a próxima peça no canvas lateral
 export function desenharProxima(ctx, peca) {
   const bloco = 20;
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -120,20 +98,11 @@ export function desenharProxima(ctx, peca) {
   }
 }
 
-/**
- * Desenha o estado actual do tabuleiro e a peça em movimento
- * @param {CanvasRenderingContext2D} ctx - contexto do tabuleiro
- * @param {number} width - largura do canvas
- * @param {number} height - altura do canvas
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Array<Array<number>>} pecaAtual - matriz da peça atual
- * @param {Object} posicao - posição x e y da peça atual
- */
+// Desenha o estado atual do tabuleiro e da peça em movimento
 export function desenharJogo(ctx, width, height, tabuleiro, pecaAtual, posicao) {
   const bloco = 20;
   ctx.clearRect(0, 0, width, height);
 
-  // Desenha o tabuleiro
   for (let y = 0; y < tabuleiro.length; y++) {
     for (let x = 0; x < tabuleiro[y].length; x++) {
       if (tabuleiro[y][x]) {
@@ -145,7 +114,6 @@ export function desenharJogo(ctx, width, height, tabuleiro, pecaAtual, posicao) 
     }
   }
 
-  // Desenha a peça actual em movimento
   for (let y = 0; y < pecaAtual.length; y++) {
     for (let x = 0; x < pecaAtual[y].length; x++) {
       if (pecaAtual[y][x]) {
@@ -157,5 +125,62 @@ export function desenharJogo(ctx, width, height, tabuleiro, pecaAtual, posicao) 
         ctx.strokeRect(px * bloco, py * bloco, bloco, bloco);
       }
     }
+  }
+}
+
+// Acessibilidade e menu de opções
+function carregarDefinicoesAcessibilidade() {
+  const padrao = {
+    flash: true,
+    vibracao: true,
+    animacoes: true,
+    sonsAgudos: true,
+    somGeral: true
+  };
+  const guardado = localStorage.getItem('acessibilidade');
+  return guardado ? JSON.parse(guardado) : padrao;
+}
+
+function guardarDefinicoesAcessibilidade() {
+  const definicoes = {
+    flash: document.getElementById('toggle-flash').checked,
+    vibracao: document.getElementById('toggle-vibracao').checked,
+    animacoes: document.getElementById('toggle-animacoes').checked,
+    sonsAgudos: document.getElementById('toggle-sonos-agudos').checked,
+    somGeral: document.getElementById('toggle-som').checked
+  };
+  localStorage.setItem('acessibilidade', JSON.stringify(definicoes));
+}
+
+// Abertura e fecho do menu
+document.getElementById('btn-opcoes').onclick = () => {
+  const config = carregarDefinicoesAcessibilidade();
+  document.getElementById('toggle-flash').checked = config.flash;
+  document.getElementById('toggle-vibracao').checked = config.vibracao;
+  document.getElementById('toggle-animacoes').checked = config.animacoes;
+  document.getElementById('toggle-sonos-agudos').checked = config.sonsAgudos;
+  document.getElementById('toggle-som').checked = config.somGeral;
+  document.getElementById('menu-opcoes').classList.remove('escondido');
+};
+
+document.getElementById('fechar-opcoes').onclick = () => {
+  guardarDefinicoesAcessibilidade();
+  document.getElementById('menu-opcoes').classList.add('escondido');
+};
+
+// Uso das definições no jogo
+export function aplicarEfeitosTabuleiro() {
+  const config = carregarDefinicoesAcessibilidade();
+
+  if (config.vibracao) {
+    const tabuleiro = document.getElementById('board');
+    tabuleiro.classList.add('vibrar');
+    setTimeout(() => tabuleiro.classList.remove('vibrar'), 300);
+  }
+
+  if (config.flash) {
+    const tabuleiro = document.getElementById('board');
+    tabuleiro.classList.add('flash');
+    setTimeout(() => tabuleiro.classList.remove('flash'), 300);
   }
 }
