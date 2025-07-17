@@ -75,7 +75,16 @@ h1 {
   box-shadow: 0 0 10px #00ffff;
 }
 
-/* Estilo dos botões principais */
+/* Agrupamento dos botões principais */
+.botoes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Estilo uniforme para todos os botões */
 button {
   margin: 8px;
   padding: 12px 24px;
@@ -121,7 +130,6 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
   border-radius: 6px;
-  font-size: clamp(10px, 1.5vw, 14px);
   font-family: 'Press Start 2P', monospace;
   display: inline-block;
 }
@@ -200,14 +208,7 @@ button:hover {
   text-shadow: 0 0 5px #ff0;
 }
 
-/* Botão para alternar o som */
-#toggle-sound {
-  margin-top: 10px;
-  font-size: 16px;
-  font-family: 'Press Start 2P', monospace;
-}
-
-/* Texto de celebração ao eliminar linhas */
+/* Texto de celebração */
 #celebracao {
   position: absolute;
   top: 50%;
@@ -220,8 +221,6 @@ button:hover {
   text-shadow: 0 0 10px #ffcc00;
   font-family: 'Press Start 2P', monospace;
 }
-
-/* Animação de subida para o texto de celebração */
 @keyframes subirCelebracao {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -250,6 +249,11 @@ button:hover {
 /* Estilo adaptado para ecrãs pequenos */
 @media (max-width: 600px) {
   #info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .botoes {
     flex-direction: column;
     align-items: center;
   }
