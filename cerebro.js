@@ -1,12 +1,14 @@
 // cerebro.js — o CPU do jogo
-import { COLUNAS, LINHAS } from './motor.js';
-import { desenharJogo, desenharProxima } from './canvas.js';
 import {
-  tocarSomRodar,
-  tocarSomColidir,
-  tocarSomPerdeu,
-  iniciarMusicaFundo,
-  pararMusicaFundo
+  COLUNAS, LINHAS, criarMatriz, rodar, verificarColisao, fundirPeca, gerarPeca
+} from './motor.js';
+import {
+  desenharJogo, desenharProxima, atualizarPontuacao,
+  mostrarModalFim, guardarPontuacao, carregarRankingGuardado
+} from './canvas.js';
+import {
+  tocarSomRodar, tocarSomColidir, tocarSomPerdeu,
+  iniciarMusicaFundo, pararMusicaFundo
 } from './audio.js';
 
 // Canvas e contexto
@@ -15,179 +17,108 @@ const nextCanvas = document.getElementById('next');
 const boardCtx = boardCanvas.getContext('2d');
 const nextCtx = nextCanvas.getContext('2d');
 
-// Dimensões do tabuleiro e da peça seguinte
-const tamanhoBloco = 20;
-boardCanvas.width = COLUNAS * tamanhoBloco;
-boardCanvas.height = LINHAS * tamanhoBloco;
-nextCanvas.width = 80;
-nextCanvas.height = 80;
+// Dimensões
+boardCanvas.width = COLUNAS * 24;
+boardCanvas.height = LINHAS * 24;
 
 // Estado do jogo
-let tabuleiro = criarTabuleiroVazio();
-let pecaAtual = gerarPecaAleatoria();
-let proximaPeca = gerarPecaAleatoria();
+let tabuleiro = criarMatriz(COLUNAS, LINHAS);
+let pecaAtual = gerarPeca();
+let proximaPeca = gerarPeca();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
+let pontuacao = 0;
+let nivel = 1;
 
-// Funções auxiliares
-function criarTabuleiroVazio() {
-  return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
-}
-
-function gerarPecaAleatoria() {
-  const pecas = [
-    [[1, 1], [1, 1]],                  // O
-    [[0, 2, 0], [2, 2, 2]],            // T
-    [[3, 3, 0], [0, 3, 3]],            // S
-    [[0, 4, 4], [4, 4, 0]],            // Z
-    [[5, 5, 5, 5]],                    // I
-    [[6, 0, 0], [6, 6, 6]],            // L
-    [[0, 0, 7], [7, 7, 7]]             // J
-  ];
-  return pecas[Math.floor(Math.random() * pecas.length)];
-}
-
+// Funções principais
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
 function atualizar() {
-  const novaY = posicao.y + 1;
-  if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
-    posicao.y = novaY;
-  } else {
-    fixarPeca(tabuleiro, pecaAtual, posicao);
+  posicao.y++;
+
+  if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
+    posicao.y--;
+    fundirPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
-    pecaAtual = proximaPeca;
-    proximaPeca = gerarPecaAleatoria();
+
+    // Simulação de cálculo de pontos (podes ajustar)
+    pontuacao += 100 * nivel;
+    atualizarPontuacao(pontuacao, nivel);
+
+    [pecaAtual, proximaPeca] = [proximaPeca, gerarPeca()];
     posicao = { x: 3, y: 0 };
-    if (colisao(tabuleiro, pecaAtual, posicao)) {
+
+    if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
       tocarSomPerdeu();
       clearInterval(intervalo);
-      intervalo = null;
-      alert("💥 Fim de jogo!");
+      mostrarModalFim(pontuacao);
     }
   }
+
   desenhar();
 }
-function colisao(tab, peca, pos) {
-  for (let y = 0; y < peca.length; y++) {
-    for (let x = 0; x < peca[y].length; x++) {
-      if (peca[y][x]) {
-        const novoX = pos.x + x;
-        const novoY = pos.y + y;
-        if (
-          novoX < 0 || novoX >= COLUNAS ||
-          novoY >= LINHAS || (novoY >= 0 && tab[novoY]?.[novoX])
-        ) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-}
-function fixarPeca(tab, peca, pos) {
-  for (let y = 0; y < peca.length; y++) {
-    for (let x = 0; x < peca[y].length; x++) {
-      if (peca[y][x]) {
-        const px = pos.x + x;
-        const py = pos.y + y;
-        if (py >= 0 && py < LINHAS && px >= 0 && px < COLUNAS) {
-          tab[py][px] = peca[y][x];
-        }
-      }
-    }
-  }
-}
-function rodarMatriz(matriz) {
-  const altura = matriz.length;
-  const largura = matriz[0].length;
-  const nova = [];
-  for (let x = 0; x < largura; x++) {
-    nova[x] = [];
-    for (let y = altura - 1; y >= 0; y--) {
-      nova[x].push(matriz[y][x]);
-    }
-  }
-  return nova;
-}
 
-// Botão Iniciar
-document.getElementById('startBtn').addEventListener('click', () => {
-  if (!intervalo) {
-    intervalo = setInterval(atualizar, 600);
-    iniciarMusicaFundo();
-  }
-});
-
-// Botão Pausar
-document.getElementById('pauseBtn').addEventListener('click', () => {
-  clearInterval(intervalo);
-  intervalo = null;
-  pararMusicaFundo();
-});
-
-// Botão Reiniciar
-document.getElementById('resetBtn').addEventListener('click', () => {
-  clearInterval(intervalo);
-  intervalo = null;
-  tabuleiro = criarTabuleiroVazio();
-  pecaAtual = gerarPecaAleatoria();
-  proximaPeca = gerarPecaAleatoria();
-  posicao = { x: 3, y: 0 };
-  desenhar();
-});
-
-// Botão do Som
-document.getElementById('toggle-sound').addEventListener('click', () => {
-  const audio = document.getElementById('musica-fundo');
-  const botao = document.getElementById('toggle-sound');
-  if (!audio) return;
-
-  if (audio.paused) {
-    audio.play();
-    botao.textContent = '🔊 Som ligado';
-  } else {
-    audio.pause();
-    botao.textContent = '🔇 Som desligado';
-  }
-});
-
-// Controlo por Teclado
-document.addEventListener('keydown', (e) => {
+// Controlo por teclado
+document.addEventListener('keydown', e => {
   if (!intervalo) return;
+  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) e.preventDefault();
 
-  if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-    e.preventDefault();
-  }
-  if (e.key === 'ArrowLeft') {
-    const novaX = posicao.x - 1;
-    if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
-      posicao.x = novaX;
-    }
-  }
-  if (e.key === 'ArrowRight') {
-    const novaX = posicao.x + 1;
-    if (!colisao(tabuleiro, pecaAtual, { x: novaX, y: posicao.y })) {
-      posicao.x = novaX;
-    }
-  }
-  if (e.key === 'ArrowDown') {
-    const novaY = posicao.y + 1;
-    if (!colisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
-      posicao.y = novaY;
-    }
-  }
+  const { x, y } = posicao;
+  if (e.key === 'ArrowLeft' && !verificarColisao(tabuleiro, pecaAtual, { x: x - 1, y })) posicao.x--;
+  if (e.key === 'ArrowRight' && !verificarColisao(tabuleiro, pecaAtual, { x: x + 1, y })) posicao.x++;
+  if (e.key === 'ArrowDown' && !verificarColisao(tabuleiro, pecaAtual, { x, y: y + 1 })) posicao.y++;
   if (e.key === 'ArrowUp') {
-    const rodada = rodarMatriz(pecaAtual);
-    if (!colisao(tabuleiro, rodada, posicao)) {
+    const rodada = rodar(pecaAtual, 1);
+    if (!verificarColisao(tabuleiro, rodada, posicao)) {
       pecaAtual = rodada;
       tocarSomRodar();
     }
   }
+
   desenhar();
 });
-// Render inicial
+
+// Botões
+document.getElementById('startBtn').onclick = () => {
+  if (!intervalo) {
+    intervalo = setInterval(atualizar, 600);
+    iniciarMusicaFundo();
+  }
+};
+
+document.getElementById('pauseBtn').onclick = () => {
+  clearInterval(intervalo);
+  intervalo = null;
+  pararMusicaFundo();
+};
+
+document.getElementById('resetBtn').onclick = () => {
+  clearInterval(intervalo);
+  intervalo = null;
+  tabuleiro = criarMatriz(COLUNAS, LINHAS);
+  [pecaAtual, proximaPeca] = [gerarPeca(), gerarPeca()];
+  posicao = { x: 3, y: 0 };
+  pontuacao = 0;
+  nivel = 1;
+  atualizarPontuacao(pontuacao, nivel);
+  desenhar();
+};
+
+document.getElementById('toggle-sound').onclick = () => {
+  const audio = document.getElementById('musica-fundo');
+  const btn = document.getElementById('toggle-sound');
+  audio.paused ? audio.play() : audio.pause();
+  btn.textContent = audio.paused ? '🔇 Som desligado' : '🔊 Som ligado';
+  btn.classList.toggle('active', !audio.paused);
+};
+
+// Modal e pontuação
+document.getElementById('confirmSave').onclick = () => guardarPontuacao(pontuacao);
+document.getElementById('cancelSave').onclick = () => document.getElementById('modal').classList.remove('show');
+
+// Início
+carregarRankingGuardado();
 desenhar();
