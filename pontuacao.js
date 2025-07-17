@@ -1,24 +1,22 @@
-// Estado interno da pontuação
+// Estado interno do jogo
 let pontuacao = 0;
 let nivel = 1;
 let comboAtivo = false;
 
 /**
- * Processa a pontuação com base nas linhas eliminadas
- * @param {number} linhasFeitas - número de linhas removidas após fixar a peça
- * @returns {{pontuacao: number, nivel: number}} - pontuação total e nível atual
+ * Processa a pontuação consoante número de linhas eliminadas
+ * @param {number} linhasFeitas - número de linhas removidas após fixação da peça
+ * @returns {{pontuacao: number, nivel: number}} - pontuação atual e nível
  */
 export function processarLinhas(linhasFeitas) {
   let pontosGanhos = 0;
 
-  // Pontuação consoante o número de linhas
   if (linhasFeitas >= 1) {
     if (linhasFeitas === 1) pontosGanhos = 100;
     else if (linhasFeitas === 2) pontosGanhos = 200;
     else if (linhasFeitas === 3) pontosGanhos = 300;
     else pontosGanhos = linhasFeitas * 100;
 
-    // Se já houve uma linha antes, ativa combo visual
     if (linhasFeitas >= 2 && comboAtivo) {
       mostrarCelebracao("Combo!");
     } else {
@@ -30,7 +28,6 @@ export function processarLinhas(linhasFeitas) {
     comboAtivo = false;
   }
 
-  // Acumula pontuação e atualiza nível
   pontuacao += pontosGanhos;
   nivel = 1 + Math.floor(pontuacao / 500);
 
@@ -40,7 +37,7 @@ export function processarLinhas(linhasFeitas) {
 }
 
 /**
- * Reinicia a pontuação e o estado do jogo
+ * Reinicia a pontuação e o estado de combo
  */
 export function reiniciarPontuacao() {
   pontuacao = 0;
@@ -50,8 +47,8 @@ export function reiniciarPontuacao() {
 }
 
 /**
- * Mostra mensagem de celebração animada no topo do ecrã
- * @param {string} texto - mensagem a apresentar (ex. "Linha!", "Combo!")
+ * Mostra uma mensagem visual animada no topo do ecrã
+ * @param {string} texto - mensagem a apresentar ("Linha!" ou "Combo!")
  */
 function mostrarCelebracao(texto) {
   const el = document.getElementById("celebracao");
@@ -69,13 +66,60 @@ function mostrarCelebracao(texto) {
 }
 
 /**
- * Atualiza os valores da pontuação e do nível no interface
- * @param {number} pontos - valor atual de pontos
- * @param {number} nivelAtual - valor atual do nível
+ * Atualiza os elementos visuais de pontuação e nível
+ * @param {number} pontos - pontuação atual
+ * @param {number} nivelAtual - nível atual
  */
 function atualizarPontuacao(pontos, nivelAtual) {
   const elPontos = document.getElementById("score");
   const elNivel = document.getElementById("level");
   if (elPontos) elPontos.textContent = pontos;
   if (elNivel) elNivel.textContent = nivelAtual;
+}
+
+/**
+ * Guarda pontuação no localStorage e atualiza o ranking visual
+ * @param {number} pontuacaoFinal - pontuação a guardar
+ */
+export function guardarPontuacao(pontuacaoFinal) {
+  const nome = document.getElementById("player-name").value.trim();
+  if (!nome) {
+    alert("Por favor, insere o teu nome.");
+    return;
+  }
+
+  const agora = new Date();
+  const data = agora.toLocaleDateString("pt-PT", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
+
+  const novoJogador = {
+    name: nome,
+    score: pontuacaoFinal,
+    date: data
+  };
+
+  const lista = JSON.parse(localStorage.getItem("scores") || "[]");
+  lista.push(novoJogador);
+  lista.sort((a, b) => b.score - a.score);
+  lista.splice(10); // mantém os 10 melhores
+  localStorage.setItem("scores", JSON.stringify(lista));
+
+  atualizarRanking(lista);
+  document.getElementById("modal")?.classList.remove("show");
+}
+
+/**
+ * Atualiza a lista visual de ranking no elemento HTML
+ * @param {Array<{name: string, score: number, date: string}>} lista
+ */
+function atualizarRanking(lista) {
+  const ul = document.getElementById("ranking-list");
+  if (!ul) return;
+
+  ul.innerHTML = lista.map((jogador, i) =>
+    `<li>${i + 1}. ${jogador.name} - ${jogador.score} pts (${jogador.date})</li>`
+  ).join("");
 }
