@@ -1,24 +1,27 @@
-// Constantes do tabuleiro
+// Dimensões do tabuleiro de jogo
 export const COLUNAS = 10;
 export const LINHAS = 20;
 
 /**
- * Verifica se há colisão entre a peça e o tabuleiro na posição dada
- * @param {number[][]} tabuleiro
- * @param {number[][]} peca
- * @param {{x: number, y: number}} posicao
- * @returns {boolean}
+ * Verifica se uma peça colide com o tabuleiro ou com os limites
+ * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
+ * @param {Array<Array<number>>} peca - matriz da peça
+ * @param {Object} posicao - posição x e y da peça
+ * @returns {boolean} - true se houver colisão
  */
 export function verificarColisao(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
       if (peca[y][x]) {
-        const novoX = posicao.x + x;
-        const novoY = posicao.y + y;
+        const px = posicao.x + x;
+        const py = posicao.y + y;
+
+        // Verifica se está fora dos limites ou sobre uma célula ocupada
         if (
-          novoX < 0 || novoX >= COLUNAS ||
-          novoY >= LINHAS ||
-          (novoY >= 0 && tabuleiro[novoY]?.[novoX])
+          px < 0 ||
+          px >= COLUNAS ||
+          py >= LINHAS ||
+          (py >= 0 && tabuleiro[py][px])
         ) {
           return true;
         }
@@ -29,24 +32,42 @@ export function verificarColisao(tabuleiro, peca, posicao) {
 }
 
 /**
- * Roda uma matriz no sentido horário (+1) ou anti-horário (-1)
- * @param {number[][]} peca
- * @param {number} direcao
- * @returns {number[][]}
+ * Fixa a peça no tabuleiro após colisão
+ * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
+ * @param {Array<Array<number>>} peca - matriz da peça
+ * @param {Object} posicao - posição x e y da peça
  */
-export function rodar(peca, direcao = 1) {
-  const altura = peca.length;
-  const largura = peca[0].length;
-  const matriz = [];
+export function fixarPeca(tabuleiro, peca, posicao) {
+  for (let y = 0; y < peca.length; y++) {
+    for (let x = 0; x < peca[y].length; x++) {
+      if (peca[y][x]) {
+        const px = posicao.x + x;
+        const py = posicao.y + y;
 
-  for (let x = 0; x < largura; x++) {
-    matriz[x] = [];
-    for (let y = 0; y < altura; y++) {
-      matriz[x][y] = direcao > 0
-        ? peca[altura - 1 - y][x]     // horário
-        : peca[y][largura - 1 - x];  // anti-horário
+        if (py >= 0 && py < LINHAS && px >= 0 && px < COLUNAS) {
+          tabuleiro[py][px] = peca[y][x];
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Elimina linhas completas do tabuleiro
+ * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
+ * @returns {number} - número de linhas eliminadas
+ */
+export function eliminarLinhas(tabuleiro) {
+  let linhasEliminadas = 0;
+
+  for (let y = tabuleiro.length - 1; y >= 0; y--) {
+    if (tabuleiro[y].every(valor => valor !== 0)) {
+      tabuleiro.splice(y, 1); // Remove a linha completa
+      tabuleiro.unshift(Array(COLUNAS).fill(0)); // Adiciona linha vazia no topo
+      linhasEliminadas++;
+      y++;
     }
   }
 
-  return matriz;
+  return linhasEliminadas;
 }
