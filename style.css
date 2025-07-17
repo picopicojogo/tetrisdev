@@ -1,173 +1,142 @@
-/* Reset global */
-html, body {
+/* Define comportamento de caixa para todos os elementos */
+* {
+  box-sizing: border-box;
+}
+
+/* Estilos base para o corpo da página */
+body {
   margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
   font-family: 'Fredoka', sans-serif;
-  background: url('capadojogo.png') no-repeat center center fixed;
-  background-size: cover;
+  background: #121212;
+  color: #eeeeee;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-/* Wrapper principal */
+/* Limita largura máxima do conteúdo e centraliza */
 #wrapper {
-  width: 100%;
-  padding: 1rem;
-  box-sizing: border-box;
+  max-width: 1200px;
+  width: 95%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
 }
 
-/* Área de jogo */
+/* Estrutura principal do jogo */
 #game-container {
-  width: 90vw;
-  max-width: 420px;
-  background-color: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 0 24px rgba(0, 0, 0, 0.2);
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 2vh;
 }
 
 /* Título do jogo */
 h1 {
-  margin-top: 0;
-  margin-bottom: 12px;
+  font-size: 2em;
+  margin: 0.5em 0;
   text-align: center;
-  font-size: 2rem;
-  color: #fa8231;
 }
 
-/* Informação do jogador */
+/* Secção com pontuação, nível e tempo */
 #info {
-  font-weight: bold;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
+  gap: 2em;
   flex-wrap: wrap;
-  margin-bottom: 12px;
-  color: #fa8231;
-  width: 100%;
-  font-size: 1rem;
+  font-size: 1.2em;
 }
 
-/* Próxima Peça */
+/* Pré-visualização da próxima peça */
 #preview-container {
-  background-color: rgba(255, 255, 255, 0.95);
-  border-radius: 10px;
-  padding: 8px;
-  margin-bottom: 10px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  max-width: 120px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .preview-title {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-bottom: 4px;
-  color: #fa8231;
+  font-size: 1em;
+  margin-bottom: 0.3em;
 }
 
-#next {
-  width: 80px;
-  height: 80px;
-  display: block;
-  margin: 0 auto;
-}
-
-/* Tabuleiro principal */
-#board {
-  background-color: #eee;
-  width: 100%;
-  max-width: 320px;
-  height: 240px; /* Altura mais compacta */
-  margin-bottom: 12px;
-  border: 4px solid #fa8231;
+/* Estilos para o canvas da próxima peça */
+canvas#next {
+  background: #222222;
+  border: 2px solid #555555;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Botões principais */
+/* Estilos para o canvas principal do tabuleiro */
+canvas#board {
+  background: #1a1a1a;
+  border: 2px solid #888888;
+  border-radius: 8px;
+  touch-action: none; /* Impede gestos automáticos em dispositivos tácteis */
+  max-width: 100%;
+}
+
+/* Secção dos botões principais */
 #controls {
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
-  width: 100%;
-  margin-bottom: 12px;
+  gap: 1em;
+  margin-top: 1vh;
 }
 
+/* Botões de controlo */
 #controls button {
-  flex: 1 1 45%;
-  padding: 10px;
-  font-weight: bold;
-  background-color: #fa8231;
-  color: white;
+  padding: 0.8em 1.2em;
+  font-size: 1em;
+  border-radius: 6px;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  box-shadow: 0 3px 0 #d35400;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+  background-color: #444444;
+  color: #ffffff;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 #controls button:hover {
-  background-color: #f39c12;
+  background-color: #666666;
 }
 
-#controls button:active {
-  transform: scale(0.98);
-  box-shadow: none;
+#controls button.active {
+  background-color: #0099cc;
 }
 
-/* Estado activo do botão de som */
-#toggle-sound.active {
-  background-color: #f7b731;
-}
-
-/* Ranking */
+/* Secção do ranking de jogadores */
 #ranking-container {
-  margin-top: 10px;
-  background-color: #fffbe7;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(250, 130, 49, 0.15);
-  width: 100%;
-  max-width: 320px;
-}
-
-#ranking-container h2 {
+  margin-top: 2vh;
   text-align: center;
-  margin-top: 0;
-  color: #fa8231;
+  width: 100%;
 }
 
-#ranking-list {
+#ranking-container ul {
   list-style: none;
   padding: 0;
-  margin: 0;
-  text-align: left;
-  font-size: 0.95rem;
+  margin: 0.5em 0;
 }
 
-/* Modal fim de jogo */
+#ranking-container li {
+  background-color: #333333;
+  margin: 0.4em auto;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  max-width: 90%;
+  font-size: 1em;
+}
+
+/* Estilos para o modal de fim de jogo */
 #modal {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
   display: none;
   justify-content: center;
   align-items: center;
@@ -178,23 +147,90 @@ h1 {
   display: flex;
 }
 
+/* Conteúdo do modal */
 #modal-content {
-  background-color: rgba(255,255,255,0.95);
-  backdrop-filter: blur(8px);
-  padding: 20px;
-  border-radius: 14px;
+  background: #222222;
+  padding: 2em;
+  border-radius: 8px;
   text-align: center;
+  max-width: 400px;
   width: 90%;
-  max-width: 320px;
-  box-shadow: 0 0 16px rgba(0,0,0,0.3);
 }
 
-/* Nome do jogador */
-#player-name {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #fa8231;
-  margin: 10px 0;
-  font-size: 1rem;
+#modal-content input {
+  width: 80%;
+  padding: 0.6em;
+  margin: 1em 0;
+  border-radius: 4px;
+  border: none;
+}
+
+#modal-content button {
+  padding: 0.6em 1em;
+  font-size: 1em;
+  border-radius: 4px;
+  border: none;
+  background-color: #444444;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* Elemento de celebração visual para combos */
+#celebracao {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2em;
+  font-weight: bold;
+  color: #00ffcc;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Adaptação para dispositivos móveis e tablets */
+@media (max-width: 768px) {
+  #info {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #controls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #controls button {
+    width: 90%;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  #modal-content {
+    padding: 1.2em;
+  }
+
+  #ranking-container li {
+    font-size: 0.9em;
+  }
+}
+
+/* Ajuste visual para ecrãs muito grandes (ex: 4K) */
+@media (min-width: 2560px) {
+  h1 {
+    font-size: 3em;
+  }
+
+  #controls button {
+    font-size: 1.4em;
+    padding: 1em 1.8em;
+  }
+
+  #ranking-container li {
+    font-size: 1.2em;
+  }
 }
