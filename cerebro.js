@@ -30,12 +30,12 @@ import {
   iniciarCronometro, pararCronometro, reiniciarCronometro
 } from './cronometro.js';
 
-// Referência rápida a elementos do DOM
+// Atalho para elementos por ID
 const $ = id => document.getElementById(id);
 const boardCtx = $('board').getContext('2d');
 const nextCtx = $('next').getContext('2d');
 
-// Definições do canvas
+// Dimensões dos canvas
 $('board').width = COLUNAS * 20;
 $('board').height = LINHAS * 20;
 $('next').width = 80;
@@ -52,13 +52,13 @@ let linhasTotais = 0;
 let intervaloTempo = 600;
 let config = carregarDefinicoesAcessibilidade();
 
-// Renderiza o tabuleiro e próxima peça
+// Desenha tabuleiro e próxima peça
 function desenhar() {
   desenharJogo(boardCtx, $('board').width, $('board').height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Função central de fim de jogo
+// Encerramento do jogo
 function terminarJogo() {
   tocarSomPerdeu();
   clearInterval(intervalo);
@@ -67,7 +67,7 @@ function terminarJogo() {
   $('modal').classList.add('show');
 }
 
-// Atualiza o estado do jogo
+// Atualiza lógica principal
 function atualizar() {
   posicao.y++;
 
@@ -114,7 +114,7 @@ function atualizar() {
   desenhar();
 }
 
-// Liga os controlos de teclado
+// Liga os controlos
 configurarControlos(
   dir => { moverPeca(dir, tabuleiro, pecaAtual, posicao); desenhar(); },
   () => { pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao); desenhar(); },
@@ -173,22 +173,26 @@ $('confirmSave').onclick = () => {
   $('player-name').value = '';
 };
 
+// Cancela modal
 $('cancelSave').onclick = () => {
   $('modal').classList.remove('show');
   $('player-name').value = '';
 };
 
+// Abre modal para guardar pontuação
 $('save-score-btn').onclick = () => {
   const nomeAnterior = localStorage.getItem('ultimoJogador');
   if (nomeAnterior) $('player-name').value = nomeAnterior;
   $('modal').classList.add('show');
 };
 
+// Alterna visualização do ranking
 $('top10Btn')?.addEventListener('click', () => {
   const r = $('ranking-container');
   r.style.display = r.style.display === 'none' || !r.style.display ? 'block' : 'none';
 });
 
+// Limpa ranking
 $('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
@@ -203,16 +207,30 @@ $('toggle-sound').onclick = () => {
   botao.textContent = audio.paused ? '🔇 Som desligado' : '🔊 Som ligado';
 };
 
-// Mostra/fecha menu de opções
+// Função para guardar preferências de acessibilidade
+function guardarDefinicoesAcessibilidade() {
+  const configNova = {
+    flash: $('toggle-flash')?.checked ?? true,
+    vibracao: $('toggle-vibracao')?.checked ?? true,
+    animacoes: $('toggle-animacoes')?.checked ?? true,
+    sonsAgudos: $('toggle-sonos-agudos')?.checked ?? true
+  };
+  localStorage.setItem('acessibilidade', JSON.stringify(configNova));
+  config = configNova;
+}
+
+// Abre menu de opções
 $('btn-opcoes')?.addEventListener('click', () => {
   $('menu-opcoes').classList.remove('escondido');
 });
 
+// Fecha e guarda as opções
 $('fechar-opcoes')?.addEventListener('click', () => {
+  guardarDefinicoesAcessibilidade();
   $('menu-opcoes').classList.add('escondido');
 });
 
-// Estado inicial ao carregar
+// Ao carregar a página
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   atualizarRankingVisual(ranking.sort((a, b) => b.pontuacao - a.pontuacao));
