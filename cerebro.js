@@ -30,11 +30,11 @@ import {
   carregarRankingGuardado
 } from './pontuacao.js';
 
-/* Inicializa os canvas */
+// Inicializa os canvas e elementos visuais
 const { ctxBoard, ctxNext, board, next } = configurarCanvas();
 const tempoEl = document.getElementById("time");
 
-/* Estado do jogo */
+// Estado do jogo
 let tabuleiro = criarMatriz(COLUNAS, LINHAS);
 let pecaAtual = gerarPeca();
 let proximaPeca = gerarPeca();
@@ -43,13 +43,9 @@ let intervalo = null;
 let tempoIntervalo = null;
 let segundos = 0;
 
-/* Desenha o estado atual */
-function desenhar() {
-  desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
-  desenharProxima(ctxNext, proximaPeca);
-}
-
-/* Ciclo principal do jogo */
+/**
+ * Atualiza o jogo após cada descida ou jogada
+ */
 function atualizar() {
   posicao.y++;
 
@@ -58,7 +54,7 @@ function atualizar() {
     fundirPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
 
-    const linhasFeitas = limparLinhas(tabuleiro); // devolve número de linhas
+    const linhasFeitas = limparLinhas(tabuleiro);
     processarLinhas(linhasFeitas);
 
     [pecaAtual, proximaPeca] = [proximaPeca, gerarPeca()];
@@ -68,7 +64,8 @@ function atualizar() {
       tocarSomPerdeu();
       clearInterval(intervalo);
       clearInterval(tempoIntervalo);
-      mostrarModalFim(processarLinhas(0).pontuacao);
+      const { pontuacao } = processarLinhas(0);
+      mostrarModalFim(pontuacao);
       return;
     }
   }
@@ -76,7 +73,17 @@ function atualizar() {
   desenhar();
 }
 
-/* Queda rápida da peça */
+/**
+ * Desenha estado atual no canvas
+ */
+function desenhar() {
+  desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
+  desenharProxima(ctxNext, proximaPeca);
+}
+
+/**
+ * Lançamento rápido da peça
+ */
 function quedaInstantanea() {
   while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
     posicao.y++;
@@ -84,7 +91,9 @@ function quedaInstantanea() {
   atualizar();
 }
 
-/* Pausar cronómetro e jogo */
+/**
+ * Pausar o jogo e música
+ */
 function pausarJogo() {
   clearInterval(intervalo);
   clearInterval(tempoIntervalo);
@@ -93,7 +102,9 @@ function pausarJogo() {
   pararMusicaFundo();
 }
 
-/* Iniciar cronómetro */
+/**
+ * Inicia cronómetro de tempo
+ */
 function iniciarTempo() {
   tempoIntervalo = setInterval(() => {
     segundos++;
@@ -101,7 +112,9 @@ function iniciarTempo() {
   }, 1000);
 }
 
-/* Botão: Iniciar */
+/**
+ * Botão: Iniciar
+ */
 document.getElementById('startBtn').onclick = () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -110,12 +123,16 @@ document.getElementById('startBtn').onclick = () => {
   }
 };
 
-/* Botão: Pausar */
+/**
+ * Botão: Pausar
+ */
 document.getElementById('pauseBtn').onclick = () => {
   pausarJogo();
 };
 
-/* Botão: Reiniciar */
+/**
+ * Botão: Reiniciar
+ */
 document.getElementById('resetBtn').onclick = () => {
   pausarJogo();
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
@@ -127,7 +144,9 @@ document.getElementById('resetBtn').onclick = () => {
   desenhar();
 };
 
-/* Botão: Alternar som de fundo */
+/**
+ * Botão: Alternar som
+ */
 document.getElementById('toggle-sound').onclick = () => {
   const audio = document.getElementById('musica-fundo');
   const btn = document.getElementById('toggle-sound');
@@ -144,16 +163,23 @@ document.getElementById('toggle-sound').onclick = () => {
   btn.classList.toggle('active', !audio.paused);
 };
 
-/* Botões: guardar e cancelar pontuação final */
+/**
+ * Botão: Guardar pontuação final
+ */
 document.getElementById('confirmSave').onclick = () => {
-  const dados = processarLinhas(0);
-  guardarPontuacao(dados.pontuacao);
+  const { pontuacao } = processarLinhas(0);
+  guardarPontuacao(pontuacao);
 };
 
+/**
+ * Botão: Cancelar modal
+ */
 document.getElementById('cancelSave').onclick = () =>
   document.getElementById('modal')?.classList.remove('show');
 
-/* Liga os controlos do utilizador */
+/**
+ * Liga os controlos do utilizador
+ */
 configurarControlos(
   direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
   dir => {
@@ -175,7 +201,7 @@ configurarControlos(
   pausarJogo
 );
 
-/* Estado inicial do jogo */
+// Estado inicial
 carregarRankingGuardado();
 atualizarTempo(tempoEl, segundos);
 desenhar();
