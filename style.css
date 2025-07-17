@@ -1,14 +1,15 @@
-/* Define comportamento de caixa para todos os elementos */
+/* Comportamento de caixa universal */
 * {
   box-sizing: border-box;
 }
 
-/* Estilos base para o corpo da página */
+/* Fundo do jogo com imagem arcade */
 body {
   margin: 0;
   font-family: 'Fredoka', sans-serif;
-  background: #121212;
-  color: #eeeeee;
+  background: url('capadojogo.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,37 +17,42 @@ body {
   padding: 20px;
 }
 
-/* Limita largura máxima do conteúdo e centraliza */
+/* Contorno máximo do jogo */
 #wrapper {
   max-width: 1200px;
-  width: 95%;
+  width: 100%;
   display: flex;
   justify-content: center;
 }
 
-/* Estrutura principal do jogo */
+/* Estrutura vertical do jogo */
 #game-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2vh;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2vh;
+  border-radius: 12px;
 }
 
-/* Título do jogo */
+/* Título principal */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
   text-align: center;
+  text-shadow: 2px 2px #000;
 }
 
-/* Secção com pontuação, nível e tempo */
+/* Informações de pontuação, nível e tempo */
 #info {
   display: flex;
   justify-content: space-around;
   gap: 2em;
   flex-wrap: wrap;
   font-size: 1.2em;
+  width: 100%;
 }
 
 /* Pré-visualização da próxima peça */
@@ -62,24 +68,25 @@ h1 {
   margin-bottom: 0.3em;
 }
 
-/* Estilos para o canvas da próxima peça */
+/* Canvas da peça seguinte */
 canvas#next {
-  background: #222222;
-  border: 2px solid #555555;
+  background: #222;
+  border: 2px solid #555;
   border-radius: 8px;
 }
 
-/* Estilos para o canvas principal do tabuleiro */
+/* Tabuleiro de jogo */
 canvas#board {
-  background: #1a1a1a;
-  border: 2px solid #888888;
+  background: #111;
+  border: 2px solid #888;
   border-radius: 8px;
-  touch-action: none; /* Impede gestos automáticos em dispositivos tácteis */
+  touch-action: none;
   max-width: 100%;
 }
 
-/* Secção dos botões principais */
-#controls {
+/* Botões de controlo */
+#controls,
+#touch-controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -87,56 +94,66 @@ canvas#board {
   margin-top: 1vh;
 }
 
-/* Botões de controlo */
-#controls button {
+#controls button,
+#touch-controls button {
   padding: 0.8em 1.2em;
   font-size: 1em;
   border-radius: 6px;
   border: none;
-  background-color: #444444;
-  color: #ffffff;
+  background-color: #ff0040;
+  color: white;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
-#controls button:hover {
-  background-color: #666666;
+#controls button:hover,
+#touch-controls button:hover {
+  background-color: #cc0033;
 }
 
 #controls button.active {
-  background-color: #0099cc;
+  background-color: #00ffcc;
+  color: #000;
 }
 
-/* Secção do ranking de jogadores */
+/* Ranking dos jogadores */
 #ranking-container {
   margin-top: 2vh;
   text-align: center;
   width: 100%;
 }
 
-#ranking-container ul {
-  list-style: none;
-  padding: 0;
-  margin: 0.5em 0;
+#ranking-container h2 {
+  margin-bottom: 0.5em;
+  font-size: 1.4em;
 }
 
-#ranking-container li {
-  background-color: #333333;
+#ranking-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#ranking-list li {
+  background-color: #222;
   margin: 0.4em auto;
   padding: 0.5em 1em;
   border-radius: 6px;
-  max-width: 90%;
+  max-width: 80%;
   font-size: 1em;
+  text-align: center;
+  border: 1px solid #555;
 }
 
-/* Estilos para o modal de fim de jogo */
+/* Modal de fim de jogo */
 #modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0,0,0,0.85);
   display: none;
   justify-content: center;
   align-items: center;
@@ -147,14 +164,15 @@ canvas#board {
   display: flex;
 }
 
-/* Conteúdo do modal */
 #modal-content {
-  background: #222222;
+  background: #111;
   padding: 2em;
-  border-radius: 8px;
+  border-radius: 12px;
   text-align: center;
   max-width: 400px;
   width: 90%;
+  color: white;
+  border: 2px solid #ff0040;
 }
 
 #modal-content input {
@@ -170,12 +188,12 @@ canvas#board {
   font-size: 1em;
   border-radius: 4px;
   border: none;
-  background-color: #444444;
-  color: #ffffff;
+  background-color: #ff0040;
+  color: white;
   cursor: pointer;
 }
 
-/* Elemento de celebração visual para combos */
+/* Celebração de combos */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -190,19 +208,21 @@ canvas#board {
   z-index: 999;
 }
 
-/* Adaptação para dispositivos móveis e tablets */
+/* Adaptação para dispositivos móveis */
 @media (max-width: 768px) {
   #info {
     flex-direction: column;
     align-items: center;
   }
 
-  #controls {
+  #controls,
+  #touch-controls {
     flex-direction: column;
     align-items: center;
   }
 
-  #controls button {
+  #controls button,
+  #touch-controls button {
     width: 90%;
   }
 
@@ -219,15 +239,16 @@ canvas#board {
   }
 }
 
-/* Ajuste visual para ecrãs muito grandes (ex: 4K) */
+/* Ajustes para ecrãs de alta resolução */
 @media (min-width: 2560px) {
   h1 {
     font-size: 3em;
   }
 
-  #controls button {
+  #controls button,
+  #touch-controls button {
     font-size: 1.4em;
-    padding: 1em 1.8em;
+    padding: 1em 2em;
   }
 
   #ranking-container li {
