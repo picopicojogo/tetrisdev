@@ -38,12 +38,12 @@ let pontuacao = 0;
 let nivel = 1;
 let totalLinhasEliminadas = 0;
 let intervaloTempo = 600;
+let comboContador = 0;
 
 // Cronómetro
 let segundos = 0;
 let cronometroID = null;
 
-// Funções do cronómetro
 function iniciarCronometro() {
   cronometroID = setInterval(() => {
     segundos++;
@@ -102,7 +102,22 @@ function eliminarLinhas(tabuleiro) {
   return linhasEliminadas;
 }
 
-// Atualiza o estado do jogo
+// Fixa a peça no tabuleiro
+function fixarPeca(tab, peca, pos) {
+  for (let y = 0; y < peca.length; y++) {
+    for (let x = 0; x < peca[y].length; x++) {
+      if (peca[y][x]) {
+        const px = pos.x + x;
+        const py = pos.y + y;
+        if (py >= 0 && py < LINHAS && px >= 0 && px < COLUNAS) {
+          tab[py][px] = peca[y][x];
+        }
+      }
+    }
+  }
+}
+
+// Actualiza o estado do jogo
 function atualizar() {
   const novaY = posicao.y + 1;
   if (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
@@ -117,15 +132,21 @@ function atualizar() {
       pontuacao += eliminadas * 100;
       totalLinhasEliminadas += eliminadas;
 
+      comboContador++;
+      const comboBonus = comboContador > 1 ? comboContador * 50 : 0;
+      pontuacao += comboBonus;
+
       boardCanvas.classList.add('flash');
       setTimeout(() => boardCanvas.classList.remove('flash'), 300);
 
       const celebracao = document.getElementById('celebracao');
+      celebracao.textContent = comboContador > 1 ? 'COMBO!' : 'LINHA!';
+      celebracao.className = comboContador > 1 ? 'combo' : '';
       celebracao.style.display = 'block';
-      celebracao.style.animation = 'subirCelebracao 1s ease-out forwards';
       setTimeout(() => {
         celebracao.style.display = 'none';
-        celebracao.style.animation = '';
+        celebracao.className = '';
+        celebracao.textContent = 'LINHA!';
       }, 1000);
 
       const novoNivel = Math.floor(totalLinhasEliminadas / 5) + 1;
@@ -136,6 +157,8 @@ function atualizar() {
         intervaloTempo = Math.max(150, intervaloTempo - 50);
         intervalo = setInterval(atualizar, intervaloTempo);
       }
+    } else {
+      comboContador = 0;
     }
 
     document.getElementById('score').textContent = pontuacao;
@@ -154,22 +177,7 @@ function atualizar() {
   desenhar();
 }
 
-// Fixa a peça no tabuleiro
-function fixarPeca(tab, peca, pos) {
-  for (let y = 0; y < peca.length; y++) {
-    for (let x = 0; x < peca[y].length; x++) {
-      if (peca[y][x]) {
-        const px = pos.x + x;
-        const py = pos.y + y;
-        if (py >= 0 && py < LINHAS && px >= 0 && px < COLUNAS) {
-          tab[py][px] = peca[y][x];
-        }
-      }
-    }
-  }
-}
-
-// Atualiza visualmente a lista de ranking
+// Actualiza visualmente a lista de ranking
 function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
   lista.innerHTML = '';
@@ -230,6 +238,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   nivel = 1;
   totalLinhasEliminadas = 0;
   intervaloTempo = 600;
+  comboContador = 0;
   document.getElementById('score').textContent = 0;
   document.getElementById('level').textContent = nivel;
   reiniciarCronometro();
@@ -265,25 +274,21 @@ document.getElementById('confirmSave').addEventListener('click', () => {
   }
 });
 
-// Botão para cancelar e fechar o modal sem guardar
 document.getElementById('cancelSave').addEventListener('click', () => {
   document.getElementById('modal').classList.remove('show');
   document.getElementById('player-name').value = '';
 });
 
-// Botão para mostrar/esconder o ranking
 document.getElementById('top10Btn')?.addEventListener('click', () => {
   const ranking = document.getElementById('ranking-container');
   ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
 });
 
-// Botão para limpar o ranking guardado
 document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-// Botão para alternar som de fundo
 document.getElementById('toggle-sound').addEventListener('click', () => {
   const audio = document.getElementById('musica-fundo');
   const botao = document.getElementById('toggle-sound');
@@ -306,4 +311,3 @@ window.addEventListener('DOMContentLoaded', () => {
   reiniciarCronometro();
   desenhar();
 });
-  
