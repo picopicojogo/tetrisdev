@@ -1,7 +1,7 @@
 export const COLUNAS = 10;
 export const LINHAS = 20;
 
-/* Cores das peças (por tipo) */
+/* Cores por tipo de peça */
 export const CORES = {
   1: '#00ffff', // I
   2: '#ff00ff', // T
@@ -12,29 +12,19 @@ export const CORES = {
   7: '#ffa500'  // L
 };
 
-/* Todas as peças disponíveis */
+/* Formatos das peças */
 const PECAS = [
-  // I
-  [[1, 1, 1, 1]],
-  // T
-  [[0, 2, 0], [2, 2, 2]],
-  // O
-  [[3, 3], [3, 3]],
-  // S
-  [[0, 4, 4], [4, 4, 0]],
-  // Z
-  [[5, 5, 0], [0, 5, 5]],
-  // J
-  [[6, 0, 0], [6, 6, 6]],
-  // L
-  [[0, 0, 7], [7, 7, 7]]
+  [[1, 1, 1, 1]],                    // I
+  [[0, 2, 0], [2, 2, 2]],            // T
+  [[3, 3], [3, 3]],                  // O
+  [[0, 4, 4], [4, 4, 0]],            // S
+  [[5, 5, 0], [0, 5, 5]],            // Z
+  [[6, 0, 0], [6, 6, 6]],            // J
+  [[0, 0, 7], [7, 7, 7]]             // L
 ];
 
 /**
- * Cria matriz do tabuleiro com todas as posições a zero
- * @param {number} largura
- * @param {number} altura
- * @returns {number[][]}
+ * Cria uma matriz vazia para o tabuleiro
  */
 export function criarMatriz(largura, altura) {
   return Array.from({ length: altura }, () => Array(largura).fill(0));
@@ -42,19 +32,14 @@ export function criarMatriz(largura, altura) {
 
 /**
  * Gera uma nova peça aleatória
- * @returns {number[][]}
  */
 export function gerarPeca() {
-  const id = Math.floor(Math.random() * PECAS.length);
-  return PECAS[id].map(row => [...row]);
+  const i = Math.floor(Math.random() * PECAS.length);
+  return PECAS[i].map(row => [...row]);
 }
 
 /**
- * Verifica se há colisão entre a peça e o tabuleiro
- * @param {number[][]} tabuleiro
- * @param {number[][]} peca
- * @param {{x: number, y: number}} posicao
- * @returns {boolean}
+ * Verifica se há colisão com limites ou peças fixas
  */
 export function verificarColisao(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
@@ -65,13 +50,8 @@ export function verificarColisao(tabuleiro, peca, posicao) {
       const tx = posicao.x + x;
       const ty = posicao.y + y;
 
-      if (tx < 0 || tx >= COLUNAS || ty >= LINHAS) {
-        return true;
-      }
-
-      if (ty >= 0 && tabuleiro[ty]?.[tx] !== 0) {
-        return true;
-      }
+      if (tx < 0 || tx >= COLUNAS || ty >= LINHAS) return true;
+      if (ty >= 0 && tabuleiro[ty]?.[tx] !== 0) return true;
     }
   }
   return false;
@@ -79,9 +59,6 @@ export function verificarColisao(tabuleiro, peca, posicao) {
 
 /**
  * Roda a peça no sentido indicado
- * @param {number[][]} peca
- * @param {number} direcao - +1 para horário, -1 para anti-horário
- * @returns {number[][]}
  */
 export function rodar(peca, direcao) {
   const matriz = peca.map((_, i) => peca.map(r => r[i]));
@@ -90,9 +67,9 @@ export function rodar(peca, direcao) {
 
 /**
  * Fundir peça fixa no tabuleiro
- * @param {number[][]} tabuleiro
- * @param {number[][]} peca
- * @param {{x: number, y: number}} posicao
+ * @param {number[][]} tabuleiro - estado atual do tabuleiro
+ * @param {number[][]} peca - matriz da peça ativa
+ * @param {{x: number, y: number}} posicao - posição de inserção da peça
  */
 export function fundirPeca(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
@@ -101,7 +78,7 @@ export function fundirPeca(tabuleiro, peca, posicao) {
       if (valor) {
         const tx = posicao.x + x;
         const ty = posicao.y + y;
-        if (ty >= 0 && ty < LINHAS && tx >= 0 && tx < COLUNAS) {
+        if (tx >= 0 && tx < COLUNAS && ty >= 0 && ty < LINHAS) {
           tabuleiro[ty][tx] = valor;
         }
       }
@@ -110,19 +87,20 @@ export function fundirPeca(tabuleiro, peca, posicao) {
 }
 
 /**
- * Remove linhas completas e devolve o número de linhas eliminadas
- * @param {number[][]} tabuleiro
- * @returns {number} número de linhas removidas
+ * Elimina linhas completas do tabuleiro
+ * @param {number[][]} tabuleiro - matriz do tabuleiro
+ * @returns {number} - número de linhas eliminadas
  */
 export function limparLinhas(tabuleiro) {
   let linhasRemovidas = 0;
 
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
-    if (tabuleiro[y].every(valor => valor !== 0)) {
-      tabuleiro.splice(y, 1);
-      tabuleiro.unshift(new Array(tabuleiro[0].length).fill(0));
+    const linhaCompleta = tabuleiro[y].every(valor => valor !== 0);
+    if (linhaCompleta) {
+      tabuleiro.splice(y, 1); // remove a linha
+      tabuleiro.unshift(new Array(COLUNAS).fill(0)); // adiciona linha vazia no topo
       linhasRemovidas++;
-      y++; // volta a verificar nova linha no mesmo índice
+      y++; // reposiciona para verificar nova linha após deslocamento
     }
   }
 
