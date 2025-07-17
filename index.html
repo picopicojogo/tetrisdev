@@ -14,7 +14,7 @@
 </head>
 <body>
   <h1>Pico-Pico Bricks</h1>
-  <!-- Área de jogo -->
+  <!-- Área principal do jogo -->
   <div id="jogo">
     <canvas id="board"></canvas>
     <div id="next-container">
@@ -22,7 +22,7 @@
       <canvas id="next"></canvas>
     </div>
   </div>
-  <!-- Informações do jogo -->
+  <!-- Informações do estado de jogo -->
   <div id="info">
     <div>Tempo: <span id="time">00:00</span></div>
     <div>Pontuação: <span id="score">0</span></div>
@@ -36,10 +36,9 @@
     <button id="save-score-btn" class="botao-menu"><span class="icone">💾</span> Guardar</button>
     <button id="top10Btn" class="botao-menu"><span class="icone">📊</span> Ver Ranking</button>
     <button id="clear-ranking-btn" class="botao-menu"><span class="icone">🗑️</span> Limpar Ranking</button>
-    <button id="toggle-sound" class="botao-menu"><span class="icone">🔈</span> Som ligado</button>
     <button id="btn-opcoes" class="botao-menu" title="Abrir definições"><span class="icone">⚙️</span> Opções</button>
   </div>
-  <!-- Ranking -->
+  <!-- Ranking visual -->
   <div id="ranking-container">
     <h2>Top 10</h2>
     <ul id="ranking-list"></ul>
@@ -57,20 +56,21 @@
       </div>
     </div>
   </div>
-  <!-- Celebração -->
+  <!-- Celebração central -->
   <div id="celebracao">LINHA!</div>
-  <!-- Menu de acessibilidade -->
+  <!-- Modal de Opções -->
   <div id="menu-opcoes" class="modal escondido">
-    <h2>🎮 Opções de Acessibilidade</h2>
-    <label><input type="checkbox" id="toggle-flash" checked> Flash</label><br>
-    <label><input type="checkbox" id="toggle-vibracao" checked> Vibração</label><br>
+    <h2>⚙️ Opções</h2>
+    <label><input type="checkbox" id="toggle-flash" checked> Efeitos visuais (flash)</label><br>
+    <label><input type="checkbox" id="toggle-vibracao" checked> Vibração do tabuleiro</label><br>
     <label><input type="checkbox" id="toggle-animacoes" checked> Animações intensas</label><br>
-    <label><input type="checkbox" id="toggle-sonos-agudos" checked> Sons agudos / explosivos</label><br>
-    <label><input type="checkbox" id="toggle-som" checked> Som ativado</label><br>
+    <label><input type="checkbox" id="toggle-sonos-agudos" checked> Sons agudos</label><br>
+    <!-- Botão de som dentro do menu -->
+    <button id="toggle-sound" class="botao-menu"><span class="icone">🔈</span> Som ligado</button>
     <button id="fechar-opcoes" class="botao-menu"><span class="icone">🔙</span> Fechar</button>
   </div>
-  <!-- Sons de jogo -->
-  <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
+  <!-- Sons do jogo -->
+  <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
   <audio id="som-colidir" src="colidir.mp3"></audio>
   <audio id="som-perdeu" src="perdeu.mp3"></audio>
   <audio id="som-pontos" src="pontos.mp3"></audio>
@@ -79,7 +79,7 @@
   <audio id="combo3" src="combo3.mp3"></audio>
   <audio id="combo-final" src="combo-final.mp3"></audio>
   <audio id="bonus" src="bonus.mp3"></audio>
-  <!-- Scripts -->
+  <!-- Lógica do jogo -->
   <script type="module" src="cerebro.js"></script>
 </body>
 </html>
