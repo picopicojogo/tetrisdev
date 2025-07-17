@@ -82,13 +82,13 @@ function gerarPecaAleatoria() {
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
 
-// Desenha o estado atual do jogo
+// Desenha o estado actual do jogo
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Elimina linhas completas
+// Elimina as linhas completas
 function eliminarLinhas(tabuleiro) {
   let linhasEliminadas = 0;
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
@@ -125,7 +125,6 @@ function atualizar() {
   } else {
     fixarPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
-    pontuacao += 10;
 
     const eliminadas = eliminarLinhas(tabuleiro);
     if (eliminadas > 0) {
@@ -177,7 +176,7 @@ function atualizar() {
   desenhar();
 }
 
-// Actualiza visualmente a lista de ranking
+// Atualiza visualmente a lista de ranking
 function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
   lista.innerHTML = '';
