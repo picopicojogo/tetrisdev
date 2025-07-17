@@ -3,10 +3,10 @@
   box-sizing: border-box;
 }
 
-/* Corpo da página com fundo arcade */
+/* Fonte arcade pixelizada */
 body {
   margin: 0;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Press Start 2P', cursive;
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
   color: #ffffff;
@@ -36,7 +36,6 @@ body {
   background: rgba(0, 0, 0, 0.75);
   padding: 2vh;
   border-radius: 12px;
-  min-height: 90vh;
 }
 
 /* Título principal */
@@ -53,7 +52,7 @@ h1 {
   justify-content: space-around;
   gap: 2em;
   flex-wrap: wrap;
-  font-size: 1.2em;
+  font-size: 0.8em;
   width: 100%;
 }
 
@@ -66,7 +65,7 @@ h1 {
 }
 
 .preview-title {
-  font-size: 1em;
+  font-size: 0.8em;
   margin-bottom: 0.3em;
 }
 
@@ -86,7 +85,7 @@ canvas#board {
   display: block;
   max-width: 100%;
   height: auto;
-  max-height: 80vh; /* aumenta a altura visível em ecrãs 1080p */
+  max-height: 65vh;
 }
 
 /* Botões principais */
@@ -100,7 +99,7 @@ canvas#board {
 
 #controls button {
   padding: 0.8em 1.2em;
-  font-size: 1em;
+  font-size: 0.7em;
   border-radius: 6px;
   border: none;
   background-color: #3d3d7f;
@@ -136,7 +135,7 @@ canvas#board {
 
 #ranking-container h2 {
   margin-bottom: 0.5em;
-  font-size: 1.4em;
+  font-size: 1em;
 }
 
 #ranking-list {
@@ -151,7 +150,7 @@ canvas#board {
   padding: 0.5em 1em;
   border-radius: 6px;
   max-width: 80%;
-  font-size: 1em;
+  font-size: 0.7em;
   text-align: center;
   border: 1px solid #555555;
 }
@@ -163,7 +162,7 @@ canvas#board {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   display: none;
   justify-content: center;
   align-items: center;
@@ -191,30 +190,33 @@ canvas#board {
   margin: 1em 0;
   border-radius: 4px;
   border: none;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6em;
 }
 
 #modal-content button {
   padding: 0.6em 1em;
-  font-size: 1em;
+  font-size: 0.7em;
   border-radius: 4px;
   border: none;
   background-color: #3d3d7f;
   color: #f4f4f4;
   cursor: pointer;
   font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
 }
 
 #modal-content button:hover {
   background-color: #5a5aac;
 }
 
-/* Celebração arcade no topo */
+/* Celebração arcade */
 #celebracao {
   position: fixed;
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 2em;
+  font-size: 1.2em;
   font-weight: bold;
   color: #00ffcc;
   opacity: 0;
@@ -223,7 +225,7 @@ canvas#board {
   z-index: 999;
 }
 
-/* Responsivo para dispositivos móveis */
+/* Responsividade para telemóveis */
 @media (max-width: 768px) {
   #info {
     flex-direction: column;
@@ -237,10 +239,11 @@ canvas#board {
 
   #controls button {
     width: 90%;
+    font-size: 0.6em;
   }
 
   h1 {
-    font-size: 1.5em;
+    font-size: 1.2em;
   }
 
   #modal-content {
@@ -248,30 +251,30 @@ canvas#board {
   }
 
   #ranking-list li {
-    font-size: 0.9em;
+    font-size: 0.6em;
   }
 
   canvas#board {
-    max-height: 60vh; /* altura moderada para ecrãs pequenos */
+    max-height: 50vh;
   }
 }
 
 /* Ajustes para ecrãs grandes (ex. 4K) */
 @media (min-width: 2560px) {
   h1 {
-    font-size: 3em;
+    font-size: 2.5em;
   }
 
   #controls button {
-    font-size: 1.4em;
+    font-size: 1em;
     padding: 1em 2em;
   }
 
   #ranking-list li {
-    font-size: 1.2em;
+    font-size: 1em;
   }
 
   canvas#board {
-    max-height: 75vh;
+    max-height: 70vh;
   }
 }
