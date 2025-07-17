@@ -82,13 +82,13 @@ function gerarPecaAleatoria() {
   return pecas[Math.floor(Math.random() * pecas.length)];
 }
 
-// Desenha o estado actual do jogo
+// Desenha o estado atual do jogo
 function desenhar() {
   desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Elimina as linhas completas
+// Elimina linhas completas
 function eliminarLinhas(tabuleiro) {
   let linhasEliminadas = 0;
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
@@ -120,13 +120,16 @@ function fixarPeca(tab, peca, pos) {
 // Actualiza o estado do jogo
 function atualizar() {
   const novaY = posicao.y + 1;
+
   if (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
     posicao.y = novaY;
   } else {
     fixarPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
 
+    // Só pontua se eliminar linhas
     const eliminadas = eliminarLinhas(tabuleiro);
+
     if (eliminadas > 0) {
       pontuacao += eliminadas * 100;
       totalLinhasEliminadas += eliminadas;
@@ -173,6 +176,7 @@ function atualizar() {
       document.getElementById('modal').classList.add('show');
     }
   }
+
   desenhar();
 }
 
@@ -235,11 +239,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   posicao = { x: 3, y: 0 };
   pontuacao = 0;
   nivel = 1;
-  totalLinhasEliminadas = 0;
-  intervaloTempo = 600;
-  comboContador = 0;
-  document.getElementById('score').textContent = 0;
-  document.getElementById('level').textContent = nivel;
+   document.getElementById('level').textContent = nivel;
   reiniciarCronometro();
   desenhar();
 });
