@@ -2,6 +2,33 @@
 import { COLUNAS, LINHAS, CORES } from "./motor.js";
 
 /**
+ * Inicializa os canvas e devolve os contextos e elementos configurados
+ * @returns {{
+ *   ctxBoard: CanvasRenderingContext2D,
+ *   ctxNext: CanvasRenderingContext2D,
+ *   board: HTMLCanvasElement,
+ *   next: HTMLCanvasElement
+ * }}
+ */
+export function configurarCanvas() {
+  const board = document.getElementById('board');
+  const next = document.getElementById('next');
+
+  // Dimensão otimizada para ecrã 1920x1080
+  const bloco = 36; // pixels por bloco
+  board.width = COLUNAS * bloco;
+  board.height = LINHAS * bloco;
+
+  next.width = 100;
+  next.height = 100;
+
+  const ctxBoard = board.getContext('2d');
+  const ctxNext = next.getContext('2d');
+
+  return { ctxBoard, ctxNext, board, next };
+}
+
+/**
  * Desenha o estado atual do tabuleiro e da peça em movimento
  * @param {CanvasRenderingContext2D} ctx
  * @param {number} largura
@@ -15,7 +42,6 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
   const larguraBloco = largura / COLUNAS;
   const alturaBloco = altura / LINHAS;
 
-  // Blocos fixos no tabuleiro
   for (let y = 0; y < LINHAS; y++) {
     for (let x = 0; x < COLUNAS; x++) {
       const valor = tabuleiro[y][x];
@@ -23,7 +49,6 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
     }
   }
 
-  // Peça atual em movimento
   for (let y = 0; y < peca.length; y++) {
     for (let x = 0; x < peca[y].length; x++) {
       const valor = peca[y][x];
@@ -39,7 +64,7 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
 }
 
 /**
- * Desenha a próxima peça no canvas lateral, centrada
+ * Desenha a próxima peça no canvas lateral
  * @param {CanvasRenderingContext2D} ctx
  * @param {number[][]} proxima
  */
@@ -66,36 +91,36 @@ export function desenharProxima(ctx, proxima) {
 }
 
 /**
- * Desenha um bloco baseado em coordenadas da grelha
+ * Desenha um bloco na grelha principal
  */
 function desenharBloco(ctx, x, y, largura, altura, valor) {
   ctx.fillStyle = obterCor(valor);
   ctx.fillRect(Math.floor(x * largura), Math.floor(y * altura), largura, altura);
-  ctx.strokeStyle = "#333";
+  ctx.strokeStyle = "#333333";
   ctx.strokeRect(Math.floor(x * largura), Math.floor(y * altura), largura, altura);
 }
 
 /**
- * Desenha um bloco com coordenadas absolutas (usado para pré-visualização)
+ * Desenha um bloco absoluto (para a pré-visualização)
  */
 function desenharBlocoAbsoluto(ctx, x, y, largura, altura, valor) {
   ctx.fillStyle = obterCor(valor);
   ctx.fillRect(x, y, largura, altura);
-  ctx.strokeStyle = "#333";
+  ctx.strokeStyle = "#333333";
   ctx.strokeRect(x, y, largura, altura);
 }
 
 /**
- * Obtém a cor atribuída ao tipo de peça
+ * Retorna a cor associada ao tipo de peça
  * @param {number} valor
- * @returns {string} código da cor
+ * @returns {string}
  */
 function obterCor(valor) {
   return CORES[valor] || "#FFFFFF";
 }
 
 /**
- * Atualiza a pontuação e o nível visualmente
+ * Atualiza a pontuação e o nível
  * @param {number} pontuacao
  * @param {number} nivel
  */
@@ -105,7 +130,7 @@ export function atualizarPontuacao(pontuacao, nivel) {
 }
 
 /**
- * Atualiza o cronómetro no formato MM:SS
+ * Atualiza o tempo decorrido no formato MM:SS
  * @param {HTMLElement} elTempo
  * @param {number} segundos
  */
@@ -116,7 +141,7 @@ export function atualizarTempo(elTempo, segundos) {
 }
 
 /**
- * Apresenta o modal de fim de jogo com a pontuação final
+ * Apresenta o modal com pontuação final
  * @param {number} pontuacao
  */
 export function mostrarModalFim(pontuacao) {
@@ -126,7 +151,7 @@ export function mostrarModalFim(pontuacao) {
 }
 
 /**
- * Atualiza visualmente o ranking de jogadores
+ * Atualiza a lista de ranking
  * @param {Array<{name: string, score: number}>} lista
  */
 export function atualizarRanking(lista) {
@@ -140,7 +165,7 @@ export function atualizarRanking(lista) {
 }
 
 /**
- * Carrega pontuações guardadas do armazenamento local
+ * Carrega ranking guardado no localStorage
  */
 export function carregarRankingGuardado() {
   const guardados = JSON.parse(localStorage.getItem("scores") || "[]");
@@ -148,7 +173,7 @@ export function carregarRankingGuardado() {
 }
 
 /**
- * Guarda a pontuação atual e atualiza o ranking
+ * Guarda pontuação atual e atualiza ranking
  * @param {number} pontuacao
  */
 export function guardarPontuacao(pontuacao) {
@@ -161,8 +186,7 @@ export function guardarPontuacao(pontuacao) {
   const lista = JSON.parse(localStorage.getItem("scores") || "[]");
   lista.push({ name: nome, score: pontuacao });
   lista.sort((a, b) => b.score - a.score);
-  lista.splice(10); // Mantém apenas o top 10
-
+  lista.splice(10);
   localStorage.setItem("scores", JSON.stringify(lista));
   atualizarRanking(lista);
   document.getElementById("modal").classList.remove("show");
