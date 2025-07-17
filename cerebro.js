@@ -1,160 +1,79 @@
-// Importa os módulos necessários
-import { COLUNAS, LINHAS, verificarColisao } from './motor.js';
-import { desenharJogo, desenharProxima } from './canvas.js';
+/**
+ * cerebro.js
+ *
+ * Módulo principal do jogo Pico-Pico Bricks.
+ * Coordena os módulos canvas, pontuação, áudio, controlos e cronómetro.
+ */
+
 import {
-  tocarSomColidir,
-  tocarSomPerdeu,
-  iniciarMusicaFundo,
-  pararMusicaFundo
+  COLUNAS, LINHAS, verificarColisao, fixarPeca,
+  eliminarLinhas, desenharJogo, desenharProxima, gerarPecaAleatoria
+} from './canvas.js';
+
+import {
+  tocarSomColidir, tocarSomPerdeu, iniciarMusicaFundo, pararMusicaFundo
 } from './audio.js';
+
 import {
-  configurarControlos,
-  moverPeca,
-  rodarPeca,
-  descerPeca,
-  quedaInstantanea
+  configurarControlos, moverPeca, rodarPeca, descerPeca, quedaInstantanea
 } from './controlos.js';
 
-// Referências aos canvas
-const boardCanvas = document.getElementById('board');
-const nextCanvas = document.getElementById('next');
-const boardCtx = boardCanvas.getContext('2d');
-const nextCtx = nextCanvas.getContext('2d');
+import {
+  pontuacao, comboContador, calcularPontuacao, resetarPontuacao,
+  atualizarRankingVisual, mostrarCelebracao
+} from './pontuacao.js';
 
-// Define dimensões dos canvas
-const tamanhoBloco = 20;
-boardCanvas.width = COLUNAS * tamanhoBloco;
-boardCanvas.height = LINHAS * tamanhoBloco;
-nextCanvas.width = 80;
-nextCanvas.height = 80;
+import {
+  iniciarCronometro, pararCronometro, reiniciarCronometro
+} from './cronometro.js';
 
-// Estado inicial do jogo
-let tabuleiro = criarTabuleiroVazio();
+// Canvas e contexto
+const $ = id => document.getElementById(id);
+const boardCtx = $('board').getContext('2d');
+const nextCtx = $('next').getContext('2d');
+
+$('board').width = COLUNAS * 20;
+$('board').height = LINHAS * 20;
+$('next').width = 80;
+$('next').height = 80;
+
+// Estado do jogo
+let tabuleiro = Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
-let pontuacao = 0;
 let nivel = 1;
-let totalLinhasEliminadas = 0;
+let linhasTotais = 0;
 let intervaloTempo = 600;
-let comboContador = 0;
 
-// Cronómetro
-let segundos = 0;
-let cronometroID = null;
-
-function iniciarCronometro() {
-  cronometroID = setInterval(() => {
-    segundos++;
-    const mm = String(Math.floor(segundos / 60)).padStart(2, '0');
-    const ss = String(segundos % 60).padStart(2, '0');
-    document.getElementById('time').textContent = `${mm}:${ss}`;
-  }, 1000);
-}
-
-function pararCronometro() {
-  clearInterval(cronometroID);
-  cronometroID = null;
-}
-
-function reiniciarCronometro() {
-  segundos = 0;
-  document.getElementById('time').textContent = '00:00';
-}
-
-// Cria tabuleiro vazio
-function criarTabuleiroVazio() {
-  return Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
-}
-
-// Cria uma peça aleatória
-function gerarPecaAleatoria() {
-  const pecas = [
-    [[1, 1], [1, 1]],
-    [[0, 2, 0], [2, 2, 2]],
-    [[3, 3, 0], [0, 3, 3]],
-    [[0, 4, 4], [4, 4, 0]],
-    [[5, 5, 5, 5]],
-    [[6, 0, 0], [6, 6, 6]],
-    [[0, 0, 7], [7, 7, 7]]
-  ];
-  return pecas[Math.floor(Math.random() * pecas.length)];
-}
-
-// Desenha o estado atual do jogo
+// Renderiza o estado visual
 function desenhar() {
-  desenharJogo(boardCtx, boardCanvas.width, boardCanvas.height, tabuleiro, pecaAtual, posicao);
+  desenharJogo(boardCtx, $('board').width, $('board').height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Elimina linhas completas
-function eliminarLinhas(tabuleiro) {
-  let linhasEliminadas = 0;
-  for (let y = tabuleiro.length - 1; y >= 0; y--) {
-    if (tabuleiro[y].every(val => val !== 0)) {
-      tabuleiro.splice(y, 1);
-      tabuleiro.unshift(Array(COLUNAS).fill(0));
-      linhasEliminadas++;
-      y++;
-    }
-  }
-  return linhasEliminadas;
-}
-
-// Fixa a peça no tabuleiro
-function fixarPeca(tab, peca, pos) {
-  for (let y = 0; y < peca.length; y++) {
-    for (let x = 0; x < peca[y].length; x++) {
-      if (peca[y][x]) {
-        const px = pos.x + x;
-        const py = pos.y + y;
-        if (py >= 0 && py < LINHAS && px >= 0 && px < COLUNAS) {
-          tab[py][px] = peca[y][x];
-        }
-      }
-    }
-  }
-}
-
-// Actualiza o estado do jogo
+// Atualiza o estado do jogo
 function atualizar() {
-  const novaY = posicao.y + 1;
-
-  if (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: novaY })) {
-    posicao.y = novaY;
-  } else {
+  posicao.y++;
+  if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
+    posicao.y--;
     fixarPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
 
-    // Só pontua se eliminar linhas
     const eliminadas = eliminarLinhas(tabuleiro);
+    if (eliminadas) {
+      calcularPontuacao(eliminadas);
+      linhasTotais += eliminadas;
 
-    if (eliminadas > 0) {
-      pontuacao += eliminadas * 100;
-      totalLinhasEliminadas += eliminadas;
+      mostrarCelebracao(comboContador > 1 ? 'COMBO!' : 'LINHA!', comboContador > 1 ? 'combo' : '');
+      $('board').classList.add('flash');
+      setTimeout(() => $('board').classList.remove('flash'), 300);
 
-      comboContador++;
-      const comboBonus = comboContador > 1 ? comboContador * 50 : 0;
-      pontuacao += comboBonus;
-
-      boardCanvas.classList.add('flash');
-      setTimeout(() => boardCanvas.classList.remove('flash'), 300);
-
-      const celebracao = document.getElementById('celebracao');
-      celebracao.textContent = comboContador > 1 ? 'COMBO!' : 'LINHA!';
-      celebracao.className = comboContador > 1 ? 'combo' : '';
-      celebracao.style.display = 'block';
-      setTimeout(() => {
-        celebracao.style.display = 'none';
-        celebracao.className = '';
-        celebracao.textContent = 'LINHA!';
-      }, 1000);
-
-      const novoNivel = Math.floor(totalLinhasEliminadas / 5) + 1;
+      const novoNivel = Math.floor(linhasTotais / 5) + 1;
       if (novoNivel > nivel) {
         nivel = novoNivel;
-        document.getElementById('level').textContent = nivel;
+        $('level').textContent = nivel;
         clearInterval(intervalo);
         intervaloTempo = Math.max(150, intervaloTempo - 50);
         intervalo = setInterval(atualizar, intervaloTempo);
@@ -163,9 +82,8 @@ function atualizar() {
       comboContador = 0;
     }
 
-    document.getElementById('score').textContent = pontuacao;
-    pecaAtual = proximaPeca;
-    proximaPeca = gerarPecaAleatoria();
+    $('score').textContent = pontuacao;
+    [pecaAtual, proximaPeca] = [proximaPeca, gerarPecaAleatoria()];
     posicao = { x: 3, y: 0 };
 
     if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
@@ -173,140 +91,106 @@ function atualizar() {
       clearInterval(intervalo);
       intervalo = null;
       pararCronometro();
-      document.getElementById('modal').classList.add('show');
+      $('modal').classList.add('show');
     }
   }
 
   desenhar();
 }
 
-// Atualiza visualmente a lista de ranking
-function atualizarRankingVisual(ranking) {
-  const lista = document.getElementById('ranking-list');
-  lista.innerHTML = '';
-  ranking.forEach((item, index) => {
-    const li = document.createElement('li');
-    li.textContent = `${index + 1}. ${item.nome} — ${item.pontuacao} pts (${item.data})`;
-    lista.appendChild(li);
-  });
-}
-
-// Liga os controlos do jogador
+// Liga os controlos
 configurarControlos(
-  direcao => {
-    moverPeca(direcao, tabuleiro, pecaAtual, posicao);
-    desenhar();
-  },
-  () => {
-    pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao);
-    desenhar();
-  },
-  () => {
-    descerPeca(tabuleiro, pecaAtual, posicao);
-    desenhar();
-  },
-  () => {
-    document.getElementById('pauseBtn').click();
-  },
-  () => {
-    quedaInstantanea(tabuleiro, pecaAtual, posicao);
-    desenhar();
-  }
+  dir => { moverPeca(dir, tabuleiro, pecaAtual, posicao); desenhar(); },
+  () => { pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao); desenhar(); },
+  () => { descerPeca(tabuleiro, pecaAtual, posicao); desenhar(); },
+  () => { $('pauseBtn').click(); },
+  () => { quedaInstantanea(tabuleiro, pecaAtual, posicao); desenhar(); }
 );
 
 // Botões principais
-document.getElementById('startBtn').addEventListener('click', () => {
+$('startBtn').onclick = () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
     iniciarMusicaFundo();
     iniciarCronometro();
   }
-});
+};
 
-document.getElementById('pauseBtn').addEventListener('click', () => {
+$('pauseBtn').onclick = () => {
   clearInterval(intervalo);
   intervalo = null;
   pararMusicaFundo();
   pararCronometro();
-});
+};
 
-document.getElementById('resetBtn').addEventListener('click', () => {
+$('resetBtn').onclick = () => {
   clearInterval(intervalo);
   intervalo = null;
-  tabuleiro = criarTabuleiroVazio();
-  pecaAtual = gerarPecaAleatoria();
-  proximaPeca = gerarPecaAleatoria();
+  tabuleiro = Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
+  [pecaAtual, proximaPeca] = [gerarPecaAleatoria(), gerarPecaAleatoria()];
   posicao = { x: 3, y: 0 };
-  pontuacao = 0;
+  resetarPontuacao();
   nivel = 1;
-   document.getElementById('level').textContent = nivel;
+  linhasTotais = 0;
+  intervaloTempo = 600;
+  $('level').textContent = nivel;
   reiniciarCronometro();
   desenhar();
-});
+};
 
-// Ranking e modal
-document.getElementById('save-score-btn').addEventListener('click', () => {
+// Modal e ranking
+$('save-score-btn').onclick = () => {
   const nomeAnterior = localStorage.getItem('ultimoJogador');
-  if (nomeAnterior) {
-    document.getElementById('player-name').value = nomeAnterior;
-  }
-  document.getElementById('modal').classList.add('show');
+  if (nomeAnterior) $('player-name').value = nomeAnterior;
+  $('modal').classList.add('show');
+};
+
+$('confirmSave').onclick = () => {
+  const nome = $('player-name').value.trim();
+  if (!nome) return;
+
+  localStorage.setItem('ultimoJogador', nome);
+  const pontuacaoAtual = parseInt($('score').textContent);
+  const data = new Date().toLocaleDateString('pt-PT');
+  const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+
+  ranking.push({ nome, pontuacao: pontuacaoAtual, data });
+  localStorage.setItem('ranking',
+    JSON.stringify(ranking.sort((a, b) => b.pontuacao - a.pontuacao).slice(0, 10))
+  );
+
+  atualizarRankingVisual(JSON.parse(localStorage.getItem('ranking')));
+  $('modal').classList.remove('show');
+  $('player-name').value = '';
+};
+
+$('cancelSave').onclick = () => {
+  $('modal').classList.remove('show');
+  $('player-name').value = '';
+};
+
+$('top10Btn')?.addEventListener('click', () => {
+  const r = $('ranking-container');
+  r.style.display = r.style.display === 'none' || !r.style.display ? 'block' : 'none';
 });
 
-document.getElementById('confirmSave').addEventListener('click', () => {
-  const nome = document.getElementById('player-name').value.trim();
-  if (nome) {
-    localStorage.setItem('ultimoJogador', nome);
-    const pontuacaoAtual = parseInt(document.getElementById('score').textContent, 10);
-    const agora = new Date();
-    const data = agora.toLocaleDateString('pt-PT');
-
-    const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
-    ranking.push({ nome, pontuacao: pontuacaoAtual, data });
-    ranking.sort((a, b) => b.pontuacao - a.pontuacao);
-    const top10 = ranking.slice(0, 10);
-    localStorage.setItem('ranking', JSON.stringify(top10));
-    atualizarRankingVisual(top10);
-
-    document.getElementById('modal').classList.remove('show');
-    document.getElementById('player-name').value = '';
-  }
-});
-
-document.getElementById('cancelSave').addEventListener('click', () => {
-  document.getElementById('modal').classList.remove('show');
-  document.getElementById('player-name').value = '';
-});
-
-document.getElementById('top10Btn')?.addEventListener('click', () => {
-  const ranking = document.getElementById('ranking-container');
-  ranking.style.display = ranking.style.display === 'none' || !ranking.style.display ? 'block' : 'none';
-});
-
-document.getElementById('clear-ranking-btn')?.addEventListener('click', () => {
+$('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-document.getElementById('toggle-sound').addEventListener('click', () => {
-  const audio = document.getElementById('musica-fundo');
-  const botao = document.getElementById('toggle-sound');
+$('toggle-sound').onclick = () => {
+  const audio = $('musica-fundo');
+  const botao = $('toggle-sound');
   if (!audio) return;
+  audio.paused ? audio.play() : audio.pause();
+  botao.textContent = audio.paused ? 'Som desligado' : 'Som ligado';
+};
 
-  if (audio.paused) {
-    audio.play();
-    botao.textContent = '🔊 Som ligado';
-  } else {
-    audio.pause();
-    botao.textContent = '🔇 Som desligado';
-  }
-});
-
-// Renderização inicial ao carregar a página
+// Estado inicial ao carregar
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
-  ranking.sort((a, b) => b.pontuacao - a.pontuacao);
-  atualizarRankingVisual(ranking);
+  atualizarRankingVisual(ranking.sort((a, b) => b.pontuacao - a.pontuacao));
   reiniciarCronometro();
   desenhar();
 });
