@@ -10,7 +10,7 @@ export const pecasDisponiveis = [
 ];
 
 /**
- * Gera uma peça aleatória com base na lista disponível
+ * Cria uma peça aleatória com base na lista disponível
  * @returns {Array<Array<number>>} Matriz da peça
  */
 export function gerarPecaAleatoria() {
@@ -40,7 +40,7 @@ export function desenharProxima(ctx, peca) {
 }
 
 /**
- * Desenha o estado atual do tabuleiro e a peça em movimento
+ * Desenha o estado actual do tabuleiro e a peça em movimento
  * @param {CanvasRenderingContext2D} ctx - contexto do tabuleiro
  * @param {number} width - largura do canvas
  * @param {number} height - altura do canvas
@@ -64,7 +64,7 @@ export function desenharJogo(ctx, width, height, tabuleiro, pecaAtual, posicao) 
     }
   }
 
-  // Desenha a peça atual em movimento
+  // Desenha a peça actual em movimento
   for (let y = 0; y < pecaAtual.length; y++) {
     for (let x = 0; x < pecaAtual[y].length; x++) {
       if (pecaAtual[y][x]) {
