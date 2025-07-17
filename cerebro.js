@@ -7,6 +7,7 @@ import {
 } from './motor.js';
 
 import {
+  configurarCanvas,
   desenharJogo, desenharProxima,
   atualizarPontuacao, atualizarTempo,
   mostrarModalFim, guardarPontuacao,
@@ -24,19 +25,11 @@ import {
   configurarControlos
 } from './controlos.js';
 
-// Contexto dos canvas
-const board = document.getElementById('board');
-const next = document.getElementById('next');
-const ctxBoard = board.getContext('2d');
-const ctxNext = next.getContext('2d');
+/* Inicializa os canvas e contexto gráfico */
+const { ctxBoard, ctxNext, board, next } = configurarCanvas();
+const tempoEl = document.getElementById("time");
 
-// Dimensões
-board.width = COLUNAS * 24;
-board.height = LINHAS * 24;
-next.width = 80;
-next.height = 80;
-
-// Estado do jogo
+/* Estado do jogo */
 let tabuleiro = criarMatriz(COLUNAS, LINHAS);
 let pecaAtual = gerarPeca();
 let proximaPeca = gerarPeca();
@@ -47,15 +40,13 @@ let segundos = 0;
 let pontuacao = 0;
 let nivel = 1;
 
-const tempoEl = document.getElementById("time");
-
-// Renderiza o estado atual
+/* Desenha o jogo na tela */
 function desenhar() {
   desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(ctxNext, proximaPeca);
 }
 
-// Atualiza a posição da peça ou processa fim de jogada
+/* Processa o ciclo de atualização */
 function atualizar() {
   posicao.y++;
 
@@ -84,7 +75,7 @@ function atualizar() {
   desenhar();
 }
 
-// Descida rápida até ao limite
+/* Realiza descida rápida da peça */
 function quedaInstantanea() {
   while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
     posicao.y++;
@@ -92,7 +83,7 @@ function quedaInstantanea() {
   atualizar();
 }
 
-// Pausa o jogo e cronómetro
+/* Pausa o jogo e o tempo */
 function pausarJogo() {
   clearInterval(intervalo);
   clearInterval(tempoIntervalo);
@@ -101,7 +92,7 @@ function pausarJogo() {
   pararMusicaFundo();
 }
 
-// Reinicia o cronómetro
+/* Inicia o cronómetro */
 function iniciarTempo() {
   tempoIntervalo = setInterval(() => {
     segundos++;
@@ -109,7 +100,7 @@ function iniciarTempo() {
   }, 1000);
 }
 
-// Inicia o jogo
+/* Inicia a partida */
 document.getElementById('startBtn').onclick = () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -118,12 +109,12 @@ document.getElementById('startBtn').onclick = () => {
   }
 };
 
-// Pausa o jogo
+/* Pausa manual */
 document.getElementById('pauseBtn').onclick = () => {
   pausarJogo();
 };
 
-// Reinicia o estado do jogo
+/* Reinicia o estado do jogo */
 document.getElementById('resetBtn').onclick = () => {
   pausarJogo();
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
@@ -137,7 +128,7 @@ document.getElementById('resetBtn').onclick = () => {
   desenhar();
 };
 
-// Alternância de som
+/* Alterna o som de fundo */
 document.getElementById('toggle-sound').onclick = () => {
   const audio = document.getElementById('musica-fundo');
   const btn = document.getElementById('toggle-sound');
@@ -154,12 +145,12 @@ document.getElementById('toggle-sound').onclick = () => {
   btn.classList.toggle('active', !audio.paused);
 };
 
-// Guardar pontuação no fim
+/* Guarda a pontuação no fim */
 document.getElementById('confirmSave').onclick = () => guardarPontuacao(pontuacao);
 document.getElementById('cancelSave').onclick = () =>
   document.getElementById('modal')?.classList.remove('show');
 
-// Liga os controlos do utilizador
+/* Liga os controlos de teclado e toque */
 configurarControlos(
   direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
   dir => {
@@ -181,7 +172,7 @@ configurarControlos(
   pausarJogo
 );
 
-// Estado inicial
+/* Inicializa visual e ranking */
 carregarRankingGuardado();
 atualizarTempo(tempoEl, segundos);
 desenhar();
