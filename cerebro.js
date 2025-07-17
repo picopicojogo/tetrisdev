@@ -26,15 +26,14 @@ import {
 import {
   processarLinhas,
   reiniciarPontuacao,
-  guardarPontuacao,
-  carregarRankingGuardado
+  guardarPontuacao
 } from './pontuacao.js';
 
-// Inicializa os canvas e elementos visuais
+/* Inicializa os canvas */
 const { ctxBoard, ctxNext, board, next } = configurarCanvas();
 const tempoEl = document.getElementById("time");
 
-// Estado do jogo
+/* Estado do jogo */
 let tabuleiro = criarMatriz(COLUNAS, LINHAS);
 let pecaAtual = gerarPeca();
 let proximaPeca = gerarPeca();
@@ -44,7 +43,7 @@ let tempoIntervalo = null;
 let segundos = 0;
 
 /**
- * Atualiza o jogo após cada descida ou jogada
+ * Atualiza o estado do jogo a cada ciclo
  */
 function atualizar() {
   posicao.y++;
@@ -64,7 +63,7 @@ function atualizar() {
       tocarSomPerdeu();
       clearInterval(intervalo);
       clearInterval(tempoIntervalo);
-      const { pontuacao } = processarLinhas(0);
+      const { pontuacao } = processarLinhas(0); // devolve estado final
       mostrarModalFim(pontuacao);
       return;
     }
@@ -74,7 +73,7 @@ function atualizar() {
 }
 
 /**
- * Desenha estado atual no canvas
+ * Desenha o estado atual no canvas
  */
 function desenhar() {
   desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
@@ -82,7 +81,7 @@ function desenhar() {
 }
 
 /**
- * Lançamento rápido da peça
+ * Descida instantânea até ao limite
  */
 function quedaInstantanea() {
   while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
@@ -92,7 +91,7 @@ function quedaInstantanea() {
 }
 
 /**
- * Pausar o jogo e música
+ * Pausa o jogo e a música de fundo
  */
 function pausarJogo() {
   clearInterval(intervalo);
@@ -103,7 +102,7 @@ function pausarJogo() {
 }
 
 /**
- * Inicia cronómetro de tempo
+ * Inicia o cronómetro do jogo
  */
 function iniciarTempo() {
   tempoIntervalo = setInterval(() => {
@@ -113,7 +112,7 @@ function iniciarTempo() {
 }
 
 /**
- * Botão: Iniciar
+ * Botão: Iniciar jogo
  */
 document.getElementById('startBtn').onclick = () => {
   if (!intervalo) {
@@ -124,14 +123,14 @@ document.getElementById('startBtn').onclick = () => {
 };
 
 /**
- * Botão: Pausar
+ * Botão: Pausar jogo
  */
 document.getElementById('pauseBtn').onclick = () => {
   pausarJogo();
 };
 
 /**
- * Botão: Reiniciar
+ * Botão: Reiniciar jogo
  */
 document.getElementById('resetBtn').onclick = () => {
   pausarJogo();
@@ -145,7 +144,7 @@ document.getElementById('resetBtn').onclick = () => {
 };
 
 /**
- * Botão: Alternar som
+ * Botão: Alternar som de fundo
  */
 document.getElementById('toggle-sound').onclick = () => {
   const audio = document.getElementById('musica-fundo');
@@ -174,11 +173,12 @@ document.getElementById('confirmSave').onclick = () => {
 /**
  * Botão: Cancelar modal
  */
-document.getElementById('cancelSave').onclick = () =>
-  document.getElementById('modal')?.classList.remove('show');
+document.getElementById('cancelSave').onclick = () => {
+  document.getElementById("modal")?.classList.remove("show");
+};
 
 /**
- * Liga os controlos do utilizador
+ * Ativa os controlos de teclado ou toque
  */
 configurarControlos(
   direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
@@ -201,7 +201,8 @@ configurarControlos(
   pausarJogo
 );
 
-// Estado inicial
-carregarRankingGuardado();
+/**
+ * Inicialização visual
+ */
 atualizarTempo(tempoEl, segundos);
 desenhar();
