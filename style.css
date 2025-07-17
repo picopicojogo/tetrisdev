@@ -17,7 +17,7 @@ body {
   padding: 20px;
 }
 
-/* Limite máximo para o jogo */
+/* Limite máximo do jogo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -25,9 +25,10 @@ body {
   justify-content: center;
 }
 
-/* Container principal do jogo */
+/* Estrutura principal */
 #game-container {
   width: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -35,9 +36,10 @@ body {
   background: rgba(0, 0, 0, 0.75);
   padding: 2vh;
   border-radius: 12px;
+  min-height: 90vh;
 }
 
-/* Título do jogo */
+/* Título principal */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -45,7 +47,7 @@ h1 {
   text-shadow: 2px 2px #000000;
 }
 
-/* Secção de pontuação, nível e tempo */
+/* Secção de informações */
 #info {
   display: flex;
   justify-content: space-around;
@@ -75,13 +77,16 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Canvas principal */
+/* Canvas principal do tabuleiro */
 canvas#board {
   background: #111111;
   border: 2px solid #888888;
   border-radius: 8px;
   touch-action: none;
+  display: block;
   max-width: 100%;
+  height: auto;
+  max-height: 80vh; /* aumenta a altura visível em ecrãs 1080p */
 }
 
 /* Botões principais */
@@ -93,7 +98,6 @@ canvas#board {
   margin-top: 1vh;
 }
 
-/* Estilo arcade suavizado para botões */
 #controls button {
   padding: 0.8em 1.2em;
   font-size: 1em;
@@ -117,7 +121,7 @@ canvas#board {
   color: #000000;
 }
 
-/* Oculta botões visuais permanentemente */
+/* Oculta botões visuais */
 #touch-controls,
 #dropBtn {
   display: none;
@@ -125,7 +129,7 @@ canvas#board {
 
 /* Ranking dos jogadores */
 #ranking-container {
-  margin-top: 3vh;
+  margin-top: 2vh;
   text-align: center;
   width: 100%;
 }
@@ -159,7 +163,7 @@ canvas#board {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0,0,0,0.85);
   display: none;
   justify-content: center;
   align-items: center;
@@ -204,7 +208,7 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Elemento de celebração */
+/* Celebração arcade no topo */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -214,12 +218,12 @@ canvas#board {
   font-weight: bold;
   color: #00ffcc;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, transform 0.3s ease;
   pointer-events: none;
   z-index: 999;
 }
 
-/* Responsividade para ecrãs pequenos */
+/* Responsivo para dispositivos móveis */
 @media (max-width: 768px) {
   #info {
     flex-direction: column;
@@ -246,9 +250,13 @@ canvas#board {
   #ranking-list li {
     font-size: 0.9em;
   }
+
+  canvas#board {
+    max-height: 60vh; /* altura moderada para ecrãs pequenos */
+  }
 }
 
-/* Ajustes visuais para ecrãs 4K e superiores */
+/* Ajustes para ecrãs grandes (ex. 4K) */
 @media (min-width: 2560px) {
   h1 {
     font-size: 3em;
@@ -261,5 +269,9 @@ canvas#board {
 
   #ranking-list li {
     font-size: 1.2em;
+  }
+
+  canvas#board {
+    max-height: 75vh;
   }
 }
