@@ -184,7 +184,7 @@ $('toggle-sound').onclick = () => {
   const botao = $('toggle-sound');
   if (!audio) return;
   audio.paused ? audio.play() : audio.pause();
-  botao.textContent = audio.paused ? 'Som desligado' : 'Som ligado';
+  botao.textContent = audio.paused ? '🔇 Som desligado' : '🔊 Som ligado';
 };
 
 // Estado inicial ao carregar
