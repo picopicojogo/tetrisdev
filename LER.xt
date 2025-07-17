@@ -6,3 +6,18 @@ canvas.js         Renderização visual: desenha o tabuleiro e a próxima peça 
 audio.js	        Sons: música de fundo, som de rotação e colisão
 controlos.js	    Gestos e teclas: controlo por teclado, toque, rotação e queda instantânea
 cerebro.js	      Lógica central: movimentos, pontuação, níveis, cronómetro, ranking e integração
+
+
+Cada peça fixada no tabuleiro: ➤ +10 pontos
+
+Eliminação de linhas completas:
+
+1 linha eliminada: +100 pontos
+
+2 linhas: +200
+
+3 linhas: +300
+
+4 linhas ou mais: +400+ (multiplicado por 100 consoante o número)
+
+Estes pontos acumulam com os +10 pontos da peça que foi fixada.
