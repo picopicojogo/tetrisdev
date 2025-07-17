@@ -8,7 +8,7 @@ export function configurarCanvas() {
   const board = document.getElementById('board');
   const next = document.getElementById('next');
 
-  const bloco = 40; // tamanho em px de cada célula (ajustado para 1920×1080)
+  const bloco = 32; // tamanho em px de cada célula (ajustado para 1920×1080)
 
   board.width = COLUNAS * bloco;
   board.height = LINHAS * bloco;
