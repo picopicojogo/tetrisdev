@@ -14,42 +14,84 @@
  * Utilizado por cerebro.js para acompanhar o desempenho do jogador
  * e fornecer feedback visual de forma clara e reativa.
  */
+
 // Estado da pontuação e do combo
 export let pontuacao = 0;
 export let comboContador = 0;
 
+import {
+  tocarCombo2,
+  tocarCombo3,
+  tocarComboFinal,
+  tocarBonus
+} from './audio.js';
+
+import { aplicarEfeitosTabuleiro } from './canvas.js';
+
 /**
  * Calcula e atualiza a pontuação com base nas linhas eliminadas
- * Aplica bónus de combo se estiver em sequência
+ * Aplica bónus se houver sequência de combos
  * @param {number} eliminadas - número de linhas eliminadas
  * @returns {number} - valor do bónus aplicado
  */
 export function calcularPontuacao(eliminadas) {
+  if (eliminadas <= 0) return 0;
+
   pontuacao += eliminadas * 100;
   comboContador++;
 
   const bonus = comboContador > 1 ? comboContador * 50 : 0;
   pontuacao += bonus;
 
-  document.getElementById('score').textContent = pontuacao;
+  const elemento = document.getElementById('score');
+  if (elemento) elemento.textContent = pontuacao;
+
+  aplicarCelebracao(eliminadas, comboContador, bonus);
   return bonus;
 }
 
 /**
- * Reinicia a pontuação e o contador de combo
+ * Reinicia pontuação e combo
  */
 export function resetarPontuacao() {
   pontuacao = 0;
   comboContador = 0;
-  document.getElementById('score').textContent = pontuacao;
+  const elemento = document.getElementById('score');
+  if (elemento) elemento.textContent = pontuacao;
 }
 
 /**
- * Atualiza visualmente a lista de ranking no ecrã
- * @param {Array} ranking - lista de jogadores com nome, pontuação e data
+ * Mostra celebração visual e toca som dependendo do combo
+ */
+function aplicarCelebracao(linhas, comboNivel, bonus) {
+  aplicarEfeitosTabuleiro(); // Flash/vibração se ativado
+
+  let texto = 'LINHA!';
+  let classe = 'celebracao';
+  if (comboNivel >= 3) {
+    texto = 'ULTRA COMBO!';
+    classe = 'combo-final';
+    tocarComboFinal();
+    tocarBonus();
+  } else if (comboNivel === 2) {
+    texto = 'SUPER COMBO!';
+    classe = 'combo2';
+    tocarCombo2();
+  } else if (comboNivel === 1 && linhas >= 2) {
+    texto = 'COMBO!';
+    classe = 'combo';
+    tocarCombo3();
+  }
+
+  mostrarCelebracao(texto, classe);
+}
+
+/**
+ * Apresenta o ranking no ecrã
  */
 export function atualizarRankingVisual(ranking) {
   const lista = document.getElementById('ranking-list');
+  if (!lista) return;
   lista.innerHTML = '';
 
   ranking.forEach((item, index) => {
@@ -61,12 +103,10 @@ export function atualizarRankingVisual(ranking) {
 
 /**
  * Mostra uma mensagem de celebração no centro do ecrã
- * Aplica classe visual especial se for um combo
- * @param {string} texto - Texto a mostrar ("LINHA!" ou "COMBO!")
- * @param {string} classe - Nome da classe CSS a aplicar (ex: "combo")
  */
 export function mostrarCelebracao(texto, classe = '') {
   const celebracao = document.getElementById('celebracao');
+  if (!celebracao) return;
   celebracao.textContent = texto;
   celebracao.className = classe;
   celebracao.style.display = 'block';
