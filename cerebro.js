@@ -9,8 +9,8 @@
  */
 import {
   COLUNAS, LINHAS, verificarColisao, fixarPeca,
-  eliminarLinhas, desenharJogo, desenharProxima,
-  gerarPecaAleatoria, carregarDefinicoesAcessibilidade
+  eliminarLinhas, desenharJogo, desenharProxima, gerarPecaAleatoria,
+  carregarDefinicoesAcessibilidade
 } from './canvas.js';
 
 import {
@@ -30,19 +30,18 @@ import {
   iniciarCronometro, pararCronometro, reiniciarCronometro
 } from './cronometro.js';
 
+// Referência rápida a elementos do DOM
 const $ = id => document.getElementById(id);
-
-// Contextos dos canvas (tabuleiro e próxima peça)
 const boardCtx = $('board').getContext('2d');
 const nextCtx = $('next').getContext('2d');
 
-// Define dimensões dos canvas
+// Definições do canvas
 $('board').width = COLUNAS * 20;
 $('board').height = LINHAS * 20;
 $('next').width = 80;
 $('next').height = 80;
 
-// Estado interno do jogo
+// Estado do jogo
 let tabuleiro = Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
 let pecaAtual = gerarPecaAleatoria();
 let proximaPeca = gerarPecaAleatoria();
@@ -51,19 +50,15 @@ let intervalo = null;
 let nivel = 1;
 let linhasTotais = 0;
 let intervaloTempo = 600;
-let config = carregarDefinicoesAcessibilidade(); // Carrega opções do jogador
+let config = carregarDefinicoesAcessibilidade();
 
-/**
- * Desenha o tabuleiro e a próxima peça
- */
+// Renderiza o tabuleiro e próxima peça
 function desenhar() {
   desenharJogo(boardCtx, $('board').width, $('board').height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-/**
- * Executa as ações necessárias quando o jogo termina
- */
+// Função central de fim de jogo
 function terminarJogo() {
   tocarSomPerdeu();
   clearInterval(intervalo);
@@ -72,9 +67,7 @@ function terminarJogo() {
   $('modal').classList.add('show');
 }
 
-/**
- * Atualiza o estado do jogo numa iteração
- */
+// Atualiza o estado do jogo
 function atualizar() {
   posicao.y++;
 
@@ -88,9 +81,9 @@ function atualizar() {
       calcularPontuacao(eliminadas);
       linhasTotais += eliminadas;
 
-      const texto = comboContador > 1 ? 'COMBO!' : 'LINHA!';
-      const classe = comboContador > 1 ? 'combo' : '';
-      mostrarCelebracao(texto, classe);
+      const textoCelebracao = comboContador > 1 ? 'COMBO!' : 'LINHA!';
+      const classeCelebracao = comboContador > 1 ? 'combo' : '';
+      mostrarCelebracao(textoCelebracao, classeCelebracao);
 
       if (config.flash) {
         $('board').classList.add('flash');
@@ -121,9 +114,7 @@ function atualizar() {
   desenhar();
 }
 
-/**
- * Liga os eventos de teclado aos movimentos do jogo
- */
+// Liga os controlos de teclado
 configurarControlos(
   dir => { moverPeca(dir, tabuleiro, pecaAtual, posicao); desenhar(); },
   () => { pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao); desenhar(); },
@@ -132,9 +123,7 @@ configurarControlos(
   () => { quedaInstantanea(tabuleiro, pecaAtual, posicao); desenhar(); }
 );
 
-/**
- * Botão para iniciar o jogo
- */
+// Botões principais
 $('startBtn').onclick = () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, intervaloTempo);
@@ -143,9 +132,6 @@ $('startBtn').onclick = () => {
   }
 };
 
-/**
- * Botão para pausar o jogo
- */
 $('pauseBtn').onclick = () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -153,9 +139,6 @@ $('pauseBtn').onclick = () => {
   pararCronometro();
 };
 
-/**
- * Botão para reiniciar o jogo
- */
 $('resetBtn').onclick = () => {
   clearInterval(intervalo);
   intervalo = null;
@@ -171,28 +154,16 @@ $('resetBtn').onclick = () => {
   desenhar();
 };
 
-/**
- * Abre o modal para guardar a pontuação
- */
-$('save-score-btn').onclick = () => {
-  const nomeAnterior = localStorage.getItem('ultimoJogador');
-  if (nomeAnterior) $('player-name').value = nomeAnterior;
-  $('modal').classList.add('show');
-};
-
-/**
- * Confirma e guarda a pontuação no ranking
- */
+// Guardar pontuação no ranking
 $('confirmSave').onclick = () => {
   const nome = $('player-name').value.trim();
   if (!nome) return;
 
   localStorage.setItem('ultimoJogador', nome);
-  const pontuacaoAtual = parseInt($('score').textContent);
   const data = new Date().toLocaleDateString('pt-PT');
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
 
-  ranking.push({ nome, pontuacao: pontuacaoAtual, nivel, data });
+  ranking.push({ nome, pontuacao, nivel, data });
   localStorage.setItem('ranking',
     JSON.stringify(ranking.sort((a, b) => b.pontuacao - a.pontuacao).slice(0, 10))
   );
@@ -202,33 +173,28 @@ $('confirmSave').onclick = () => {
   $('player-name').value = '';
 };
 
-/**
- * Cancela o guardar da pontuação
- */
 $('cancelSave').onclick = () => {
   $('modal').classList.remove('show');
   $('player-name').value = '';
 };
 
-/**
- * Mostra ou esconde o ranking Top 10
- */
+$('save-score-btn').onclick = () => {
+  const nomeAnterior = localStorage.getItem('ultimoJogador');
+  if (nomeAnterior) $('player-name').value = nomeAnterior;
+  $('modal').classList.add('show');
+};
+
 $('top10Btn')?.addEventListener('click', () => {
   const r = $('ranking-container');
   r.style.display = r.style.display === 'none' || !r.style.display ? 'block' : 'none';
 });
 
-/**
- * Limpa completamente o ranking gravado
- */
 $('clear-ranking-btn')?.addEventListener('click', () => {
   localStorage.removeItem('ranking');
   atualizarRankingVisual([]);
 });
 
-/**
- * Alterna o estado da música de fundo manualmente
- */
+// Alterna som de fundo
 $('toggle-sound').onclick = () => {
   const audio = $('musica-fundo');
   const botao = $('toggle-sound');
@@ -237,9 +203,16 @@ $('toggle-sound').onclick = () => {
   botao.textContent = audio.paused ? '🔇 Som desligado' : '🔊 Som ligado';
 };
 
-/**
- * Estado inicial do jogo ao carregar a página
- */
+// Mostra/fecha menu de opções
+$('btn-opcoes')?.addEventListener('click', () => {
+  $('menu-opcoes').classList.remove('escondido');
+});
+
+$('fechar-opcoes')?.addEventListener('click', () => {
+  $('menu-opcoes').classList.add('escondido');
+});
+
+// Estado inicial ao carregar
 window.addEventListener('DOMContentLoaded', () => {
   const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
   atualizarRankingVisual(ranking.sort((a, b) => b.pontuacao - a.pontuacao));
