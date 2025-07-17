@@ -4,8 +4,8 @@
  * Módulo responsável por gerir os efeitos sonoros e a música de fundo do jogo.
  * Inclui funções para tocar sons específicos e controlar o áudio ambiente.
  */
+// ---------- Elementos de Áudio definidos no HTML ----------
 
-// Obtém os elementos de áudio definidos no HTML
 const somColidir      = document.getElementById('som-colidir');
 const somPerdeu       = document.getElementById('som-perdeu');
 const somRodar        = document.getElementById('som-rodar');
@@ -16,21 +16,22 @@ const combo3          = document.getElementById('combo3');
 const comboFinal      = document.getElementById('combo-final');
 const bonus           = document.getElementById('bonus');
 
-// Verifica se som geral está activo
+// ---------- Verifica se o som geral está ativo ----------
 function somAtivo() {
   const config = localStorage.getItem('acessibilidade');
   return config ? JSON.parse(config).somGeral : true;
 }
 
-// Tocar som genérico com verificação
+// ---------- Toca som genérico com volume e reinício ----------
 function tocar(som, volume = 0.6) {
   if (!somAtivo() || !som) return;
   som.pause();
   som.currentTime = 0;
   som.volume = volume;
-  som.play();
+  som.play().catch(e => console.warn('Erro ao tocar som:', e));
 }
 
+// ---------- Sons padrão ----------
 export function tocarSomColidir() {
   tocar(somColidir);
 }
@@ -47,11 +48,14 @@ export function tocarSomPontos() {
   tocar(somPontos, 0.5);
 }
 
+// ---------- Música de fundo ----------
 export function iniciarMusicaFundo() {
-  if (!somAtivo() || !musicaFundo || !musicaFundo.paused) return;
+  if (!somAtivo() || !musicaFundo) return;
+  if (!musicaFundo.paused) return;
+
   musicaFundo.volume = 0.4;
   musicaFundo.loop = true;
-  musicaFundo.play();
+  musicaFundo.play().catch(err => console.warn('Música não pôde ser tocada:', err));
 }
 
 export function pararMusicaFundo() {
@@ -60,12 +64,12 @@ export function pararMusicaFundo() {
   }
 }
 
-// Combo vocal com fade-in e fade-out
+// ---------- Combo vocal com fade-in ----------
 export function fadeInVoz(som, volume = 0.6) {
   if (!somAtivo() || !som) return;
   som.volume = 0;
   som.currentTime = 0;
-  som.play();
+  som.play().catch(e => console.warn('Erro ao tocar som vocal:', e));
   const steps = 12;
   const increment = volume / steps;
   let atual = 0;
@@ -76,6 +80,7 @@ export function fadeInVoz(som, volume = 0.6) {
   }, 30);
 }
 
+// ---------- Fade-out para vozes longas ----------
 export function fadeOutVoz(som, duracao = 700) {
   if (!som || som.paused) return;
   const steps = 15;
@@ -91,13 +96,15 @@ export function fadeOutVoz(som, duracao = 700) {
   }, duracao / steps);
 }
 
-// Sons de combo
+// ---------- Sons de combo ----------
 export function tocarCombo2() {
   tocar(combo2, 0.6);
 }
+
 export function tocarCombo3() {
   tocar(combo3, 0.65);
 }
+
 export function tocarComboFinal() {
   const config = localStorage.getItem('acessibilidade');
   const ativarVoz = config ? JSON.parse(config).sonsAgudos : true;
@@ -107,7 +114,7 @@ export function tocarComboFinal() {
   }
 }
 
-// Som de bónus com fade-out suave
+// ---------- Som de bónus ----------
 export function tocarBonus(volume = 0.7) {
   if (!somAtivo() || !bonus) return;
   bonus.currentTime = 0;
