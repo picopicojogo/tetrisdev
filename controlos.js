@@ -6,16 +6,17 @@
  * os eventos de teclado que ativam essas ações.
  */
 
-// Importa a função de colisão para validar movimentos
-import { verificarColisao } from './canvas.js';
+// Importa funções necessárias
+import { verificarColisao, aplicarEfeitosTabuleiro } from './canvas.js';
+import {
+  tocarSomRodar,
+  tocarSomColidir,
+  tocarSomPontos,
+  tocarComboFinal
+} from './audio.js';
 
 /**
  * Roda a peça no sentido horário ou anti-horário
- * @param {number} sentido - 1 para horário, -1 para anti-horário
- * @param {Array<Array<number>>} peca - matriz da peça atual
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Object} posicao - posição atual da peça
- * @returns {Array<Array<number>>} - nova matriz da peça rodada
  */
 export function rodarPeca(sentido, peca, tabuleiro, posicao) {
   const altura = peca.length;
@@ -31,21 +32,16 @@ export function rodarPeca(sentido, peca, tabuleiro, posicao) {
     }
   }
 
-  // Verifica se a rotação é válida
   if (!verificarColisao(tabuleiro, nova, posicao)) {
+    tocarSomRodar();
     return nova;
   }
 
-  // Se houver colisão, mantém a peça original
   return peca;
 }
 
 /**
  * Move a peça horizontalmente
- * @param {number} direcao - -1 para esquerda, 1 para direita
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Array<Array<number>>} peca - matriz da peça atual
- * @param {Object} posicao - posição atual da peça (modificada diretamente)
  */
 export function moverPeca(direcao, tabuleiro, peca, posicao) {
   const novaX = posicao.x + direcao;
@@ -55,10 +51,7 @@ export function moverPeca(direcao, tabuleiro, peca, posicao) {
 }
 
 /**
- * Faz a peça descer uma linha
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Array<Array<number>>} peca - matriz da peça atual
- * @param {Object} posicao - posição atual da peça (modificada diretamente)
+ * Desce a peça uma linha
  */
 export function descerPeca(tabuleiro, peca, posicao) {
   const novaY = posicao.y + 1;
@@ -68,10 +61,7 @@ export function descerPeca(tabuleiro, peca, posicao) {
 }
 
 /**
- * Faz a peça cair até ao fundo instantaneamente
- * @param {Array<Array<number>>} tabuleiro - matriz do tabuleiro
- * @param {Array<Array<number>>} peca - matriz da peça atual
- * @param {Object} posicao - posição atual da peça (modificada diretamente)
+ * Queda instantânea até ao fundo
  */
 export function quedaInstantanea(tabuleiro, peca, posicao) {
   while (!verificarColisao(tabuleiro, peca, { x: posicao.x, y: posicao.y + 1 })) {
@@ -81,11 +71,6 @@ export function quedaInstantanea(tabuleiro, peca, posicao) {
 
 /**
  * Liga os eventos de teclado aos controlos do jogo
- * @param {Function} mover - função para mover a peça
- * @param {Function} rodar - função para rodar a peça
- * @param {Function} descer - função para descer a peça
- * @param {Function} pausar - função para pausar o jogo
- * @param {Function} cair - função para queda instantânea
  */
 export function configurarControlos(mover, rodar, descer, pausar, cair) {
   document.addEventListener('keydown', evento => {
@@ -110,4 +95,20 @@ export function configurarControlos(mover, rodar, descer, pausar, cair) {
         break;
     }
   });
+}
+
+/**
+ * Chamado ao eliminar uma linha ou combo importante
+ * Aplica efeitos visuais e sons dependendo das definições
+ */
+export function aplicarFeedbackCombo(comboLevel = 1) {
+  aplicarEfeitosTabuleiro(); // Flash / vibração se ativo
+
+  if (comboLevel === 1) {
+    tocarSomPontos();
+  } else if (comboLevel === 2) {
+    tocarSomColidir();
+  } else if (comboLevel >= 3) {
+    tocarComboFinal();
+  }
 }
