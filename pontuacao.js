@@ -1,37 +1,38 @@
-/**
- * Estado interno da pontuação
- */
+// Estado interno da pontuação
 let pontuacao = 0;
 let nivel = 1;
 let comboAtivo = false;
 
 /**
- * Atualiza pontuação com base em número de linhas e combo
- * @param {number} linhasFeitas
- * @returns {{pontuacao: number, nivel: number}}
+ * Processa a pontuação com base nas linhas eliminadas
+ * @param {number} linhasFeitas - número de linhas removidas após fixar a peça
+ * @returns {{pontuacao: number, nivel: number}} - pontuação total e nível atual
  */
 export function processarLinhas(linhasFeitas) {
-  if (linhasFeitas === 0) {
-    comboAtivo = false;
-    return { pontuacao, nivel };
-  }
+  let pontosGanhos = 0;
 
-  let pontosGanhos = linhasFeitas * 100;
+  // Pontuação consoante o número de linhas
+  if (linhasFeitas >= 1) {
+    if (linhasFeitas === 1) pontosGanhos = 100;
+    else if (linhasFeitas === 2) pontosGanhos = 200;
+    else if (linhasFeitas === 3) pontosGanhos = 300;
+    else pontosGanhos = linhasFeitas * 100;
 
-  if (comboAtivo && linhasFeitas >= 2) {
-    pontosGanhos += 200;
-    mostrarCelebracao("Combo!");
+    // Se já houve uma linha antes, ativa combo visual
+    if (linhasFeitas >= 2 && comboAtivo) {
+      mostrarCelebracao("Combo!");
+    } else {
+      mostrarCelebracao("Linha!");
+    }
+
+    comboAtivo = true;
   } else {
-    mostrarCelebracao("Linha!");
+    comboAtivo = false;
   }
 
+  // Acumula pontuação e atualiza nível
   pontuacao += pontosGanhos;
-
-  // Atualiza nível a cada 500 pontos
-  const novoNivel = 1 + Math.floor(pontuacao / 500);
-  nivel = novoNivel;
-
-  comboAtivo = true;
+  nivel = 1 + Math.floor(pontuacao / 500);
 
   atualizarPontuacao(pontuacao, nivel);
 
@@ -39,7 +40,7 @@ export function processarLinhas(linhasFeitas) {
 }
 
 /**
- * Reinicia a pontuação e estado interno
+ * Reinicia a pontuação e o estado do jogo
  */
 export function reiniciarPontuacao() {
   pontuacao = 0;
@@ -49,8 +50,8 @@ export function reiniciarPontuacao() {
 }
 
 /**
- * Função utilitária para mostrar mensagem no ecrã
- * @param {string} texto
+ * Mostra mensagem de celebração animada no topo do ecrã
+ * @param {string} texto - mensagem a apresentar (ex. "Linha!", "Combo!")
  */
 function mostrarCelebracao(texto) {
   const el = document.getElementById("celebracao");
@@ -58,18 +59,23 @@ function mostrarCelebracao(texto) {
 
   el.textContent = texto;
   el.style.opacity = "1";
+  el.style.transform = "scale(1.1)";
+  el.style.transition = "opacity 0.4s ease, transform 0.3s ease";
 
   setTimeout(() => {
     el.style.opacity = "0";
-  }, 1000);
+    el.style.transform = "scale(1)";
+  }, 800);
 }
 
 /**
- * Função externa para atualizar visual de pontuação (canvas.js)
- * Substitui esta importação em contexto real:
- * import { atualizarPontuacao } from './canvas.js'
+ * Atualiza os valores da pontuação e do nível no interface
+ * @param {number} pontos - valor atual de pontos
+ * @param {number} nivelAtual - valor atual do nível
  */
-function atualizarPontuacao(pontos, nivel) {
-  document.getElementById("score").textContent = pontos;
-  document.getElementById("level").textContent = nivel;
+function atualizarPontuacao(pontos, nivelAtual) {
+  const elPontos = document.getElementById("score");
+  const elNivel = document.getElementById("level");
+  if (elPontos) elPontos.textContent = pontos;
+  if (elNivel) elNivel.textContent = nivelAtual;
 }
