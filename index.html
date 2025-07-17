@@ -14,7 +14,7 @@
 </head>
 <body>
   <h1>Pico-Pico Bricks</h1>
-  <!-- Área de jogo com tabuleiro e próxima peça -->
+  <!-- Área de jogo -->
   <div id="jogo">
     <canvas id="board"></canvas>
     <div id="next-container">
@@ -22,7 +22,7 @@
       <canvas id="next"></canvas>
     </div>
   </div>
-  <!-- Informações de jogo -->
+  <!-- Informações do jogo -->
   <div id="info">
     <div>Tempo: <span id="time">00:00</span></div>
     <div>Pontuação: <span id="score">0</span></div>
@@ -30,17 +30,18 @@
   </div>
   <!-- Botões principais -->
   <div class="botoes">
-    <button id="startBtn">Iniciar</button>
-    <button id="pauseBtn">Pausar</button>
-    <button id="resetBtn">Reiniciar</button>
-    <button id="save-score-btn">Guardar</button>
-    <button id="top10Btn">Ver Ranking</button>
-    <button id="clear-ranking-btn">Limpar Ranking</button>
-    <button id="toggle-sound">Som ligado</button>
+    <button id="startBtn" class="botao-menu"><span class="icone">▶️</span> Iniciar</button>
+    <button id="pauseBtn" class="botao-menu"><span class="icone">⏸️</span> Pausar</button>
+    <button id="resetBtn" class="botao-menu"><span class="icone">🔄</span> Reiniciar</button>
+    <button id="save-score-btn" class="botao-menu"><span class="icone">💾</span> Guardar</button>
+    <button id="top10Btn" class="botao-menu"><span class="icone">📊</span> Ver Ranking</button>
+    <button id="clear-ranking-btn" class="botao-menu"><span class="icone">🗑️</span> Limpar Ranking</button>
+    <button id="toggle-sound" class="botao-menu"><span class="icone">🔈</span> Som ligado</button>
+    <button id="btn-opcoes" class="botao-menu" title="Abrir definições"><span class="icone">⚙️</span> Opções</button>
   </div>
   <!-- Ranking -->
   <div id="ranking-container">
-    <h2>Top 10 Jogadores</h2>
+    <h2>Top 10</h2>
     <ul id="ranking-list"></ul>
   </div>
   <!-- Modal de fim de jogo -->
@@ -51,20 +52,34 @@
       <input type="text" id="player-name" placeholder="Nome do jogador" />
       <br /><br />
       <div style="display: flex; justify-content: center; gap: 20px;">
-        <button id="confirmSave">Guardar</button>
-        <button id="cancelSave">Fechar</button>
+        <button id="confirmSave" class="botao-menu"><span class="icone">✅</span> Guardar</button>
+        <button id="cancelSave" class="botao-menu"><span class="icone">❌</span> Fechar</button>
       </div>
     </div>
   </div>
   <!-- Celebração -->
   <div id="celebracao">LINHA!</div>
-  <!-- Áudio -->
+  <!-- Menu de acessibilidade -->
+  <div id="menu-opcoes" class="modal escondido">
+    <h2>🎮 Opções de Acessibilidade</h2>
+    <label><input type="checkbox" id="toggle-flash" checked> Flash</label><br>
+    <label><input type="checkbox" id="toggle-vibracao" checked> Vibração</label><br>
+    <label><input type="checkbox" id="toggle-animacoes" checked> Animações intensas</label><br>
+    <label><input type="checkbox" id="toggle-sonos-agudos" checked> Sons agudos / explosivos</label><br>
+    <label><input type="checkbox" id="toggle-som" checked> Som ativado</label><br>
+    <button id="fechar-opcoes" class="botao-menu"><span class="icone">🔙</span> Fechar</button>
+  </div>
+  <!-- Sons de jogo -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop></audio>
   <audio id="som-colidir" src="colidir.mp3"></audio>
   <audio id="som-perdeu" src="perdeu.mp3"></audio>
   <audio id="som-pontos" src="pontos.mp3"></audio>
   <audio id="som-rodar" src="rodar.mp3"></audio>
-  <!-- Script -->
+  <audio id="combo2" src="combo2.mp3"></audio>
+  <audio id="combo3" src="combo3.mp3"></audio>
+  <audio id="combo-final" src="combo-final.mp3"></audio>
+  <audio id="bonus" src="bonus.mp3"></audio>
+  <!-- Scripts -->
   <script type="module" src="cerebro.js"></script>
 </body>
 </html>
