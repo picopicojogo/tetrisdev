@@ -3,13 +3,14 @@ import {
   COLUNAS, LINHAS,
   criarMatriz, rodar,
   verificarColisao, fundirPeca,
-  gerarPeca
+  gerarPeca, limparLinhas
 } from './motor.js';
 
 import {
   desenharJogo, desenharProxima,
-  atualizarPontuacao, mostrarModalFim,
-  guardarPontuacao, carregarRankingGuardado
+  atualizarPontuacao, atualizarTempo,
+  mostrarModalFim, guardarPontuacao,
+  carregarRankingGuardado
 } from './canvas.js';
 
 import {
@@ -18,34 +19,42 @@ import {
   pararMusicaFundo
 } from './audio.js';
 
-// Obtenção do contexto dos canvas principais
+import {
+  moverPeca, rodarPeca, descerPeca,
+  configurarControlos
+} from './controlos.js';
+
+// Contexto dos canvas principais
 const board = document.getElementById('board');
 const next = document.getElementById('next');
 const ctxBoard = board.getContext('2d');
 const ctxNext = next.getContext('2d');
 
-// Configuração das dimensões do canvas
+// Dimensões dos canvas
 board.width = COLUNAS * 24;
 board.height = LINHAS * 24;
 next.width = 80;
 next.height = 80;
 
-// Estado interno do jogo
+// Estado do jogo
 let tabuleiro = criarMatriz(COLUNAS, LINHAS);
 let pecaAtual = gerarPeca();
 let proximaPeca = gerarPeca();
 let posicao = { x: 3, y: 0 };
 let intervalo = null;
+let segundos = 0;
+let tempoEl = document.getElementById("time");
+let tempoIntervalo = null;
 let pontuacao = 0;
 let nivel = 1;
 
-// Renderização do estado atual do jogo
+// Renderização atual
 function desenhar() {
   desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(ctxNext, proximaPeca);
 }
 
-// Função principal que atualiza o jogo em cada ciclo
+// Atualiza o estado do jogo (descida automática ou após fixar peça)
 function atualizar() {
   posicao.y++;
 
@@ -54,7 +63,10 @@ function atualizar() {
     fundirPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
 
-    pontuacao += 100 * nivel;
+    // Limpa linhas e atualiza pontuação
+    const { novaPontuacao, progressoNivel } = limparLinhas(tabuleiro, nivel);
+    pontuacao += novaPontuacao;
+    nivel += progressoNivel;
     atualizarPontuacao(pontuacao, nivel);
 
     [pecaAtual, proximaPeca] = [proximaPeca, gerarPeca()];
@@ -63,6 +75,7 @@ function atualizar() {
     if (verificarColisao(tabuleiro, pecaAtual, posicao)) {
       tocarSomPerdeu();
       clearInterval(intervalo);
+      clearInterval(tempoIntervalo);
       mostrarModalFim(pontuacao);
     }
   }
@@ -70,61 +83,64 @@ function atualizar() {
   desenhar();
 }
 
-// Evento de teclado para controlo do jogador
-document.addEventListener('keydown', e => {
-  if (!intervalo) return;
-  const tecla = e.key;
-  if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(tecla)) e.preventDefault();
-
-  const { x, y } = posicao;
-
-  if (tecla === 'ArrowLeft' && !verificarColisao(tabuleiro, pecaAtual, { x: x - 1, y })) posicao.x--;
-  if (tecla === 'ArrowRight' && !verificarColisao(tabuleiro, pecaAtual, { x: x + 1, y })) posicao.x++;
-  if (tecla === 'ArrowDown' && !verificarColisao(tabuleiro, pecaAtual, { x, y: y + 1 })) posicao.y++;
-  if (tecla === 'ArrowUp') {
-    const rodada = rodar(pecaAtual, 1);
-    if (!verificarColisao(tabuleiro, rodada, posicao)) {
-      pecaAtual = rodada;
-      tocarSomRodar();
-    }
+// Descida instantânea até à colisão
+function quedaInstantanea() {
+  while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
+    posicao.y++;
   }
+  atualizar();
+}
 
-  desenhar();
-});
+// Pausa o jogo
+function pausarJogo() {
+  clearInterval(intervalo);
+  clearInterval(tempoIntervalo);
+  intervalo = null;
+  tempoIntervalo = null;
+  pararMusicaFundo();
+}
 
-// Botão para iniciar o jogo
+// Inicia cronómetro visual
+function iniciarTempo() {
+  tempoIntervalo = setInterval(() => {
+    segundos++;
+    atualizarTempo(tempoEl, segundos);
+  }, 1000);
+}
+
+// Inicia o jogo
 document.getElementById('startBtn').onclick = () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
+    iniciarTempo();
     iniciarMusicaFundo();
   }
 };
 
-// Botão para pausar o jogo
-document.getElementById('pauseBtn').onclick = () => {
-  clearInterval(intervalo);
-  intervalo = null;
-  pararMusicaFundo();
-};
+// Pausa o jogo
+document.getElementById('pauseBtn').onclick = () => pausarJogo();
 
-// Botão para reiniciar o jogo
+// Reinicia o jogo
 document.getElementById('resetBtn').onclick = () => {
-  clearInterval(intervalo);
-  intervalo = null;
+  pausarJogo();
 
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
   [pecaAtual, proximaPeca] = [gerarPeca(), gerarPeca()];
   posicao = { x: 3, y: 0 };
+  segundos = 0;
   pontuacao = 0;
   nivel = 1;
   atualizarPontuacao(pontuacao, nivel);
+  atualizarTempo(tempoEl, segundos);
   desenhar();
 };
 
-// Botão de alternância de som
+// Alternância do som de fundo
 document.getElementById('toggle-sound').onclick = () => {
   const audio = document.getElementById('musica-fundo');
   const btn = document.getElementById('toggle-sound');
+  if (!audio) return;
+
   if (audio.paused) {
     audio.play();
     btn.textContent = '🔊 Som ligado';
@@ -135,10 +151,25 @@ document.getElementById('toggle-sound').onclick = () => {
   btn.classList.toggle('active', !audio.paused);
 };
 
-// Guarda pontuação no final do jogo
+// Guarda pontuação final
 document.getElementById('confirmSave').onclick = () => guardarPontuacao(pontuacao);
-document.getElementById('cancelSave').onclick = () => document.getElementById('modal').classList.remove('show');
+document.getElementById('cancelSave').onclick = () =>
+  document.getElementById('modal').classList.remove('show');
 
-// Inicialização ao carregar a página
+// Liga controlos do jogador
+configurarControlos(
+  direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
+  dir => pecaAtual = rodarPeca(dir, pecaAtual, tabuleiro, posicao),
+  () => {
+    const travou = descerPeca(tabuleiro, pecaAtual, posicao);
+    if (travou) atualizar();
+    else desenhar();
+  },
+  quedaInstantanea,
+  pausarJogo
+);
+
+// Estado inicial
 carregarRankingGuardado();
+atualizarTempo(tempoEl, segundos);
 desenhar();
