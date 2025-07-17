@@ -25,9 +25,7 @@ h1 {
   padding: 10px 20px;
   border-radius: 8px;
   text-shadow: 0 0 5px #00ffff;
-  font-family: 'Press Start 2P', monospace;
   font-size: clamp(16px, 2.5vw, 24px);
-  text-align: center;
   max-width: 90%;
 }
 
@@ -63,7 +61,6 @@ h1 {
   margin-bottom: 8px;
   color: #00ffff;
   text-shadow: 0 0 4px #00ffff;
-  font-family: 'Press Start 2P', monospace;
   text-align: center;
   max-width: 100%;
 }
@@ -107,7 +104,7 @@ button:hover {
   box-shadow: 0 0 12px #00ffcc;
 }
 
-/* Redução do tamanho dos botões em ecrãs grandes */
+/* Responsividade para ecrãs grandes */
 @media (min-width: 1200px) {
   button {
     padding: 8px 16px;
@@ -130,7 +127,6 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 6px 12px;
   border-radius: 6px;
-  font-family: 'Press Start 2P', monospace;
   display: inline-block;
 }
 
@@ -157,12 +153,10 @@ button:hover {
   z-index: 999;
 }
 
-/* Mostrar o modal quando necessário */
 #modal.show {
   display: flex;
 }
 
-/* Conteúdo interno do modal */
 #modal-content {
   background-color: #111;
   padding: 30px;
@@ -193,14 +187,12 @@ button:hover {
   display: none;
 }
 
-/* Lista de jogadores no ranking */
 #ranking-list {
   list-style: none;
   padding: 0;
   margin-top: 10px;
 }
 
-/* Estilo de cada linha do ranking */
 #ranking-list li {
   margin: 5px 0;
   font-family: 'Press Start 2P', monospace;
@@ -208,7 +200,7 @@ button:hover {
   text-shadow: 0 0 5px #ff0;
 }
 
-/* Texto de celebração */
+/* Texto de celebração ao eliminar linhas */
 #celebracao {
   position: absolute;
   top: 50%;
@@ -221,6 +213,32 @@ button:hover {
   text-shadow: 0 0 10px #ffcc00;
   font-family: 'Press Start 2P', monospace;
 }
+
+/* Estilo especial para COMBO! */
+.combo {
+  font-size: 40px;
+  color: #ff3366;
+  text-shadow: 0 0 12px #ff3366, 0 0 20px #ffffff;
+  transform: translate(-50%, -50%) scale(1.5);
+  animation: pulsarCombo 1s ease-out forwards;
+}
+
+/* Animação para pontuação COMBO! */
+@keyframes pulsarCombo {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.8);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(1.2);
+  }
+}
+
 @keyframes subirCelebracao {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -265,5 +283,18 @@ button:hover {
 
   #modal-content {
     width: 90%;
+  }
+
+  #ranking-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+
+  #next-title {
+    font-size: 12px;
+  }
+
+  #celebracao {
+    font-size: 28px;
   }
 }
