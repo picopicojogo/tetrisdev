@@ -1,8 +1,16 @@
-// Dimensões do tabuleiro de jogo
+/**
+ * canvas.js
+ *
+ * Módulo responsável pela lógica visual e estrutural do tabuleiro.
+ * Inclui funções para desenhar o jogo, gerar peças, verificar colisões,
+ * fixar peças no tabuleiro e eliminar linhas completas.
+ */
+
+// Dimensões do tabuleiro
 export const COLUNAS = 10;
 export const LINHAS = 20;
 
-// Lista de peças disponíveis no jogo
+// Lista de peças disponíveis
 export const pecasDisponiveis = [
   [[1, 1], [1, 1]],                    // Quadrado
   [[0, 2, 0], [2, 2, 2]],              // T
@@ -14,8 +22,8 @@ export const pecasDisponiveis = [
 ];
 
 /**
- * Cria uma peça aleatória com base na lista disponível
- * @returns {Array<Array<number>>} Matriz da peça
+ * Gera uma peça aleatória com base na lista disponível
+ * @returns {Array<Array<number>>} matriz da peça
  */
 export function gerarPecaAleatoria() {
   const aleatoria = Math.floor(Math.random() * pecasDisponiveis.length);
@@ -113,7 +121,7 @@ export function desenharProxima(ctx, peca) {
 }
 
 /**
- * Desenha o estado atual do tabuleiro e a peça em movimento
+ * Desenha o estado actual do tabuleiro e a peça em movimento
  * @param {CanvasRenderingContext2D} ctx - contexto do tabuleiro
  * @param {number} width - largura do canvas
  * @param {number} height - altura do canvas
