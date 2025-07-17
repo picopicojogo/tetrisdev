@@ -1,23 +1,21 @@
 // cerebro.js — o CPU do jogo
 import {
   COLUNAS, LINHAS,
-  criarMatriz, rodar,
-  verificarColisao, fundirPeca,
-  gerarPeca, limparLinhas
+  criarMatriz, verificarColisao,
+  fundirPeca, gerarPeca,
+  limparLinhas
 } from './motor.js';
 
 import {
   configurarCanvas,
   desenharJogo, desenharProxima,
-  atualizarPontuacao, atualizarTempo,
-  mostrarModalFim, guardarPontuacao,
-  carregarRankingGuardado
+  atualizarTempo,
+  mostrarModalFim
 } from './canvas.js';
 
 import {
-  tocarSomRodar, tocarSomColidir,
-  tocarSomPerdeu, iniciarMusicaFundo,
-  pararMusicaFundo
+  tocarSomColidir, tocarSomPerdeu,
+  iniciarMusicaFundo, pararMusicaFundo
 } from './audio.js';
 
 import {
@@ -25,7 +23,14 @@ import {
   configurarControlos
 } from './controlos.js';
 
-/* Inicializa os canvas e contexto gráfico */
+import {
+  processarLinhas,
+  reiniciarPontuacao,
+  guardarPontuacao,
+  carregarRankingGuardado
+} from './pontuacao.js';
+
+/* Inicializa os canvas */
 const { ctxBoard, ctxNext, board, next } = configurarCanvas();
 const tempoEl = document.getElementById("time");
 
@@ -37,16 +42,14 @@ let posicao = { x: 3, y: 0 };
 let intervalo = null;
 let tempoIntervalo = null;
 let segundos = 0;
-let pontuacao = 0;
-let nivel = 1;
 
-/* Desenha o jogo na tela */
+/* Desenha o estado atual */
 function desenhar() {
   desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(ctxNext, proximaPeca);
 }
 
-/* Processa o ciclo de atualização */
+/* Ciclo principal do jogo */
 function atualizar() {
   posicao.y++;
 
@@ -55,10 +58,8 @@ function atualizar() {
     fundirPeca(tabuleiro, pecaAtual, posicao);
     tocarSomColidir();
 
-    const { novaPontuacao, progressoNivel } = limparLinhas(tabuleiro, nivel);
-    pontuacao += novaPontuacao;
-    nivel += progressoNivel;
-    atualizarPontuacao(pontuacao, nivel);
+    const linhasFeitas = limparLinhas(tabuleiro); // devolve número de linhas
+    processarLinhas(linhasFeitas);
 
     [pecaAtual, proximaPeca] = [proximaPeca, gerarPeca()];
     posicao = { x: 3, y: 0 };
@@ -67,7 +68,7 @@ function atualizar() {
       tocarSomPerdeu();
       clearInterval(intervalo);
       clearInterval(tempoIntervalo);
-      mostrarModalFim(pontuacao);
+      mostrarModalFim(processarLinhas(0).pontuacao);
       return;
     }
   }
@@ -75,7 +76,7 @@ function atualizar() {
   desenhar();
 }
 
-/* Realiza descida rápida da peça */
+/* Queda rápida da peça */
 function quedaInstantanea() {
   while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
     posicao.y++;
@@ -83,7 +84,7 @@ function quedaInstantanea() {
   atualizar();
 }
 
-/* Pausa o jogo e o tempo */
+/* Pausar cronómetro e jogo */
 function pausarJogo() {
   clearInterval(intervalo);
   clearInterval(tempoIntervalo);
@@ -92,7 +93,7 @@ function pausarJogo() {
   pararMusicaFundo();
 }
 
-/* Inicia o cronómetro */
+/* Iniciar cronómetro */
 function iniciarTempo() {
   tempoIntervalo = setInterval(() => {
     segundos++;
@@ -100,7 +101,7 @@ function iniciarTempo() {
   }, 1000);
 }
 
-/* Inicia a partida */
+/* Botão: Iniciar */
 document.getElementById('startBtn').onclick = () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
@@ -109,26 +110,24 @@ document.getElementById('startBtn').onclick = () => {
   }
 };
 
-/* Pausa manual */
+/* Botão: Pausar */
 document.getElementById('pauseBtn').onclick = () => {
   pausarJogo();
 };
 
-/* Reinicia o estado do jogo */
+/* Botão: Reiniciar */
 document.getElementById('resetBtn').onclick = () => {
   pausarJogo();
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
   [pecaAtual, proximaPeca] = [gerarPeca(), gerarPeca()];
   posicao = { x: 3, y: 0 };
-  pontuacao = 0;
-  nivel = 1;
   segundos = 0;
-  atualizarPontuacao(pontuacao, nivel);
+  reiniciarPontuacao();
   atualizarTempo(tempoEl, segundos);
   desenhar();
 };
 
-/* Alterna o som de fundo */
+/* Botão: Alternar som de fundo */
 document.getElementById('toggle-sound').onclick = () => {
   const audio = document.getElementById('musica-fundo');
   const btn = document.getElementById('toggle-sound');
@@ -145,12 +144,16 @@ document.getElementById('toggle-sound').onclick = () => {
   btn.classList.toggle('active', !audio.paused);
 };
 
-/* Guarda a pontuação no fim */
-document.getElementById('confirmSave').onclick = () => guardarPontuacao(pontuacao);
+/* Botões: guardar e cancelar pontuação final */
+document.getElementById('confirmSave').onclick = () => {
+  const dados = processarLinhas(0);
+  guardarPontuacao(dados.pontuacao);
+};
+
 document.getElementById('cancelSave').onclick = () =>
   document.getElementById('modal')?.classList.remove('show');
 
-/* Liga os controlos de teclado e toque */
+/* Liga os controlos do utilizador */
 configurarControlos(
   direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
   dir => {
@@ -172,7 +175,7 @@ configurarControlos(
   pausarJogo
 );
 
-/* Inicializa visual e ranking */
+/* Estado inicial do jogo */
 carregarRankingGuardado();
 atualizarTempo(tempoEl, segundos);
 desenhar();
