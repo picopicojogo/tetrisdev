@@ -30,16 +30,18 @@ import {
   iniciarCronometro, pararCronometro, reiniciarCronometro
 } from './cronometro.js';
 
-// Atalho para elementos por ID
+// Atalho rápido para elementos por ID
 const $ = id => document.getElementById(id);
-const boardCtx = $('board').getContext('2d');
-const nextCtx = $('next').getContext('2d');
+const board = $('board');
+const next = $('next');
+const boardCtx = board.getContext('2d');
+const nextCtx = next.getContext('2d');
 
-// Definições do canvas
-$('board').width = COLUNAS * 20;
-$('board').height = LINHAS * 20;
-$('next').width = 80;
-$('next').height = 80;
+// Dimensões do canvas
+board.width = COLUNAS * 20;
+board.height = LINHAS * 20;
+next.width = 80;
+next.height = 80;
 
 // Estado do jogo
 let tabuleiro = Array.from({ length: LINHAS }, () => Array(COLUNAS).fill(0));
@@ -52,13 +54,13 @@ let linhasTotais = 0;
 let intervaloTempo = 600;
 let config = carregarDefinicoesAcessibilidade();
 
-// Função para desenhar o jogo e próxima peça
+// Desenha o estado do jogo
 function desenhar() {
-  desenharJogo(boardCtx, $('board').width, $('board').height, tabuleiro, pecaAtual, posicao);
+  desenharJogo(boardCtx, board.width, board.height, tabuleiro, pecaAtual, posicao);
   desenharProxima(nextCtx, proximaPeca);
 }
 
-// Função para terminar o jogo
+// Termina o jogo
 function terminarJogo() {
   tocarSomPerdeu();
   clearInterval(intervalo);
@@ -67,7 +69,7 @@ function terminarJogo() {
   $('modal').classList.add('show');
 }
 
-// Função para atualizar estado do jogo
+// Atualiza ciclo principal do jogo
 function atualizar() {
   posicao.y++;
 
@@ -81,13 +83,19 @@ function atualizar() {
       calcularPontuacao(eliminadas);
       linhasTotais += eliminadas;
 
-      const textoCelebracao = comboContador > 1 ? 'COMBO!' : 'LINHA!';
-      const classeCelebracao = comboContador > 1 ? 'combo' : '';
+      const textoCelebracao = comboContador > 2 ? 'ULTRA COMBO!' :
+                               comboContador === 2 ? 'SUPER COMBO!' :
+                               comboContador === 1 ? 'COMBO!' : 'LINHA!';
+
+      const classeCelebracao = comboContador > 2 ? 'combo-final' :
+                               comboContador === 2 ? 'combo2' :
+                               comboContador === 1 ? 'combo' : '';
+
       mostrarCelebracao(textoCelebracao, classeCelebracao);
 
       if (config.flash) {
-        $('board').classList.add('flash');
-        setTimeout(() => $('board').classList.remove('flash'), 300);
+        board.classList.add('flash');
+        setTimeout(() => board.classList.remove('flash'), 300);
       }
 
       const novoNivel = Math.floor(linhasTotais / 5) + 1;
@@ -114,7 +122,7 @@ function atualizar() {
   desenhar();
 }
 
-// Liga os controlos do jogador
+// Liga controlos do teclado
 configurarControlos(
   dir => { moverPeca(dir, tabuleiro, pecaAtual, posicao); desenhar(); },
   () => { pecaAtual = rodarPeca(1, pecaAtual, tabuleiro, posicao); desenhar(); },
@@ -184,7 +192,7 @@ $('save-score-btn').onclick = () => {
   $('modal').classList.add('show');
 };
 
-// Ranking visual
+// Alterna visualização do ranking
 $('top10Btn')?.addEventListener('click', () => {
   const r = $('ranking-container');
   r.style.display = r.style.display === 'none' || !r.style.display ? 'block' : 'none';
@@ -195,7 +203,7 @@ $('clear-ranking-btn')?.addEventListener('click', () => {
   atualizarRankingVisual([]);
 });
 
-// Alterna estado da música de fundo
+// Alterna som
 $('toggle-sound').onclick = () => {
   const audio = $('musica-fundo');
   const botao = $('toggle-sound');
@@ -204,25 +212,27 @@ $('toggle-sound').onclick = () => {
   botao.textContent = audio.paused ? '🔇 Som desligado' : '🔊 Som ligado';
 };
 
-// Guarda preferências do jogador no localStorage
+// Guarda preferências de acessibilidade
 function guardarDefinicoesAcessibilidade() {
   const configNova = {
     flash: $('toggle-flash')?.checked ?? true,
     vibracao: $('toggle-vibracao')?.checked ?? true,
     animacoes: $('toggle-animacoes')?.checked ?? true,
-    sonsAgudos: $('toggle-sonos-agudos')?.checked ?? true
+    sonsAgudos: $('toggle-sonos-agudos')?.checked ?? true,
+    somGeral: true // obrigatório para audio.js
   };
   localStorage.setItem('acessibilidade', JSON.stringify(configNova));
   config = configNova;
 }
 
-// Repõe preferências predefinidas
+// Repõe definições padrão
 function reporDefinicoesAcessibilidade() {
   const predefinidas = {
     flash: true,
     vibracao: true,
     animacoes: true,
-    sonsAgudos: true
+    sonsAgudos: true,
+    somGeral: true
   };
   localStorage.setItem('acessibilidade', JSON.stringify(predefinidas));
   config = predefinidas;
@@ -245,6 +255,7 @@ $('fechar-opcoes')?.addEventListener('click', () => {
 
 $('repor-opcoes')?.addEventListener('click', () => {
   reporDefinicoesAcessibilidade();
+  $('menu-opcoes').classList.add('escondido');
 });
 
 // Estado inicial ao carregar a página
@@ -257,7 +268,7 @@ window.addEventListener('DOMContentLoaded', () => {
   reiniciarCronometro();
   desenhar();
 
-  // Aplica preferências visuais se existirem
+  // Aplica preferências visuais existentes
   $('toggle-flash').checked = config.flash;
   $('toggle-vibracao').checked = config.vibracao;
   $('toggle-animacoes').checked = config.animacoes;
