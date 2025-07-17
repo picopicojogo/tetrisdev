@@ -2,7 +2,7 @@ import { verificarColisao, rodar } from './motor.js';
 import { tocarSomRodar } from './audio.js';
 
 /**
- * Move a peça na horizontal, se não houver colisão
+ * Move a peça na horizontal, se possível
  * @param {number} direcao - -1 para esquerda, +1 para direita
  * @param {number[][]} tabuleiro
  * @param {number[][]} peca
@@ -16,12 +16,12 @@ export function moverPeca(direcao, tabuleiro, peca, posicao) {
 }
 
 /**
- * Roda a peça, se possível
- * @param {number} direcao - +1 sentido horário, -1 sentido anti-horário
+ * Roda a peça no sentido indicado, se não houver colisão
+ * @param {number} direcao - +1 horário, -1 anti-horário
  * @param {number[][]} peca
  * @param {number[][]} tabuleiro
  * @param {{x: number, y: number}} posicao
- * @returns {number[][]} matriz da peça (original ou rodada)
+ * @returns {number[][]} matriz da peça (rodada ou original)
  */
 export function rodarPeca(direcao, peca, tabuleiro, posicao) {
   const rodada = rodar(peca, direcao);
@@ -33,11 +33,11 @@ export function rodarPeca(direcao, peca, tabuleiro, posicao) {
 }
 
 /**
- * Desce a peça uma linha, ou deteta colisão vertical
+ * Move a peça uma linha para baixo ou trava se houver colisão
  * @param {number[][]} tabuleiro
  * @param {number[][]} peca
  * @param {{x: number, y: number}} posicao
- * @returns {boolean} true se não conseguiu descer
+ * @returns {boolean} verdadeiro se não conseguiu descer
  */
 export function descerPeca(tabuleiro, peca, posicao) {
   posicao.y++;
@@ -49,37 +49,36 @@ export function descerPeca(tabuleiro, peca, posicao) {
 }
 
 /**
- * Liga os controlos (teclado, botões e toque) às funções do jogo
- * @param {function} moverFn - função para mover horizontalmente
- * @param {function} rodarFn - função para rodar a peça
- * @param {function} descerFn - função para descer a peça
- * @param {function} quedaFn - função para descida rápida da peça
- * @param {function} pausarFn - função para pausar o jogo
+ * Liga os controlos do jogador: teclado, botões visuais e toque
+ * @param {function} moverFn - move horizontalmente
+ * @param {function} rodarFn - roda a peça
+ * @param {function} descerFn - desce uma linha
+ * @param {function} quedaFn - descida rápida da peça
+ * @param {function} pausarFn - pausa o jogo
  */
 export function configurarControlos(moverFn, rodarFn, descerFn, quedaFn, pausarFn) {
-  // Controlos via teclado
+  // Teclado
   window.addEventListener("keydown", e => {
-    const tecla = e.key;
-    const teclaInferior = tecla.toLowerCase();
-    const bloqueadas = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", " ", "Spacebar"];
-    if (bloqueadas.includes(tecla)) e.preventDefault();
+    const tecla = e.key.toLowerCase();
+    const bloquear = ["arrowleft", "arrowright", "arrowup", "arrowdown", " ", "spacebar"];
+    if (bloquear.includes(tecla) || tecla === " ") e.preventDefault();
 
-    if (teclaInferior === "arrowleft") moverFn(-1);
-    if (teclaInferior === "arrowright") moverFn(1);
-    if (teclaInferior === "arrowdown") descerFn();
-    if (teclaInferior === "arrowup") rodarFn(1);
-    if (teclaInferior === " ") quedaFn();
-    if (teclaInferior === "p") pausarFn();
+    if (tecla === "arrowleft") moverFn(-1);
+    if (tecla === "arrowright") moverFn(1);
+    if (tecla === "arrowdown") descerFn();
+    if (tecla === "arrowup") rodarFn(1);
+    if (tecla === " ") quedaFn();
+    if (tecla === "p") pausarFn();
   });
 
-  // Botões visuais
+  // Botões visuais (se existirem)
   document.getElementById("leftBtn")?.addEventListener("click", () => moverFn(-1));
   document.getElementById("rightBtn")?.addEventListener("click", () => moverFn(1));
   document.getElementById("downBtn")?.addEventListener("click", () => descerFn());
   document.getElementById("rotateBtn")?.addEventListener("click", () => rodarFn(1));
   document.getElementById("dropBtn")?.addEventListener("click", () => quedaFn());
 
-  // Controlos por toque em dispositivos móveis
+  // Toque em dispositivos móveis
   const canvas = document.getElementById("board");
   let startX = 0, startY = 0;
 
@@ -93,17 +92,18 @@ export function configurarControlos(moverFn, rodarFn, descerFn, quedaFn, pausarF
     const toque = e.changedTouches[0];
     const dx = toque.clientX - startX;
     const dy = toque.clientY - startY;
-    const absX = Math.abs(dx), absY = Math.abs(dy);
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
 
     if (Math.max(absX, absY) < 20) {
-      rodarFn(1); // Toque leve = rodar a peça
+      rodarFn(1); // Toque leve = rodar
       return;
     }
 
     if (absX > absY) {
-      dx > 0 ? moverFn(1) : moverFn(-1); // Deslocar horizontalmente
+      dx > 0 ? moverFn(1) : moverFn(-1);
     } else {
-      dy > 0 ? descerFn() : quedaFn();   // Descer ou lançar rapidamente
+      dy > 0 ? descerFn() : quedaFn();
     }
   });
 }
