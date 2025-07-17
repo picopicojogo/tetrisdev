@@ -18,39 +18,51 @@
         <div>Nível: <span id="level">1</span></div>
         <div>Tempo: <span id="time">00:00</span></div>
       </div>
-      <!-- Próxima peça -->
+      <!-- Pré-visualização da próxima peça -->
       <div id="preview-container">
         <h2 class="preview-title">Próxima Peça</h2>
         <canvas id="next" width="80" height="80"></canvas>
       </div>
       <!-- Tabuleiro principal -->
       <canvas id="board"></canvas>
-      <!-- Botões principais -->
+      <!-- Botões principais do jogo -->
       <div id="controls">
-         <button id="startBtn">▶ Iniciar</button>
+        <button id="startBtn">▶ Iniciar</button>
         <button id="resetBtn">🔄 Reiniciar</button>
         <button id="pauseBtn">⏸ Pausar</button>
         <button id="toggle-sound">🔊 Som</button>
-        <button id="save-score-btn">💾 Guardar</button>
+        <button id="dropBtn">⬇ Queda Rápida</button>
       </div>
-      <!-- Ranking -->
+      <!-- Controlo por toque -->
+      <div id="touch-controls">
+        <button id="leftBtn">←</button>
+        <button id="rightBtn">→</button>
+        <button id="downBtn">↓</button>
+        <button id="rotateBtn">⤾</button>
+      </div>
+      <!-- Ranking dos jogadores -->
       <div id="ranking-container">
         <h2>Ranking Top 10 🏆</h2>
         <ul id="ranking-list"></ul>
       </div>
     </div>
+  </div>
+  <!-- Elemento visual para celebrações -->
+  <div id="celebracao"></div>
   <!-- Sons do jogo -->
   <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
   <audio id="rodar" src="rodar.mp3" preload="auto"></audio>
   <audio id="colidir" src="colidir.mp3" preload="auto"></audio>
   <audio id="perdeu" src="perdeu.mp3" preload="auto"></audio>
-  <!-- Modal Fim de Jogo -->
+  <!-- Modal de fim de jogo -->
   <div id="modal">
     <div id="modal-content">
-      <h2>🎮 Fim de jogo!</h2>
+      <h2>Fim de jogo 🎮</h2>
+      <p id="final-score">Pontuação: 0</p>
       <p>Escreve o teu nome para guardar o resultado:</p>
       <input type="text" id="player-name" placeholder="Jogador..." />
       <button id="confirmSave">Guardar Resultado</button>
+      <button id="cancelSave">Cancelar</button>
     </div>
   </div>
   <!-- Scripts -->
