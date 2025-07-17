@@ -3,13 +3,13 @@
   box-sizing: border-box;
 }
 
-/* Fundo do jogo com imagem arcade */
+/* Corpo da página com fundo arcade */
 body {
   margin: 0;
   font-family: 'Fredoka', sans-serif;
   background: url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
-  color: #fff;
+  color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,7 +17,7 @@ body {
   padding: 20px;
 }
 
-/* Contorno máximo do jogo */
+/* Limite máximo para o jogo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -25,7 +25,7 @@ body {
   justify-content: center;
 }
 
-/* Estrutura vertical do jogo */
+/* Container principal do jogo */
 #game-container {
   width: 100%;
   display: flex;
@@ -37,15 +37,15 @@ body {
   border-radius: 12px;
 }
 
-/* Título principal */
+/* Título do jogo */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
   text-align: center;
-  text-shadow: 2px 2px #000;
+  text-shadow: 2px 2px #000000;
 }
 
-/* Informações de pontuação, nível e tempo */
+/* Secção de pontuação, nível e tempo */
 #info {
   display: flex;
   justify-content: space-around;
@@ -68,25 +68,24 @@ h1 {
   margin-bottom: 0.3em;
 }
 
-/* Canvas da peça seguinte */
+/* Canvas da próxima peça */
 canvas#next {
-  background: #222;
-  border: 2px solid #555;
+  background: #222222;
+  border: 2px solid #555555;
   border-radius: 8px;
 }
 
-/* Tabuleiro de jogo */
+/* Canvas principal */
 canvas#board {
-  background: #111;
-  border: 2px solid #888;
+  background: #111111;
+  border: 2px solid #888888;
   border-radius: 8px;
   touch-action: none;
   max-width: 100%;
 }
 
-/* Botões de controlo */
-#controls,
-#touch-controls {
+/* Botões principais */
+#controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -94,32 +93,39 @@ canvas#board {
   margin-top: 1vh;
 }
 
-#controls button,
-#touch-controls button {
+/* Estilo arcade suavizado para botões */
+#controls button {
   padding: 0.8em 1.2em;
   font-size: 1em;
   border-radius: 6px;
   border: none;
-  background-color: #ff0040;
-  color: white;
+  background-color: #3d3d7f;
+  color: #f4f4f4;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 0 #000000;
 }
 
-#controls button:hover,
-#touch-controls button:hover {
-  background-color: #cc0033;
+#controls button:hover {
+  background-color: #5a5aac;
+  transform: translateY(-2px);
 }
 
 #controls button.active {
-  background-color: #00ffcc;
-  color: #000;
+  background-color: #00bfa6;
+  color: #000000;
+}
+
+/* Oculta botões visuais permanentemente */
+#touch-controls,
+#dropBtn {
+  display: none;
 }
 
 /* Ranking dos jogadores */
 #ranking-container {
-  margin-top: 2vh;
+  margin-top: 3vh;
   text-align: center;
   width: 100%;
 }
@@ -136,14 +142,14 @@ canvas#board {
 }
 
 #ranking-list li {
-  background-color: #222;
+  background-color: #222222;
   margin: 0.4em auto;
   padding: 0.5em 1em;
   border-radius: 6px;
   max-width: 80%;
   font-size: 1em;
   text-align: center;
-  border: 1px solid #555;
+  border: 1px solid #555555;
 }
 
 /* Modal de fim de jogo */
@@ -153,7 +159,7 @@ canvas#board {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.85);
+  background: rgba(0, 0, 0, 0.85);
   display: none;
   justify-content: center;
   align-items: center;
@@ -165,14 +171,14 @@ canvas#board {
 }
 
 #modal-content {
-  background: #111;
+  background: #111111;
   padding: 2em;
   border-radius: 12px;
   text-align: center;
   max-width: 400px;
   width: 90%;
-  color: white;
-  border: 2px solid #ff0040;
+  color: #ffffff;
+  border: 2px solid #3d3d7f;
 }
 
 #modal-content input {
@@ -188,12 +194,17 @@ canvas#board {
   font-size: 1em;
   border-radius: 4px;
   border: none;
-  background-color: #ff0040;
-  color: white;
+  background-color: #3d3d7f;
+  color: #f4f4f4;
   cursor: pointer;
+  font-weight: bold;
 }
 
-/* Celebração de combos */
+#modal-content button:hover {
+  background-color: #5a5aac;
+}
+
+/* Elemento de celebração */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -208,21 +219,19 @@ canvas#board {
   z-index: 999;
 }
 
-/* Adaptação para dispositivos móveis */
+/* Responsividade para ecrãs pequenos */
 @media (max-width: 768px) {
   #info {
     flex-direction: column;
     align-items: center;
   }
 
-  #controls,
-  #touch-controls {
+  #controls {
     flex-direction: column;
     align-items: center;
   }
 
-  #controls button,
-  #touch-controls button {
+  #controls button {
     width: 90%;
   }
 
@@ -234,24 +243,23 @@ canvas#board {
     padding: 1.2em;
   }
 
-  #ranking-container li {
+  #ranking-list li {
     font-size: 0.9em;
   }
 }
 
-/* Ajustes para ecrãs de alta resolução */
+/* Ajustes visuais para ecrãs 4K e superiores */
 @media (min-width: 2560px) {
   h1 {
     font-size: 3em;
   }
 
-  #controls button,
-  #touch-controls button {
+  #controls button {
     font-size: 1.4em;
     padding: 1em 2em;
   }
 
-  #ranking-container li {
+  #ranking-list li {
     font-size: 1.2em;
   }
 }
