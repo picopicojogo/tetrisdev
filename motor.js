@@ -1,7 +1,10 @@
+// Dimensões do tabuleiro
 export const COLUNAS = 10;
 export const LINHAS = 20;
 
-/* Cores por tipo de peça */
+/**
+ * Cores associadas aos tipos de peça
+ */
 export const CORES = {
   1: '#00ffff', // I
   2: '#ff00ff', // T
@@ -12,7 +15,9 @@ export const CORES = {
   7: '#ffa500'  // L
 };
 
-/* Formatos das peças */
+/**
+ * Formatos das peças disponíveis
+ */
 const PECAS = [
   [[1, 1, 1, 1]],                    // I
   [[0, 2, 0], [2, 2, 2]],            // T
@@ -24,22 +29,30 @@ const PECAS = [
 ];
 
 /**
- * Cria uma matriz vazia para o tabuleiro
+ * Cria uma matriz vazia com dimensões especificadas
+ * @param {number} largura - número de colunas
+ * @param {number} altura - número de linhas
+ * @returns {number[][]} - matriz inicial do tabuleiro
  */
 export function criarMatriz(largura, altura) {
   return Array.from({ length: altura }, () => Array(largura).fill(0));
 }
 
 /**
- * Gera uma nova peça aleatória
+ * Gera uma nova peça aleatória a partir dos formatos disponíveis
+ * @returns {number[][]} - matriz da peça gerada
  */
 export function gerarPeca() {
   const i = Math.floor(Math.random() * PECAS.length);
-  return PECAS[i].map(row => [...row]);
+  return PECAS[i].map(row => [...row]); // cópia segura da peça
 }
 
 /**
- * Verifica se há colisão com limites ou peças fixas
+ * Verifica se há colisão da peça com os limites ou com peças fixas
+ * @param {number[][]} tabuleiro - matriz actual do tabuleiro
+ * @param {number[][]} peca - matriz da peça activa
+ * @param {{x: number, y: number}} posicao - posição da peça
+ * @returns {boolean} - verdadeiro se houver colisão
  */
 export function verificarColisao(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
@@ -58,18 +71,21 @@ export function verificarColisao(tabuleiro, peca, posicao) {
 }
 
 /**
- * Roda a peça no sentido indicado
+ * Roda a peça consoante a direcção indicada
+ * @param {number[][]} peca - matriz da peça
+ * @param {number} direcao - +1 para horário, -1 para anti-horário
+ * @returns {number[][]} - matriz rodada
  */
 export function rodar(peca, direcao) {
-  const matriz = peca.map((_, i) => peca.map(r => r[i]));
+  const matriz = peca[0].map((_, i) => peca.map(r => r[i]));
   return direcao > 0 ? matriz.map(r => r.reverse()) : matriz.reverse();
 }
 
 /**
- * Fundir peça fixa no tabuleiro
- * @param {number[][]} tabuleiro - estado atual do tabuleiro
- * @param {number[][]} peca - matriz da peça ativa
- * @param {{x: number, y: number}} posicao - posição de inserção da peça
+ * Funde a peça activa na matriz do tabuleiro
+ * @param {number[][]} tabuleiro - estado actual do tabuleiro
+ * @param {number[][]} peca - matriz da peça activa
+ * @param {{x: number, y: number}} posicao - posição actual da peça
  */
 export function fundirPeca(tabuleiro, peca, posicao) {
   for (let y = 0; y < peca.length; y++) {
@@ -87,7 +103,7 @@ export function fundirPeca(tabuleiro, peca, posicao) {
 }
 
 /**
- * Elimina linhas completas do tabuleiro
+ * Elimina linhas completas e actualiza o tabuleiro
  * @param {number[][]} tabuleiro - matriz do tabuleiro
  * @returns {number} - número de linhas eliminadas
  */
@@ -97,8 +113,8 @@ export function limparLinhas(tabuleiro) {
   for (let y = tabuleiro.length - 1; y >= 0; y--) {
     const linhaCompleta = tabuleiro[y].every(valor => valor !== 0);
     if (linhaCompleta) {
-      tabuleiro.splice(y, 1); // remove a linha
-      tabuleiro.unshift(new Array(COLUNAS).fill(0)); // adiciona linha vazia no topo
+      tabuleiro.splice(y, 1);
+      tabuleiro.unshift(new Array(COLUNAS).fill(0));
       linhasRemovidas++;
       y++; // reposiciona para verificar nova linha após deslocamento
     }
