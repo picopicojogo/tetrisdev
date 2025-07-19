@@ -24,6 +24,12 @@ export function configurarCanvas() {
 
 /**
  * Desenha o tabuleiro e a peça atual no canvas principal
+ * @param {CanvasRenderingContext2D} ctx - contexto do canvas
+ * @param {number} largura - largura total do canvas
+ * @param {number} altura - altura total do canvas
+ * @param {number[][]} tabuleiro - matriz de blocos fixos
+ * @param {number[][]} peca - matriz da peça ativa
+ * @param {{x: number, y: number}} posicao - posição da peça ativa
  */
 export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
   ctx.clearRect(0, 0, largura, altura);
@@ -56,6 +62,8 @@ export function desenharJogo(ctx, largura, altura, tabuleiro, peca, posicao) {
 
 /**
  * Desenha a pré-visualização da próxima peça
+ * @param {CanvasRenderingContext2D} ctx - contexto do canvas
+ * @param {number[][]} proxima - matriz da próxima peça
  */
 export function desenharProxima(ctx, proxima) {
   const largura = ctx.canvas.width;
@@ -81,33 +89,77 @@ export function desenharProxima(ctx, proxima) {
 
 /**
  * Desenha um bloco no tabuleiro principal
+ * @param {CanvasRenderingContext2D} ctx - contexto do canvas
+ * @param {number} x - coluna do bloco
+ * @param {number} y - linha do bloco
+ * @param {number} largura - largura do bloco
+ * @param {number} altura - altura do bloco
+ * @param {number} valor - tipo da peça
  */
 function desenharBloco(ctx, x, y, largura, altura, valor) {
-  ctx.fillStyle = obterCor(valor);
-  ctx.fillRect(Math.floor(x * largura), Math.floor(y * altura), largura, altura);
+  const px = Math.floor(x * largura);
+  const py = Math.floor(y * altura);
+  const cor = obterCor(valor);
+
+  // Sombra subtil
+  ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+  ctx.shadowBlur = 2;
+  ctx.shadowOffsetX = 1;
+  ctx.shadowOffsetY = 1;
+
+  ctx.fillStyle = cor;
+  ctx.fillRect(px, py, largura, altura);
+
+  // Contorno
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
   ctx.strokeStyle = "#333";
-  ctx.strokeRect(Math.floor(x * largura), Math.floor(y * altura), largura, altura);
+  ctx.strokeRect(px, py, largura, altura);
 }
 
 /**
- * Desenha um bloco absoluto para o canvas da próxima peça
+ * Desenha um bloco absoluto para a próxima peça
+ * @param {CanvasRenderingContext2D} ctx - contexto do canvas
+ * @param {number} x - posição horizontal absoluta
+ * @param {number} y - posição vertical absoluta
+ * @param {number} largura - largura do bloco
+ * @param {number} altura - altura do bloco
+ * @param {number} valor - tipo da peça
  */
 function desenharBlocoAbsoluto(ctx, x, y, largura, altura, valor) {
-  ctx.fillStyle = obterCor(valor);
+  const cor = obterCor(valor);
+
+  // Sombra subtil
+  ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+  ctx.shadowBlur = 2;
+  ctx.shadowOffsetX = 1;
+  ctx.shadowOffsetY = 1;
+
+  ctx.fillStyle = cor;
   ctx.fillRect(x, y, largura, altura);
+
+  // Contorno
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
   ctx.strokeStyle = "#333";
   ctx.strokeRect(x, y, largura, altura);
 }
 
 /**
- * Retorna a cor da peça
+ * Obtém a cor da peça, com fallback neutro
+ * @param {number} valor - identificador da peça
+ * @returns {string} - cor correspondente
  */
 function obterCor(valor) {
-  return CORES[valor] || "#ffffff";
+  return CORES[valor] || "#cccccc";
 }
 
 /**
  * Atualiza os valores da pontuação e nível na interface
+ * @param {number} pontuacao - pontos atuais
+ * @param {number} nivel - nível atual
  */
 export function atualizarPontuacao(pontuacao, nivel) {
   const elPontos = document.getElementById("score");
@@ -117,7 +169,9 @@ export function atualizarPontuacao(pontuacao, nivel) {
 }
 
 /**
- * Atualiza o tempo decorrido no formato MM:SS
+ * Atualiza o tempo decorrido em formato MM:SS
+ * @param {HTMLElement} elTempo - elemento DOM onde mostrar o tempo
+ * @param {number} segundos - tempo total em segundos
  */
 export function atualizarTempo(elTempo, segundos) {
   const min = String(Math.floor(segundos / 60)).padStart(2, "0");
@@ -126,7 +180,8 @@ export function atualizarTempo(elTempo, segundos) {
 }
 
 /**
- * Mostra modal de fim de jogo com pontuação final
+ * Mostra o modal de fim de jogo com pontuação final
+ * @param {number} pontuacaoFinal - pontuação a mostrar
  */
 export function mostrarModalFim(pontuacaoFinal) {
   const elPontuacao = document.getElementById("final-score");
