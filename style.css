@@ -1,9 +1,9 @@
-/* Comportamento de caixa universal */
+/* Box principal */
 * {
   box-sizing: border-box;
 }
 
-/* Corpo do documento com imagem de fundo arcade suavizada e centrado */
+/* Corpo do documento: fundo arcade, sem scroll e conteúdo centrado */
 body {
   margin: 0;
   padding: 0;
@@ -20,7 +20,7 @@ body {
   overflow-y: hidden;
 }
 
-/* Contêiner geral externo */
+/* Wrapper externo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -30,7 +30,7 @@ body {
   padding-top: 2vh;
 }
 
-/* Contêiner principal do jogo, centrado e sem scroll */
+/* Wrapper principal ajustado e centrado */
 #game-container {
   width: 95%;
   max-width: 1000px;
@@ -43,7 +43,7 @@ body {
   border-radius: 12px;
 }
 
-/* Título arcade */
+/* Título principal */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -51,7 +51,7 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Secção informativa do tempo, pontuação e nível */
+/* Secção informativa */
 #info {
   display: flex;
   justify-content: space-around;
@@ -61,7 +61,7 @@ h1 {
   width: 100%;
 }
 
-/* Área da próxima peça */
+/* Pré-visualização da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
@@ -81,7 +81,7 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Tabuleiro do jogo */
+/* Tabuleiro principal */
 canvas#board {
   background: #111;
   border: 2px solid #666;
@@ -94,7 +94,7 @@ canvas#board {
   margin-bottom: 1vh;
 }
 
-/* Botões principais do jogo */
+/* Botões principais */
 #controls {
   display: flex;
   flex-wrap: wrap;
@@ -130,7 +130,7 @@ canvas#board {
   color: #000;
 }
 
-/* Ranking ocultável */
+/* Ranking recolhível */
 #ranking-container {
   margin-top: 2vh;
   text-align: center;
@@ -163,7 +163,7 @@ canvas#board {
   border: 1px solid #555;
 }
 
-/* Texto de celebração (ex: COMBO) */
+/* Celebração (ex: COMBO!) */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -178,7 +178,7 @@ canvas#board {
   z-index: 999;
 }
 
-/* Efeito de tremor subtil para combos */
+/* Efeito de tremor para combos */
 @keyframes tremor-suave {
   0% { transform: translate(0px, 0px); }
   25% { transform: translate(-2px, 1px); }
@@ -191,7 +191,7 @@ canvas#board {
   animation: tremor-suave 0.3s ease;
 }
 
-/* Modal final */
+/* Modal final de pontuação */
 #modal {
   position: fixed;
   top: 0;
@@ -246,7 +246,7 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Ajustes para telemóveis e tablets */
+/* Responsivo para tablets e telemóveis */
 @media (max-width: 1024px) {
   canvas#board {
     max-height: 50vh;
@@ -258,11 +258,13 @@ canvas#board {
   #controls {
     flex-direction: column;
     align-items: center;
+    gap: 0.5em;
   }
 
   #controls button {
-    width: 90%;
+    width: 100%;
     font-size: 0.65em;
+    padding: 0.8em 1em;
   }
 
   #preview-container {
@@ -270,29 +272,22 @@ canvas#board {
   }
 
   h1 {
-    font-size: 1.4em;
-  }
-
-  #modal-content {
-    padding: 1.2em;
-  }
-
-  #ranking-list li {
-    font-size: 0.6em;
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
   }
 
   canvas#board {
-    max-height: 45vh;
+    max-height: 40vh;
   }
 
   #game-container {
     padding: 1vh 2vw;
-    gap: 1vh;
+    gap: 0.8vh;
   }
 
   #controls {
-    margin-top: 1.5vh;
-    margin-bottom: 1.5vh;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
   }
 }
 
