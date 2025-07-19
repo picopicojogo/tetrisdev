@@ -1,9 +1,9 @@
-/* Comportamento de caixa universal */
+/* Comportamento de caixa universal para layout consistente */
 * {
   box-sizing: border-box;
 }
 
-/* Corpo do documento com imagem de fundo arcade suavizada */
+/* Corpo com imagem de fundo suavizada e sem scroll */
 body {
   margin: 0;
   padding: 0;
@@ -13,23 +13,23 @@ body {
   background-size: cover;
   color: #eeeeee;
   display: flex;
-  justify-content: flex-start; /* conteúdo alinhado ao topo */
-  align-items: center;
+  justify-content: center;     /* conteúdo centrado horizontalmente */
+  align-items: center;         /* conteúdo centrado verticalmente */
   min-height: 100vh;
-  overflow: hidden; /* evita scroll vertical */
+  overflow: hidden;
 }
 
-/* Contêiner externo centralizado */
+/* Contêiner externo que limita e centraliza o conteúdo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding-top: 2vh;
 }
 
-/* Contêiner principal ajustado e compacto */
+/* Contêiner principal do jogo com visual compacto e acessível */
 #game-container {
   width: 95%;
   max-width: 1000px;
@@ -42,7 +42,7 @@ body {
   border-radius: 12px;
 }
 
-/* Título arcade */
+/* Título principal do jogo */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -50,7 +50,7 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Secção de informações */
+/* Secção de informações complementares */
 #info {
   display: flex;
   justify-content: space-around;
@@ -60,7 +60,7 @@ h1 {
   width: 100%;
 }
 
-/* Controlo da próxima peça */
+/* Pré-visualização da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Tabuleiro de jogo com altura controlada */
+/* Tabuleiro principal com altura ajustada à janela */
 canvas#board {
   background: #111;
   border: 2px solid #666;
@@ -92,7 +92,7 @@ canvas#board {
   margin-bottom: 1vh;
 }
 
-/* Botões de controlo centralizados */
+/* Botões de controlo sempre visíveis e centralizados */
 #controls {
   display: flex;
   flex-wrap: wrap;
@@ -127,7 +127,7 @@ canvas#board {
   color: #000;
 }
 
-/* Painel de ranking expansível */
+/* Painel de ranking retrátil */
 #ranking-container {
   margin-top: 2vh;
   text-align: center;
@@ -160,7 +160,7 @@ canvas#board {
   border: 1px solid #555;
 }
 
-/* Texto de celebração no topo */
+/* Celebração visual (ex: combo) */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -175,7 +175,7 @@ canvas#board {
   z-index: 999;
 }
 
-/* Efeito de tremor para combos */
+/* Efeito suave de tremor para combos */
 @keyframes tremor-suave {
   0% { transform: translate(0px, 0px); }
   25% { transform: translate(-2px, 1px); }
@@ -188,7 +188,7 @@ canvas#board {
   animation: tremor-suave 0.3s ease;
 }
 
-/* Modal de fim de jogo */
+/* Modal final do jogo */
 #modal {
   position: fixed;
   top: 0;
@@ -274,7 +274,7 @@ canvas#board {
   }
 }
 
-/* Ajustes para ecrãs ultra-largos */
+/* Ajustes para ecrãs ultra-largos e 4K */
 @media (min-width: 2560px) {
   h1 {
     font-size: 2.5em;
