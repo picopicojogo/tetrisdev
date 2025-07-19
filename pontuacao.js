@@ -4,9 +4,9 @@ let nivel = 1;
 let comboAtivo = false;
 
 /**
- * Processa a pontuação consoante número de linhas eliminadas
+ * Processa a pontuação consoante o número de linhas eliminadas
  * @param {number} linhasFeitas - número de linhas removidas após fixação da peça
- * @returns {{pontuacao: number, nivel: number}} - pontuação atual e nível
+ * @returns {{pontuacao: number, nivel: number}} - pontuação e nível actuais
  */
 export function processarLinhas(linhasFeitas) {
   let pontosGanhos = 0;
@@ -47,8 +47,8 @@ export function reiniciarPontuacao() {
 }
 
 /**
- * Mostra uma mensagem visual animada no topo do ecrã
- * @param {string} texto - mensagem a apresentar ("Linha!" ou "Combo!")
+ * Mostra uma breve mensagem visual no topo do ecrã
+ * @param {string} texto - texto da celebração ("Linha!" ou "Combo!")
  */
 function mostrarCelebracao(texto) {
   const el = document.getElementById("celebracao");
@@ -66,23 +66,23 @@ function mostrarCelebracao(texto) {
 }
 
 /**
- * Atualiza os elementos visuais de pontuação e nível
- * @param {number} pontos - pontuação atual
- * @param {number} nivelAtual - nível atual
+ * Actualiza visualmente os elementos de pontuação e nível
+ * @param {number} pontos - pontuação actual
+ * @param {number} nivelActual - nível actual
  */
-function atualizarPontuacao(pontos, nivelAtual) {
+function atualizarPontuacao(pontos, nivelActual) {
   const elPontos = document.getElementById("score");
   const elNivel = document.getElementById("level");
   if (elPontos) elPontos.textContent = pontos;
-  if (elNivel) elNivel.textContent = nivelAtual;
+  if (elNivel) elNivel.textContent = nivelActual;
 }
 
 /**
- * Guarda pontuação no localStorage e atualiza o ranking visual
- * @param {number} pontuacaoFinal - pontuação a guardar
+ * Guarda a pontuação no localStorage e actualiza o ranking
+ * @param {number} pontuacaoFinal - pontuação final a registar
  */
 export function guardarPontuacao(pontuacaoFinal) {
-  const nome = document.getElementById("player-name").value.trim();
+  const nome = document.getElementById("player-name")?.value.trim();
   if (!nome) {
     alert("Por favor, insere o teu nome.");
     return;
@@ -104,16 +104,21 @@ export function guardarPontuacao(pontuacaoFinal) {
   const lista = JSON.parse(localStorage.getItem("scores") || "[]");
   lista.push(novoJogador);
   lista.sort((a, b) => b.score - a.score);
-  lista.splice(10); // mantém os 10 melhores
+  lista.splice(10); // mantém apenas os 10 melhores resultados
   localStorage.setItem("scores", JSON.stringify(lista));
 
   atualizarRanking(lista);
+
+  // Fecha o modal após guardar
   document.getElementById("modal")?.classList.remove("show");
+
+  // Torna o painel de ranking visível
+  document.getElementById("ranking-container")?.classList.add("visivel");
 }
 
 /**
- * Atualiza a lista visual de ranking no elemento HTML
- * @param {Array<{name: string, score: number, date: string}>} lista
+ * Actualiza a lista visual do ranking no elemento HTML
+ * @param {Array<{name: string, score: number, date: string}>} lista - lista de jogadores
  */
 function atualizarRanking(lista) {
   const ul = document.getElementById("ranking-list");
