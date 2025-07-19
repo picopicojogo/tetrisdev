@@ -1,4 +1,4 @@
-/* Comportamento de caixa universal */
+/* Box principal */
 * {
   box-sizing: border-box;
 }
@@ -20,7 +20,7 @@ body {
   overflow-y: hidden;
 }
 
-/* Contêiner externo que envolve o jogo */
+/* Wrapper externo que envolve o jogo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -30,7 +30,7 @@ body {
   padding-top: 2vh;
 }
 
-/* Contêiner principal do jogo */
+/* Wrapper principal do jogo */
 #game-container {
   width: 95%;
   max-width: 1000px;
