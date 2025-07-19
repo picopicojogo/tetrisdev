@@ -1,9 +1,9 @@
-/* Comportamento de caixa universal para layout consistente */
+/* Comportamento de caixa universal */
 * {
   box-sizing: border-box;
 }
 
-/* Corpo com imagem de fundo suavizada e sem scroll */
+/* Corpo do documento com imagem de fundo arcade suavizada e centrado */
 body {
   margin: 0;
   padding: 0;
@@ -13,13 +13,14 @@ body {
   background-size: cover;
   color: #eeeeee;
   display: flex;
-  justify-content: center;     /* conteúdo centrado horizontalmente */
-  align-items: center;         /* conteúdo centrado verticalmente */
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
-/* Contêiner externo que limita e centraliza o conteúdo */
+/* Contêiner geral externo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -29,7 +30,7 @@ body {
   padding-top: 2vh;
 }
 
-/* Contêiner principal do jogo com visual compacto e acessível */
+/* Contêiner principal do jogo, centrado e sem scroll */
 #game-container {
   width: 95%;
   max-width: 1000px;
@@ -42,7 +43,7 @@ body {
   border-radius: 12px;
 }
 
-/* Título principal do jogo */
+/* Título arcade */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -50,7 +51,7 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Secção de informações complementares */
+/* Secção informativa do tempo, pontuação e nível */
 #info {
   display: flex;
   justify-content: space-around;
@@ -60,12 +61,13 @@ h1 {
   width: 100%;
 }
 
-/* Pré-visualização da próxima peça */
+/* Área da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5em;
+  margin-bottom: 1vh;
 }
 
 .preview-title {
@@ -79,7 +81,7 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Tabuleiro principal com altura ajustada à janela */
+/* Tabuleiro do jogo */
 canvas#board {
   background: #111;
   border: 2px solid #666;
@@ -92,7 +94,7 @@ canvas#board {
   margin-bottom: 1vh;
 }
 
-/* Botões de controlo sempre visíveis e centralizados */
+/* Botões principais do jogo */
 #controls {
   display: flex;
   flex-wrap: wrap;
@@ -104,6 +106,7 @@ canvas#board {
 }
 
 #controls button {
+  width: auto;
   padding: 0.8em 1.2em;
   font-size: 0.7em;
   border-radius: 6px;
@@ -127,7 +130,7 @@ canvas#board {
   color: #000;
 }
 
-/* Painel de ranking retrátil */
+/* Ranking ocultável */
 #ranking-container {
   margin-top: 2vh;
   text-align: center;
@@ -160,7 +163,7 @@ canvas#board {
   border: 1px solid #555;
 }
 
-/* Celebração visual (ex: combo) */
+/* Texto de celebração (ex: COMBO) */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -175,7 +178,7 @@ canvas#board {
   z-index: 999;
 }
 
-/* Efeito suave de tremor para combos */
+/* Efeito de tremor subtil para combos */
 @keyframes tremor-suave {
   0% { transform: translate(0px, 0px); }
   25% { transform: translate(-2px, 1px); }
@@ -188,7 +191,7 @@ canvas#board {
   animation: tremor-suave 0.3s ease;
 }
 
-/* Modal final do jogo */
+/* Modal final */
 #modal {
   position: fixed;
   top: 0;
@@ -243,13 +246,15 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Responsividade para telemóveis */
-@media (max-width: 768px) {
-  #info {
-    flex-direction: column;
-    align-items: center;
+/* Ajustes para telemóveis e tablets */
+@media (max-width: 1024px) {
+  canvas#board {
+    max-height: 50vh;
   }
+}
 
+@media (max-width: 768px) {
+  #info,
   #controls {
     flex-direction: column;
     align-items: center;
@@ -257,11 +262,23 @@ canvas#board {
 
   #controls button {
     width: 90%;
-    font-size: 0.6em;
+    font-size: 0.65em;
+  }
+
+  #preview-container {
+    margin-bottom: 1vh;
   }
 
   h1 {
-    font-size: 1.2em;
+    font-size: 1.4em;
+  }
+
+  #modal-content {
+    padding: 1.2em;
+  }
+
+  #ranking-list li {
+    font-size: 0.6em;
   }
 
   canvas#board {
@@ -272,9 +289,14 @@ canvas#board {
     padding: 1vh 2vw;
     gap: 1vh;
   }
+
+  #controls {
+    margin-top: 1.5vh;
+    margin-bottom: 1.5vh;
+  }
 }
 
-/* Ajustes para ecrãs ultra-largos e 4K */
+/* Ajustes para ecrãs ultra-largos */
 @media (min-width: 2560px) {
   h1 {
     font-size: 2.5em;
