@@ -31,21 +31,12 @@
         <button id="resetBtn">🔄 Reiniciar</button>
         <button id="pauseBtn">⏸ Pausar</button>
         <button id="toggle-sound">🔊 Som</button>
-      </div>
-      <!-- Ranking dos jogadores -->
-      <div id="ranking-container">
-        <h2>Ranking Top 10 🏆</h2>
-        <ul id="ranking-list"></ul>
+        <button id="top10Btn">🏆 Top 10</button> <!-- NOVO botão -->
       </div>
     </div>
   </div>
   <!-- Celebrações visuais -->
   <div id="celebracao"></div>
-  <!-- Sons do jogo -->
-  <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
-  <audio id="rodar" src="rodar.mp3" preload="auto"></audio>
-  <audio id="colidir" src="colidir.mp3" preload="auto"></audio>
-  <audio id="perdeu" src="perdeu.mp3" preload="auto"></audio>
   <!-- Modal de fim de jogo -->
   <div id="modal">
     <div id="modal-content">
@@ -57,8 +48,49 @@
       <button id="cancelSave">Cancelar</button>
     </div>
   </div>
+  <!-- Modal Top 10 -->
+  <div id="top10Modal" class="modal">
+    <div class="modal-content">
+      <h2>🏆 TOP 10 Jogadores</h2>
+      <ul id="top10List"></ul>
+      <button onclick="fecharTop10()">Fechar</button>
+    </div>
+  </div>
+  <!-- Sons do jogo -->
+  <audio id="musica-fundo" src="musica-fundo.mp3" loop preload="auto"></audio>
+  <audio id="rodar" src="rodar.mp3" preload="auto"></audio>
+  <audio id="colidir" src="colidir.mp3" preload="auto"></audio>
+  <audio id="perdeu" src="perdeu.mp3" preload="auto"></audio>
   <!-- Scripts principais -->
   <script type="module" src="./audio.js"></script>
   <script type="module" src="./cerebro.js"></script>
+  <script>
+    // Funções para mostrar e fechar o modal Top 10
+    document.getElementById("top10Btn").addEventListener("click", mostrarTop10);
+    function mostrarTop10() {
+      const modal = document.getElementById("top10Modal");
+      const lista = document.getElementById("top10List");
+      const ranking = [
+        { nome: "Pedro", pontos: 9500 },
+        { nome: "Ana", pontos: 8800 },
+        { nome: "Carlos", pontos: 7650 },
+        { nome: "Rita", pontos: 7400 },
+        { nome: "João", pontos: 7150 },
+        { nome: "Sara", pontos: 6800 },
+        { nome: "Tiago", pontos: 6700 },
+        { nome: "Lúcia", pontos: 6600 },
+        { nome: "Bruno", pontos: 6500 },
+        { nome: "Vera", pontos: 6400 }
+      ];
+      lista.innerHTML = ranking
+        .map(j => `<li>${j.nome} — ${j.pontos} pontos</li>`)
+        .join("");
+
+      modal.classList.add("show");
+    }
+    function fecharTop10() {
+      document.getElementById("top10Modal").classList.remove("show");
+    }
+  </script>
 </body>
 </html>
