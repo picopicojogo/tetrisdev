@@ -1,9 +1,9 @@
-/* Caixa principal */
+/* Comportamento de caixa universal */
 * {
   box-sizing: border-box;
 }
 
-/* Corpo do documento com imagem de fundo arcade e filtro escurecido */
+/* Corpo com fundo arcade suavizado e imagem */
 body {
   margin: 0;
   padding: 0;
@@ -16,10 +16,10 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow: hidden; /* Evita scroll vertical */
+  overflow: hidden;
 }
 
-/* Wrapper que centraliza o conteúdo */
+/* Contêiner externo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -29,20 +29,22 @@ body {
   padding: 1vh 0;
 }
 
-/* Wrapper principal do jogo com largura flexível e altura controlada */
+/* Contêiner principal responsivo e equilibrado */
 #game-container {
   width: 95%;
   max-width: 1000px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2vh;
+  gap: 1.5vh;
   background: rgba(0, 0, 0, 0.7);
-  padding: 2vh 3vw;
+  padding: 1.5vh 2vw;
   border-radius: 12px;
+  max-height: 90vh;
+  overflow: hidden;
 }
 
-/* Título central com estilo arcade */
+/* Título arcade retro */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -50,7 +52,7 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Secção de informações complementares (tempo, nível, pontuação) */
+/* Secção de informação principal */
 #info {
   display: flex;
   justify-content: space-around;
@@ -60,7 +62,7 @@ h1 {
   width: 100%;
 }
 
-/* Área de pré-visualização da próxima peça */
+/* Pré-visualização da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
@@ -79,7 +81,7 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Tabuleiro principal com limites máximos adaptados à janela */
+/* Tabuleiro principal ajustado à altura disponível */
 canvas#board {
   background: #111;
   border: 2px solid #666;
@@ -91,11 +93,12 @@ canvas#board {
   max-height: 65vh;
 }
 
-/* Botões principais do jogo com estilo retro */
+/* Botões principais */
 #controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 1em;
   margin-top: 1vh;
 }
@@ -124,13 +127,12 @@ canvas#board {
   color: #000;
 }
 
-/* Oculta controlos específicos em determinadas resoluções */
 #touch-controls,
 #dropBtn {
   display: none;
 }
 
-/* Painel de ranking que se expande de forma suave */
+/* Painel de ranking expansível */
 #ranking-container {
   margin-top: 2vh;
   text-align: center;
@@ -168,7 +170,7 @@ canvas#board {
   border: 1px solid #555;
 }
 
-/* Texto de celebração (combo, linhas, etc.) */
+/* Celebração visual */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -183,7 +185,7 @@ canvas#board {
   z-index: 999;
 }
 
-/* Modal final de pontuação */
+/* Modal final */
 #modal {
   position: fixed;
   top: 0;
@@ -238,7 +240,7 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Efeito de tremor usado nas celebrações de combo */
+/* Efeito de tremor para combos */
 @keyframes tremor-suave {
   0% { transform: translate(0px, 0px); }
   25% { transform: translate(-2px, 1px); }
@@ -290,7 +292,7 @@ canvas#board {
   }
 }
 
-/* Estilos adicionais para ecrãs ultra-largos e 4K */
+/* Ajustes para ecrãs ultra-largos e 4K */
 @media (min-width: 2560px) {
   h1 {
     font-size: 2.5em;
@@ -312,3 +314,13 @@ canvas#board {
   #modal-content {
     font-size: 1em;
   }
+
+  #modal-content button {
+    font-size: 1em;
+  }
+
+  #game-container {
+    max-width: 1400px;
+    padding: 3vh 4vw;
+  }
+}
