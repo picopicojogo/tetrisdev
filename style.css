@@ -3,7 +3,7 @@
   box-sizing: border-box;
 }
 
-/* Corpo com fundo arcade suavizado e imagem */
+/* Corpo do documento com imagem de fundo arcade suavizada */
 body {
   margin: 0;
   padding: 0;
@@ -13,38 +13,36 @@ body {
   background-size: cover;
   color: #eeeeee;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; /* conteúdo alinhado ao topo */
   align-items: center;
   min-height: 100vh;
-  overflow: hidden;
+  overflow: hidden; /* evita scroll vertical */
 }
 
-/* Contêiner externo */
+/* Contêiner externo centralizado */
 #wrapper {
   max-width: 1200px;
   width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 1vh 0;
+  align-items: flex-start;
+  padding-top: 2vh;
 }
 
-/* Contêiner principal responsivo e equilibrado */
+/* Contêiner principal ajustado e compacto */
 #game-container {
   width: 95%;
   max-width: 1000px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5vh;
+  gap: 1vh;
   background: rgba(0, 0, 0, 0.7);
   padding: 1.5vh 2vw;
   border-radius: 12px;
-  max-height: 90vh;
-  overflow: hidden;
 }
 
-/* Título arcade retro */
+/* Título arcade */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -52,7 +50,7 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Secção de informação principal */
+/* Secção de informações */
 #info {
   display: flex;
   justify-content: space-around;
@@ -62,7 +60,7 @@ h1 {
   width: 100%;
 }
 
-/* Pré-visualização da próxima peça */
+/* Controlo da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
@@ -81,7 +79,7 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Tabuleiro principal ajustado à altura disponível */
+/* Tabuleiro de jogo com altura controlada */
 canvas#board {
   background: #111;
   border: 2px solid #666;
@@ -90,17 +88,19 @@ canvas#board {
   display: block;
   max-width: 100%;
   height: auto;
-  max-height: 65vh;
+  max-height: 55vh;
+  margin-bottom: 1vh;
 }
 
-/* Botões principais */
+/* Botões de controlo centralizados */
 #controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   gap: 1em;
-  margin-top: 1vh;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
 }
 
 #controls button {
@@ -127,11 +127,6 @@ canvas#board {
   color: #000;
 }
 
-#touch-controls,
-#dropBtn {
-  display: none;
-}
-
 /* Painel de ranking expansível */
 #ranking-container {
   margin-top: 2vh;
@@ -146,11 +141,6 @@ canvas#board {
 #ranking-container.visivel {
   max-height: 400px;
   opacity: 1;
-}
-
-#ranking-container h2 {
-  margin-bottom: 0.5em;
-  font-size: 1em;
 }
 
 #ranking-list {
@@ -170,7 +160,7 @@ canvas#board {
   border: 1px solid #555;
 }
 
-/* Celebração visual */
+/* Texto de celebração no topo */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -185,7 +175,20 @@ canvas#board {
   z-index: 999;
 }
 
-/* Modal final */
+/* Efeito de tremor para combos */
+@keyframes tremor-suave {
+  0% { transform: translate(0px, 0px); }
+  25% { transform: translate(-2px, 1px); }
+  50% { transform: translate(2px, -1px); }
+  75% { transform: translate(-2px, 1px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+.tremor {
+  animation: tremor-suave 0.3s ease;
+}
+
+/* Modal de fim de jogo */
 #modal {
   position: fixed;
   top: 0;
@@ -240,20 +243,7 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Efeito de tremor para combos */
-@keyframes tremor-suave {
-  0% { transform: translate(0px, 0px); }
-  25% { transform: translate(-2px, 1px); }
-  50% { transform: translate(2px, -1px); }
-  75% { transform: translate(-2px, 1px); }
-  100% { transform: translate(0px, 0px); }
-}
-
-.tremor {
-  animation: tremor-suave 0.3s ease;
-}
-
-/* Ajustes para telemóveis */
+/* Responsividade para telemóveis */
 @media (max-width: 768px) {
   #info {
     flex-direction: column;
@@ -274,25 +264,17 @@ canvas#board {
     font-size: 1.2em;
   }
 
-  #modal-content {
-    padding: 1.2em;
-  }
-
-  #ranking-list li {
-    font-size: 0.6em;
-  }
-
   canvas#board {
-    max-height: 50vh;
+    max-height: 45vh;
   }
 
   #game-container {
     padding: 1vh 2vw;
-    gap: 1.5vh;
+    gap: 1vh;
   }
 }
 
-/* Ajustes para ecrãs ultra-largos e 4K */
+/* Ajustes para ecrãs ultra-largos */
 @media (min-width: 2560px) {
   h1 {
     font-size: 2.5em;
@@ -303,20 +285,8 @@ canvas#board {
     padding: 1em 2em;
   }
 
-  #ranking-list li {
-    font-size: 1em;
-  }
-
   canvas#board {
-    max-height: 70vh;
-  }
-
-  #modal-content {
-    font-size: 1em;
-  }
-
-  #modal-content button {
-    font-size: 1em;
+    max-height: 65vh;
   }
 
   #game-container {
