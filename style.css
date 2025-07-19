@@ -278,3 +278,16 @@ canvas#board {
     max-height: 70vh;
   }
 }
+
+/* Ranking arcade retrátil */
+#ranking-container {
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+}
+
+#ranking-container.visivel {
+  max-height: 400px;
+  opacity: 1;
+}
