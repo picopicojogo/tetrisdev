@@ -1,9 +1,11 @@
-/* Comportamento de caixa universal */
+/* ============================== */
+/* Estrutura Base e Layout Geral */
+/* ============================== */
+
 * {
   box-sizing: border-box;
 }
 
-/* Corpo do documento com fundo arcade e sem scroll */
 body {
   margin: 0;
   padding: 0;
@@ -20,7 +22,6 @@ body {
   overflow-y: hidden;
 }
 
-/* Contêiner externo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
@@ -30,7 +31,6 @@ body {
   padding-top: 2vh;
 }
 
-/* Contêiner principal */
 #game-container {
   width: 95%;
   max-width: 1000px;
@@ -44,7 +44,6 @@ body {
   overflow-y: visible;
 }
 
-/* Título */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
@@ -52,7 +51,10 @@ h1 {
   text-shadow: 2px 2px #000;
 }
 
-/* Secção de informação */
+/* ===================== */
+/* Secções de Informação */
+/* ===================== */
+
 #info {
   display: flex;
   justify-content: space-around;
@@ -62,7 +64,6 @@ h1 {
   width: 100%;
 }
 
-/* Pré-visualização da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
@@ -82,7 +83,10 @@ canvas#next {
   border-radius: 8px;
 }
 
-/* Tabuleiro de jogo */
+/* ===================== */
+/* Tabuleiro Principal   */
+/* ===================== */
+
 canvas#board {
   background: #111;
   border: 2px solid #666;
@@ -95,7 +99,10 @@ canvas#board {
   margin-bottom: 1vh;
 }
 
-/* Botões principais */
+/* ================== */
+/* Botões Principais  */
+/* ================== */
+
 #controls {
   display: flex;
   flex-wrap: wrap;
@@ -131,7 +138,78 @@ canvas#board {
   color: #000;
 }
 
-/* Celebração (ex.: combo) */
+/* ========================= */
+/* Modal Arcade do Top 10   */
+/* ========================= */
+
+#top10Modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#top10Modal.show {
+  display: flex;
+}
+
+#top10Modal .modal-content {
+  background: rgba(20, 20, 20, 0.8);
+  border: 2px solid #3d3d7f;
+  border-radius: 12px;
+  padding: 2em;
+  color: #00ffcc;
+  text-align: center;
+  font-family: 'Press Start 2P', cursive;
+  width: 90%;
+  max-width: 600px;
+  max-height: 70vh;
+  overflow-y: auto;
+  box-shadow: 0 0 12px #000;
+}
+
+#top10Modal h2 {
+  margin-bottom: 1em;
+  font-size: 1em;
+}
+
+#top10List {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#top10List li {
+  margin: 0.4em 0;
+  background-color: #222;
+  padding: 0.6em 1em;
+  border-radius: 8px;
+  border: 1px solid #555;
+  font-size: 0.7em;
+}
+
+#top10Modal button {
+  margin-top: 1em;
+  padding: 0.6em 1.2em;
+  border: none;
+  border-radius: 6px;
+  background-color: #3d3d7f;
+  color: #eee;
+  cursor: pointer;
+  font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
+}
+
+/* =========================== */
+/* Celebração Visual + Tremor */
+/* =========================== */
+
 #celebracao {
   position: fixed;
   top: 20px;
@@ -146,7 +224,6 @@ canvas#board {
   z-index: 999;
 }
 
-/* Efeito de tremor */
 @keyframes tremor-suave {
   0% { transform: translate(0px, 0px); }
   25% { transform: translate(-2px, 1px); }
@@ -159,7 +236,10 @@ canvas#board {
   animation: tremor-suave 0.3s ease;
 }
 
-/* Modal final */
+/* ==================== */
+/* Modal Final do Jogo */
+/* ==================== */
+
 #modal {
   position: fixed;
   top: 0;
@@ -214,80 +294,110 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Ranking com scroll interno visível */
-#ranking-container {
-  margin-top: 2vh;
-  text-align: center;
-  width: 100%;
-  transition: opacity 0.4s ease, max-height 0.4s ease;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-}
-
-#ranking-container.visivel {
-  max-height: 30vh;
-  overflow-y: auto;
-}
-
-#ranking-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-#ranking-list li {
-  background-color: #222;
-  margin: 0.4em auto;
-  padding: 0.6em 1em;
-  border-radius: 6px;
-  max-width: 80%;
-  font-size: 0.7em;
-  text-align: center;
-  border: 1px solid #555;
-  word-break: break-word;
-  line-height: 1.4em;
-}
+/* ==================== */
+/* Responsividade Total */
+/* ==================== */
 
 /* Tablets */
 @media (max-width: 1024px) {
   canvas#board {
     max-height: 50vh;
   }
+
+  #preview-container {
+    gap: 0.4em;
+  }
+
+  #controls {
+    gap: 0.8em;
+    margin-top: 1.5vh;
+    margin-bottom: 1.5vh;
+  }
+
+  #controls button {
+    font-size: 0.65em;
+    padding: 0.7em 1em;
+  }
+
+  h1 {
+    font-size: 1.6em;
+  }
+
+  #info {
+    gap: 1em;
+    font-size: 0.75em;
+  }
+
+  #top10Modal .modal-content {
+    padding: 1.8em;
+    font-size: 0.9em;
+  }
+
+  #top10List li {
+    font-size: 0.65em;
+    padding: 0.5em 1em;
+  }
 }
 
 /* Smartphones modernos */
 @media (max-width: 768px) {
-  #info,
-  #controls {
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5em;
-  }
-
-  #controls button {
-    width: 100%;
-    font-size: 0.65em;
-    padding: 0.8em 1em;
-  }
-
-  h1 {
-    font-size: 1.2em;
-    margin-bottom: 0.5em;
-  }
-
   canvas#board {
     max-height: 40vh;
   }
 
-  #game-container {
-    padding: 1vh 2vw;
-    gap: 0.8vh;
+  #preview-container {
+    gap: 0.3em;
+    margin-bottom: 1vh;
   }
 
   #controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6em;
     margin-top: 1vh;
     margin-bottom: 1vh;
+  }
+
+  #controls button {
+    width: 100%;
+    font-size: 0.6em;
+    padding: 0.7em 0.9em;
+  }
+
+  h1 {
+    font-size: 1.3em;
+    margin-bottom: 0.4em;
+  }
+
+  #info {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4em;
+    font-size: 0.7em;
+  }
+
+  #modal-content {
+    padding: 1.5em;
+  }
+
+  #modal-content input {
+    font-size: 0.55em;
+    padding: 0.5em;
+  }
+
+  #modal-content button {
+    font-size: 0.55em;
+    padding: 0.5em 0.9em;
+  }
+
+  #top10Modal .modal-content {
+    padding: 1.5em;
+    font-size: 0.85em;
+  }
+
+  #top10List li {
+    font-size: 0.6em;
+    padding: 0.4em 0.8em;
   }
 }
 
@@ -306,6 +416,7 @@ canvas#board {
     margin-top: 0.5vh;
     margin-bottom: 0.5vh;
     gap: 0.4em;
+    flex-direction: column;
   }
 
   #controls button {
@@ -315,7 +426,7 @@ canvas#board {
   }
 
   h1 {
-    font-size: 0.9em;
+    font-size: 1em;
     margin-bottom: 0.3em;
   }
 
@@ -328,29 +439,82 @@ canvas#board {
     flex-direction: column;
     align-items: center;
     gap: 0.3em;
-    font-size: 0.7em;
+    font-size: 0.65em;
+  }
+
+  #top10Modal .modal-content {
+    padding: 1em;
+    font-size: 0.8em;
+  }
+
+  #top10List li {
+    font-size: 0.55em;
+    padding: 0.4em 0.6em;
   }
 
   #ranking-container {
-    display: none; /* desactivado para evitar corte em ecrãs muito pequenos */
-  }
-
-  #modal-content {
-    padding: 1.5em;
-  }
-
-  #modal-content input {
-    font-size: 0.55em;
-    padding: 0.5em;
-  }
-
-  #modal-content button {
-    font-size: 0.55em;
-    padding: 0.5em 0.8em;
+    display: none;
   }
 
   #celebracao {
     font-size: 1em;
     top: 10px;
+  }
+}
+
+/* Ecrãs ultra-largos e monitores 4K */
+@media (min-width: 2560px) {
+  canvas#board {
+    max-height: 65vh;
+  }
+
+  #game-container {
+    max-width: 1400px;
+    padding: 3vh 4vw;
+    gap: 2vh;
+  }
+
+  h1 {
+    font-size: 2.5em;
+  }
+
+  #info {
+    font-size: 1em;
+    gap: 3em;
+  }
+
+  #controls button {
+    font-size: 1em;
+    padding: 1em 2em;
+  }
+
+  #preview-container {
+    gap: 1vh;
+  }
+
+  #top10Modal .modal-content {
+    font-size: 1em;
+    padding: 2.5em;
+    max-width: 800px;
+  }
+
+  #top10List li {
+    font-size: 1em;
+    padding: 1em 2em;
+  }
+
+  #modal-content {
+    font-size: 1em;
+    padding: 2.5em;
+  }
+
+  #modal-content input {
+    font-size: 1em;
+    padding: 0.8em;
+  }
+
+  #modal-content button {
+    font-size: 1em;
+    padding: 1em 2em;
   }
 }
