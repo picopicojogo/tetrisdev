@@ -15,7 +15,8 @@ import {
 
 import {
   tocarSomColidir, tocarSomPerdeu,
-  iniciarMusicaFundo, pararMusicaFundo
+  iniciarMusicaFundo, pararMusicaFundo,
+  alternarMusica
 } from './audio.js';
 
 import {
@@ -29,11 +30,11 @@ import {
   guardarPontuacao
 } from './pontuacao.js';
 
-/* Inicializa os canvas */
+// Inicializa os canvas
 const { ctxBoard, ctxNext, board, next } = configurarCanvas();
 const tempoEl = document.getElementById("time");
 
-/* Estado do jogo */
+// Estado interno do jogo
 let tabuleiro = criarMatriz(COLUNAS, LINHAS);
 let pecaAtual = gerarPeca();
 let proximaPeca = gerarPeca();
@@ -63,7 +64,7 @@ function atualizar() {
       tocarSomPerdeu();
       clearInterval(intervalo);
       clearInterval(tempoIntervalo);
-      const { pontuacao } = processarLinhas(0); // devolve estado final
+      const { pontuacao } = processarLinhas(0);
       mostrarModalFim(pontuacao);
       return;
     }
@@ -73,7 +74,7 @@ function atualizar() {
 }
 
 /**
- * Desenha o estado atual no canvas
+ * Redesenha o estado visual do jogo
  */
 function desenhar() {
   desenharJogo(ctxBoard, board.width, board.height, tabuleiro, pecaAtual, posicao);
@@ -81,7 +82,7 @@ function desenhar() {
 }
 
 /**
- * Descida instantânea até ao limite
+ * Executa queda rápida da peça até ao limite
  */
 function quedaInstantanea() {
   while (!verificarColisao(tabuleiro, pecaAtual, { x: posicao.x, y: posicao.y + 1 })) {
@@ -91,7 +92,7 @@ function quedaInstantanea() {
 }
 
 /**
- * Pausa o jogo e a música de fundo
+ * Pausa o jogo e música de fundo
  */
 function pausarJogo() {
   clearInterval(intervalo);
@@ -102,7 +103,7 @@ function pausarJogo() {
 }
 
 /**
- * Inicia o cronómetro do jogo
+ * Inicia o cronómetro de jogo
  */
 function iniciarTempo() {
   tempoIntervalo = setInterval(() => {
@@ -111,28 +112,20 @@ function iniciarTempo() {
   }, 1000);
 }
 
-/**
- * Botão: Iniciar jogo
- */
-document.getElementById('startBtn').onclick = () => {
+// Botão: Iniciar jogo
+document.getElementById("startBtn")?.addEventListener("click", () => {
   if (!intervalo) {
     intervalo = setInterval(atualizar, 600);
     iniciarTempo();
     iniciarMusicaFundo();
   }
-};
+});
 
-/**
- * Botão: Pausar jogo
- */
-document.getElementById('pauseBtn').onclick = () => {
-  pausarJogo();
-};
+// Botão: Pausar jogo
+document.getElementById("pauseBtn")?.addEventListener("click", pausarJogo);
 
-/**
- * Botão: Reiniciar jogo
- */
-document.getElementById('resetBtn').onclick = () => {
+// Botão: Reiniciar jogo
+document.getElementById("resetBtn")?.addEventListener("click", () => {
   pausarJogo();
   tabuleiro = criarMatriz(COLUNAS, LINHAS);
   [pecaAtual, proximaPeca] = [gerarPeca(), gerarPeca()];
@@ -141,44 +134,26 @@ document.getElementById('resetBtn').onclick = () => {
   reiniciarPontuacao();
   atualizarTempo(tempoEl, segundos);
   desenhar();
-};
+});
 
-/**
- * Botão: Alternar som de fundo
- */
-document.getElementById('toggle-sound').onclick = () => {
-  const audio = document.getElementById('musica-fundo');
-  const btn = document.getElementById('toggle-sound');
-  if (!audio) return;
+// Botão: Alternar música de fundo
+document.getElementById("toggle-sound")?.addEventListener("click", () => {
+  alternarMusica();
+});
 
-  if (audio.paused) {
-    audio.play();
-    btn.textContent = '🔊 Som ligado';
-  } else {
-    audio.pause();
-    btn.textContent = '🔇 Som desligado';
-  }
+// Botão: Guardar pontuação final
+document.getElementById("confirmSave")?.addEventListener("click", () => {
+  const pontos = document.getElementById("score")?.textContent || "0";
+  guardarPontuacao(parseInt(pontos));
+});
 
-  btn.classList.toggle('active', !audio.paused);
-};
-
-/**
- * Botão: Guardar pontuação final
- */
-document.getElementById('confirmSave').onclick = () => {
-  const { pontuacao } = processarLinhas(0);
-  guardarPontuacao(pontuacao);
-};
-
-/**
- * Botão: Cancelar modal
- */
-document.getElementById('cancelSave').onclick = () => {
+// Botão: Cancelar modal
+document.getElementById("cancelSave")?.addEventListener("click", () => {
   document.getElementById("modal")?.classList.remove("show");
-};
+});
 
 /**
- * Ativa os controlos de teclado ou toque
+ * Ativa os controlos de teclado, toque e botões visuais
  */
 configurarControlos(
   direcao => moverPeca(direcao, tabuleiro, pecaAtual, posicao),
@@ -201,8 +176,6 @@ configurarControlos(
   pausarJogo
 );
 
-/**
- * Inicialização visual
- */
+// Inicializa tempo e canvas
 atualizarTempo(tempoEl, segundos);
 desenhar();
