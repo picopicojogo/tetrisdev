@@ -1,13 +1,14 @@
-/* Base */
+/* Box principal */
 * {
   box-sizing: border-box;
 }
 
-/* Corpo do documento com fundo arcade suavizado */
+/* Corpo do documento com fundo arcade suavizado e imagem de fundo */
 body {
   margin: 0;
   font-family: 'Press Start 2P', cursive;
-  background: linear-gradient(rgba(17, 17, 17, 0.85), rgba(17, 17, 17, 0.85)), url('capadojogo.png') no-repeat center center fixed;
+  background: linear-gradient(rgba(17,17,17,0.85), rgba(17,17,17,0.85)),
+              url('capadojogo.png') no-repeat center center fixed;
   background-size: cover;
   color: #eeeeee;
   display: flex;
@@ -17,35 +18,38 @@ body {
   padding: 20px;
 }
 
-/* Wrapper geral */
+/* Contêiner geral do jogo */
 #wrapper {
   max-width: 1200px;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  padding: 2vh 0;
 }
 
-/* Secção principal do jogo */
+/* Contêiner principal com layout responsivo e acessível */
 #game-container {
-  width: 100%;
+  width: 95%;
+  max-width: 1000px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2vh;
   background: rgba(0, 0, 0, 0.7);
-  padding: 2vh;
+  padding: 2vh 3vw;
   border-radius: 12px;
 }
 
-/* Título */
+/* Título retro arcade */
 h1 {
   font-size: 2em;
   margin: 0.5em 0;
   text-align: center;
-  text-shadow: 2px 2px #000000;
+  text-shadow: 2px 2px #000;
 }
 
-/* Informações principais */
+/* Secção de informações */
 #info {
   display: flex;
   justify-content: space-around;
@@ -55,7 +59,7 @@ h1 {
   width: 100%;
 }
 
-/* Secção da próxima peça */
+/* Pré-visualização da próxima peça */
 #preview-container {
   display: flex;
   flex-direction: column;
@@ -87,7 +91,7 @@ canvas#board {
   max-height: 65vh;
 }
 
-/* Botões de controlo */
+/* Botões principais */
 #controls {
   display: flex;
   flex-wrap: wrap;
@@ -120,13 +124,13 @@ canvas#board {
   color: #000;
 }
 
-/* Oculta botões tácteis (opcional) */
+/* Oculta botões tácteis (se necessário) */
 #touch-controls,
 #dropBtn {
   display: none;
 }
 
-/* Ranking retrátil */
+/* Painel de ranking retrátil */
 #ranking-container {
   margin-top: 2vh;
   text-align: center;
@@ -164,7 +168,7 @@ canvas#board {
   border: 1px solid #555;
 }
 
-/* Celebração visual */
+/* Celebração arcade sem cintilação */
 #celebracao {
   position: fixed;
   top: 20px;
@@ -179,7 +183,7 @@ canvas#board {
   z-index: 999;
 }
 
-/* Modal final */
+/* Modal final de pontuação */
 #modal {
   position: fixed;
   top: 0;
@@ -234,7 +238,7 @@ canvas#board {
   background-color: #5a5aac;
 }
 
-/* Responsividade para telemóveis */
+/* Responsivo para telemóveis */
 @media (max-width: 768px) {
   #info {
     flex-direction: column;
@@ -266,6 +270,11 @@ canvas#board {
   canvas#board {
     max-height: 50vh;
   }
+
+  #game-container {
+    padding: 1vh 2vw;
+    gap: 1.5vh;
+  }
 }
 
 /* Ajustes para ecrãs ultra-largos e 4K */
@@ -293,5 +302,10 @@ canvas#board {
 
   #modal-content button {
     font-size: 1em;
+  }
+
+  #game-container {
+    max-width: 1400px;
+    padding: 3vh 4vw;
   }
 }
